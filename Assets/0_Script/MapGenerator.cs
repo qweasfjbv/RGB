@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
 using UnityEngine;
 
 public enum GridState { NONE = 0, START, END, CAMERA }
