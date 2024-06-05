@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Timers;
 using UnityEngine;
 
 public enum BoxDir{FORWARD = 0, BOTTOM, BACK, TOP, LEFT, RIGHT}
@@ -12,20 +10,30 @@ public class BoxController : MonoBehaviour
     [SerializeField] private float jumpDistance = 1.0f;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float jumpDuration = 0.3f;
-    [Space(20)]
+    [Space(10)]
 
     [Header("Input Buffer")]
-    [SerializeField, Range(0f, 1f),] private float inputThreshold;
-    [Space(20)]
+    [SerializeField, Range(0f, 1f)] private float inputThreshold;
+    [Space(10)]
+
+    [Header("Confuse")]
+    [SerializeField, Tooltip("DO NOT SELECT BOTTOM, TOP")] private BoxDir forwardDir;
+    [Space(10)]
 
     [Header("DEBUG")]
     [SerializeField] private BoxDir[] boxDirs;
-    [Space(20)]
 
     // Index sequence to rotate boxDirs
+    readonly KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow };
     readonly int[] vertIdx = new int[4] { 3, 0, 1, 2 };
     readonly int[] horzIdx = new int[4] { 3, 5, 1, 4 };
-    readonly KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow };
+    readonly int[,] confuseIdx = new int[6, 4] {
+        { 0, 1, 2, 3 },
+        { 0, 1, 2, 3 },
+        { 1, 0, 3, 2 },
+        { 0, 1, 2, 3 },
+        { 3, 2, 0, 1 },
+        { 2, 3, 1, 0 } };
 
 
     private float jumpProgress = 0f;
@@ -47,6 +55,11 @@ public class BoxController : MonoBehaviour
         direction = Vector3.zero;
         prevInputBuffer = KeyCode.None;
         isJumping = false;
+    }
+
+    private KeyCode ConfuseDirection(KeyCode dir)
+    {
+        return arrowKeys[confuseIdx[(int)forwardDir, (int)dir - (int)KeyCode.UpArrow]];
     }
 
     private void RotateBox(BoxDir rotateDir)
@@ -122,6 +135,7 @@ public class BoxController : MonoBehaviour
         prevInputBuffer = KeyCode.None;
         direction = Vector3.zero;
 
+        key = ConfuseDirection(key);
         switch (key) {
             case KeyCode.UpArrow:
                 direction = Vector3.forward;
