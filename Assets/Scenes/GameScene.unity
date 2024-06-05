@@ -516,6 +516,7 @@ MonoBehaviour:
   jumpDistance: 1
   jumpHeight: 1
   jumpDuration: 0.3
+  inputThreshold: 0.7
   boxDirs: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
