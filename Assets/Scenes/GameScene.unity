@@ -168,6 +168,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridPrefab: {fileID: 5207074923845617936, guid: 65f51888a4dfbc44a862fe79b8f45812, type: 3}
+  fallDuration: 1
+  timeBetweenFall: 0.1
+  camOffY: 7
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,6 +522,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f2d0345025f173479367ee713da0587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraArmLength: 10
+  verticalRotate: 40
+  horizontalRotate: 10
 --- !u!1 &1158124095
 GameObject:
   m_ObjectHideFlags: 0

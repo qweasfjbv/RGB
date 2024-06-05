@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public enum BoxDir{FORWARD = 0, BOTTOM, BACK, TOP, LEFT, RIGHT}
 
 public class BoxController : MonoBehaviour
 {
