@@ -21,6 +21,7 @@ public class BoxController : MonoBehaviour
 
     [Header("DEBUG")]
     [SerializeField] private BoxDir[] boxDirs;
+    [SerializeField] private ColorSet[] boxColors;
 
     // Index sequence to rotate boxDirs
     readonly KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow };
@@ -51,6 +52,8 @@ public class BoxController : MonoBehaviour
     {
         boxDirs = new BoxDir[6] { BoxDir.FORWARD, BoxDir.BOTTOM, BoxDir.BACK, BoxDir.TOP, BoxDir.LEFT, BoxDir.RIGHT };
 
+
+        jumpDistance = Constant.GRID_SIZE;
         direction = Vector3.zero;
         prevInputBuffer = KeyCode.None;
         isJumping = false;
@@ -117,6 +120,11 @@ public class BoxController : MonoBehaviour
             {
                 GetKeyInput(key); return;
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GetComponent<BoxColorController>().TestToggle(boxDirs[(int)BoxDir.BACK]);
         }
 
     }

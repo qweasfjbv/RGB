@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
-using UnityEngine.UIElements;
-
 
 public class MapGenerator : MonoBehaviour
 {
@@ -32,7 +29,10 @@ public class MapGenerator : MonoBehaviour
     }
     #endregion
 
+    [Header("Grid Variables")]
     [SerializeField] private GameObject gridPrefab;
+
+    [Space(10)]
 
     [Header("Map Appear Effect")]
     [SerializeField] private float fallDuration;
@@ -56,17 +56,16 @@ public class MapGenerator : MonoBehaviour
         mapGrids = new MapGrid[wh, wh];
 
         GridInfo grid;
-        MapGrid center= null;
 
         for (int i = 0; i < wh; i++)
         {
             for(int j=0; j<wh; j++)
             {
                 grid = mapArr[i * wh + j];
-                mapGrids[i, j] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, camOffY, grid.Pos.y), Quaternion.identity, transform).GetComponent<MapGrid>();
+                mapGrids[i, j] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
+                mapGrids[i, j].transform.localScale = Vector3.one * Constant.GRID_SIZE;
                 mapGrids[i, j].InitMapGrid(grid);
 
-                if (grid.State == GridState.CAMERA) center = mapGrids[i, j];    
             }
         }
 
