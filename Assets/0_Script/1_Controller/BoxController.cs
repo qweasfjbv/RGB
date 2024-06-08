@@ -9,7 +9,12 @@ public class BoxController : MonoBehaviour
     [SerializeField] private float jumpDistance = 1.0f;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float jumpDuration = 0.3f;
+
+    [SerializeField] private float scaleDuration = 0.1f;
+    [SerializeField] private float scaleEffect = 0.3f;
+
     [Space(10)]
+
 
     [Header("Input Buffer")]
     [SerializeField, Range(0f, 1f)] private float inputThreshold;
@@ -186,13 +191,35 @@ public class BoxController : MonoBehaviour
 
         return;
     }
+    public Vector3 GetSclaeYAxis()
+    {
+        Vector3 tmpV = transform.worldToLocalMatrix * Vector3.up;
+        return new Vector3(Mathf.Abs(tmpV.x), Mathf.Abs(tmpV.y), Mathf.Abs(tmpV.z));
+    }
 
     private IEnumerator JumpCoroutine(float duration)
     {
-        jumpProgress = 0f;
         isJumping = true;
-        float elapsedTime = 0f;
+        jumpProgress = 0f;
 
+        Vector3 scaleAxis = GetSclaeYAxis();
+
+        float elapsedTime = 0f;
+        float scaleProgress = 0f;
+
+        while (scaleProgress < 1.0f)
+        {
+            scaleProgress = elapsedTime / scaleDuration;
+            float tmp = Mathf.Lerp(0, scaleEffect, scaleProgress);
+            transform.localScale = Vector3.one - tmp * scaleAxis;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = Vector3.one;
+
+
+        elapsedTime = 0f;
         while (jumpProgress < 1.0f)
         {
             jumpProgress = elapsedTime / duration;
@@ -205,9 +232,12 @@ public class BoxController : MonoBehaviour
             yield return null;
         }
 
+
         // Jump Complete
         transform.position = jumpTarget;
         transform.rotation = targetRotation;
+
+
         isJumping = false;
 
         // If inputBuffer exist -> direct execute
