@@ -11,7 +11,7 @@ public static class Constant
 public static class ColorConstants {
 
     // TODO : Color Modify Needed
-    public static readonly Color RED = new Color(1f, 0f, 0f, 1f);
+    public static readonly Color RED = new Color(255f/255, 50f/255, 50f/255, 1f);
     public static readonly Color BLUE = new Color(1f, 0f, 0f, 1f);
     public static readonly Color GREEN = new Color(1f, 0f, 0f, 1f);
     public static readonly Color YELLOW = new Color(1f, 0f, 0f, 1f);
