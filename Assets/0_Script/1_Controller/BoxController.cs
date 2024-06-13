@@ -199,6 +199,8 @@ public class BoxController : MonoBehaviour
 
     private IEnumerator JumpCoroutine(float duration)
     {
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.H_JUMP);
+
         isJumping = true;
         jumpProgress = 0f;
 
