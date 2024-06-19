@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -29,7 +30,7 @@ public class BoxController : MonoBehaviour
     [SerializeField] private ColorSet[] boxColors;
 
     // Index sequence to rotate boxDirs
-    readonly KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow };
+    readonly KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Space};
     readonly int[] vertIdx = new int[4] { 3, 0, 1, 2 };
     readonly int[] horzIdx = new int[4] { 3, 5, 1, 4 };
     readonly int[,] confuseIdx = new int[6, 4] {
@@ -127,15 +128,11 @@ public class BoxController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GetComponent<BoxColorController>().TestToggle(boxDirs[(int)BoxDir.BACK]);
-        }
 
     }
 
 
-    private void GetKeyInput(KeyCode key)
+    public void GetKeyInput(KeyCode key)
     {
         // Key Block during Jumping
         if (isJumping)
@@ -143,9 +140,17 @@ public class BoxController : MonoBehaviour
             if (jumpProgress > inputThreshold) prevInputBuffer = key;
             return;
         }
-
         prevInputBuffer = KeyCode.None;
         direction = Vector3.zero;
+
+
+        if (key == KeyCode.Space)
+        {
+            //GetComponent<BoxColorController>().TestToggle(boxDirs[(int)BoxDir.BACK]);
+
+            StartCoroutine(StampCoroutine(jumpDuration));
+            return;
+        }
 
         key = ConfuseDirection(key);
         switch (key) {
@@ -185,26 +190,43 @@ public class BoxController : MonoBehaviour
             startRotation = transform.rotation;
             targetRotation = Quaternion.AngleAxis(90, rotateAxis) * startRotation;
 
-            StartCoroutine(JumpCoroutine(jumpDuration));
+            StartCoroutine(JumpCoroutine(jumpDuration, jumpDistance, jumpHeight));
         }
+
+
 
 
         return;
     }
-    public Vector3 GetSclaeYAxis()
+
+    #region GetScaleAxis
+    public Vector3 GetScaleYAxis()
     {
         Vector3 tmpV = transform.worldToLocalMatrix * Vector3.up;
         return new Vector3(Mathf.Abs(tmpV.x), Mathf.Abs(tmpV.y), Mathf.Abs(tmpV.z));
     }
 
-    private IEnumerator JumpCoroutine(float duration)
+    public Vector3 GetScaleXAxis()
+    {
+        Vector3 tmpV = transform.worldToLocalMatrix * Vector3.right;
+        return new Vector3(Mathf.Abs(tmpV.x), Mathf.Abs(tmpV.y), Mathf.Abs(tmpV.z));
+    }
+
+    public Vector3 GetScaleZAxis()
+    {
+        Vector3 tmpV = transform.worldToLocalMatrix * Vector3.forward;
+        return new Vector3(Mathf.Abs(tmpV.x), Mathf.Abs(tmpV.y), Mathf.Abs(tmpV.z));
+    }
+    #endregion
+
+    private IEnumerator JumpCoroutine(float duration, float jDis, float jHei)
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.H_JUMP);
 
         isJumping = true;
         jumpProgress = 0f;
 
-        Vector3 scaleAxis = GetSclaeYAxis();
+        Vector3 scaleAxis = GetScaleYAxis();
 
         float elapsedTime = 0f;
         float scaleProgress = 0f;
@@ -246,5 +268,47 @@ public class BoxController : MonoBehaviour
         if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
 
+    private IEnumerator StampCoroutine(float duration)
+    {
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.H_JUMP);
+
+        isJumping = true;
+        jumpProgress = 0f;
+
+        float elapsedTime = 0f;
+        float scaleProgress = 0f;
+
+        Vector3 scaleAxis = GetScaleYAxis();
+
+        Vector3 originalPosition = transform.position;
+        Vector3 originalScale = Vector3.one;
+        Vector3 stampScale = scaleAxis * scaleEffect + (GetScaleXAxis() +GetScaleZAxis())*1.15f;
+
+        while (scaleProgress < 1.0f)
+        {
+            scaleProgress = elapsedTime / duration;
+            Vector3 tmp = Vector3.Lerp(originalScale, stampScale, scaleProgress);
+
+            // 주축 방향으로 줄이고 다른 축은 약간 늘리기
+            transform.localScale = tmp;
+
+            // 위치 조정 - y축 방향으로 이동
+            float scaleOffset = MathF.Abs(Vector3.Dot(originalScale, scaleAxis) - Vector3.Dot(transform.localScale, scaleAxis)) / 2;
+
+            
+            transform.position = new Vector3(originalPosition.x, originalPosition.y - scaleOffset, originalPosition.z);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = Vector3.one;
+        transform.localPosition = originalPosition;
+
+        isJumping = false;
+
+        // 입력 버퍼가 존재하면 바로 실행
+        if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
+    }
 
 }
