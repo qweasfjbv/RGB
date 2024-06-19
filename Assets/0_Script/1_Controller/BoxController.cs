@@ -1,13 +1,13 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
 public class BoxController : MonoBehaviour
 {
     [Header("Jump Variables")]
-    [SerializeField] private float jumpDistance = 1.0f;
+    [SerializeField] private int jumpDisWeight = 1;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float jumpDuration = 0.3f;
 
@@ -28,6 +28,9 @@ public class BoxController : MonoBehaviour
     [Header("DEBUG")]
     [SerializeField] private BoxDir[] boxDirs;
     [SerializeField] private ColorSet[] boxColors;
+    [SerializeField] private Vector2Int boxPosition;
+    
+    private float jumpDistance = 1.0f;
 
     // Index sequence to rotate boxDirs
     readonly KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Space};
@@ -63,6 +66,33 @@ public class BoxController : MonoBehaviour
         direction = Vector3.zero;
         prevInputBuffer = KeyCode.None;
         isJumping = false;
+        SetStartPosition(new Vector2Int(0, 0));
+    }
+
+    public void SetStartPosition(Vector2Int pos)
+    {
+        boxPosition = pos; return;
+    }
+
+    private void MoveBoxPos(KeyCode k, int dis)
+    {
+        Vector2Int tmp = Vector2Int.zero;
+        switch (k) {
+            case KeyCode.UpArrow:
+                tmp = new Vector2Int(1, 0); break;
+            case KeyCode.DownArrow:
+                tmp = new Vector2Int(-1, 0); break;
+            case KeyCode.RightArrow:
+                tmp = new Vector2Int(0, 1); break;
+            case KeyCode.LeftArrow:
+                tmp = new Vector2Int(0, -1); break;
+        }
+
+        boxPosition += tmp * dis;
+    }
+    public Vector2Int GetBoxPos()
+    {
+        return boxPosition;
     }
 
     private KeyCode ConfuseDirection(KeyCode dir)
@@ -184,13 +214,14 @@ public class BoxController : MonoBehaviour
         {
             // Jump Start
             jumpStart = transform.position;
-            jumpTarget = jumpStart + direction * jumpDistance;
+            jumpTarget = jumpStart + direction * jumpDistance * jumpDisWeight;
             jumpTarget.y = jumpStart.y;
 
             startRotation = transform.rotation;
             targetRotation = Quaternion.AngleAxis(90, rotateAxis) * startRotation;
 
-            StartCoroutine(JumpCoroutine(jumpDuration, jumpDistance, jumpHeight));
+            MoveBoxPos(key, jumpDisWeight);
+            StartCoroutine(JumpCoroutine(jumpDuration, jumpDistance * jumpDisWeight, jumpHeight));
         }
 
 
@@ -267,12 +298,14 @@ public class BoxController : MonoBehaviour
         // If inputBuffer exist -> direct execute
         if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
+    
 
     private IEnumerator StampCoroutine(float duration)
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.H_JUMP);
 
         isJumping = true;
+        GetComponent<BoxColorController>().StampColor(boxDirs[(int)BoxDir.BOTTOM]);
         jumpProgress = 0f;
 
         float elapsedTime = 0f;
@@ -296,6 +329,28 @@ public class BoxController : MonoBehaviour
             float scaleOffset = MathF.Abs(Vector3.Dot(originalScale, scaleAxis) - Vector3.Dot(transform.localScale, scaleAxis)) / 2;
 
             
+            transform.position = new Vector3(originalPosition.x, originalPosition.y - scaleOffset, originalPosition.z);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+
+        elapsedTime = 0f;
+        scaleProgress = 0f;
+
+        while (scaleProgress < 1.0f)
+        {
+            scaleProgress = elapsedTime*3 / duration;
+            Vector3 tmp = Vector3.Lerp( stampScale, originalScale, scaleProgress);
+
+            // 주축 방향으로 줄이고 다른 축은 약간 늘리기
+            transform.localScale = tmp;
+
+            // 위치 조정 - y축 방향으로 이동
+            float scaleOffset = MathF.Abs(Vector3.Dot(originalScale, scaleAxis) - Vector3.Dot(transform.localScale, scaleAxis)) / 2;
+
+
             transform.position = new Vector3(originalPosition.x, originalPosition.y - scaleOffset, originalPosition.z);
 
             elapsedTime += Time.deltaTime;

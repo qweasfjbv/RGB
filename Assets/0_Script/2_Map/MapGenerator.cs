@@ -62,9 +62,9 @@ public class MapGenerator : MonoBehaviour
             for(int j=0; j<wh; j++)
             {
                 grid = mapArr[i * wh + j];
-                mapGrids[i, j] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
-                mapGrids[i, j].transform.localScale = Vector3.one * Constant.GRID_SIZE;
-                mapGrids[i, j].InitMapGrid(grid);
+                mapGrids[j, i] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
+                mapGrids[j, i].transform.localScale = Vector3.one * Constant.GRID_SIZE;
+                mapGrids[j, i].InitMapGrid(grid);
 
             }
         }
@@ -73,6 +73,14 @@ public class MapGenerator : MonoBehaviour
         return;
     }
 
+    public void SetGridColor(Vector2Int pos, Color color)
+    {
+        mapGrids[pos.x, pos.y].GetComponent<MeshRenderer>().material.color = color;
+    }
+    public ColorSet GetGridColor(Vector2Int pos)
+    {
+        return mapGrids[pos.x, pos.y].Gridinfo.Colorset;
+    }
 
     private IEnumerator GridAppearEff(float duration)
     {

@@ -80,6 +80,29 @@ public class BoxColorController : MonoBehaviour
         else RemoveBoxColor(dir);
     }
 
+    public void StampColor(BoxDir dir)
+    {
+        ColorSet gridC = MapGenerator.Instance.GetGridColor(GetComponent<BoxController>().GetBoxPos());
+        Debug.Log(gridC.ToString());
+        ColorSet boxC = boxColorSet[(int)dir];
+
+        // Empty-> get Color from grid
+        if (boxColorSet[(int)dir].IsEmpty())
+        {
+            boxC.BlendColor(gridC);
+            gridC.RemoveColor();
+        }
+        // !Empty -> Blend color to grid
+        else
+        {
+            gridC.BlendColor(boxC);
+            boxC.RemoveColor();
+        }
+
+        SetBoxColor(dir, boxC.GetColor());
+        MapGenerator.Instance.SetGridColor(GetComponent<BoxController>().GetBoxPos(), gridC.GetColor());
+
+    }
     /*
     public void AddBoxColor(BoxDir dir, Color color)
     {

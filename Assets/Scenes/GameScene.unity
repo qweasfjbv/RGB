@@ -698,7 +698,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraArmLength: 10
-  verticalRotate: 40
+  verticalRotate: 55
   horizontalRotate: 10
 --- !u!850595691 &1637289734
 LightingSettings:

@@ -17,6 +17,6 @@ public static class ColorConstants {
     public static readonly Color YELLOW = new Color(255f / 255, 255f / 255, 30f / 255, 1f);
     public static readonly Color CYAN = new Color(30f / 255, 255f / 255, 255f / 255, 1f);
     public static readonly Color MAGENTA = new Color(255f / 255, 30f / 255, 255f / 255, 1f);
-    public static readonly Color BLACK = new Color(0f, 0f, 0f, 1f);
+    public static readonly Color BLACK = new Color(20f/255, 20f/255, 20f/255, 1f);
     public static readonly Color WHITE = new Color(1f, 1f, 1f, 1f);
 }

@@ -1,6 +1,8 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 
 [Serializable]
 public class ColorSet
@@ -28,6 +30,9 @@ public class ColorSet
     // TODO : 1 do get color
     public Color GetColor()
     {
+        if (r == 0 && g == 0 && b == 0) return ColorConstants.BLACK;
+        else if (r == 1 && g == 1 && b == 1) return ColorConstants.WHITE;
+
         return new Color(r, g, b);
     }
 
@@ -39,6 +44,13 @@ public class ColorSet
     public void RemoveColor()
     {
         r = 0; g=0; b=0;
+    }
+
+    public void BlendColor(ColorSet cSet)
+    {
+        r = Mathf.Max(r, cSet.r);
+        g = Mathf.Max(g, cSet.g);
+        b = Mathf.Max(b, cSet.b);
     }
 
     public override string ToString()
@@ -85,10 +97,12 @@ public class MapGrid : MonoBehaviour
             case GridState.NONE: return;
             case GridState.START:
                 GetComponent<Renderer>().material.color = Color.red;
+                gridinfo.Colorset.SetColor(ColorConstants.RED);
                 break;
 
             case GridState.END:
                 GetComponent<Renderer>().material.color = Color.blue;
+                gridinfo.Colorset.SetColor(ColorConstants.BLUE);
                 break;
 
             case GridState.CAMERA:
