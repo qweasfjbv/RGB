@@ -23,7 +23,7 @@ public class BoxColorController : MonoBehaviour
     private void Start()
     {
         pbMesh = GetComponent<ProBuilderMesh>();
-        for (int i = 0; i < 6; i++) boxColorSet[i] = new ColorSet(0, 0, 0);
+        for (int i = 0; i < 6; i++) boxColorSet[i] = new ColorSet(ColorConstants.WHITE);
 
         if (pbMesh == null)
         {
@@ -83,7 +83,6 @@ public class BoxColorController : MonoBehaviour
     public void StampColor(BoxDir dir)
     {
         ColorSet gridC = MapGenerator.Instance.GetGridColor(GetComponent<BoxController>().GetBoxPos());
-        Debug.Log(gridC.ToString());
         ColorSet boxC = boxColorSet[(int)dir];
 
         // Empty-> get Color from grid

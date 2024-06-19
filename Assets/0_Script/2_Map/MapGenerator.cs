@@ -108,15 +108,15 @@ public class MapGenerator : MonoBehaviour
     private void TestInit()
     {
         List<GridInfo> mapArrs = new List<GridInfo>();
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 0), 0, GridState.START));
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 1), 0));
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 2), 0));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 0), 0));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 1), 0, GridState.CAMERA));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 2), 0));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 0), 1));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 1), 1));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 2), 1, GridState.END));
+        mapArrs.Add(new GridInfo(new Vector2Int(0, 0), 0, ColorConstants.WHITE, GridState.START));
+        mapArrs.Add(new GridInfo(new Vector2Int(0, 1), 0, ColorConstants.BLUE));
+        mapArrs.Add(new GridInfo(new Vector2Int(0, 2), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 0), 0, ColorConstants.RED));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 1), 0, ColorConstants.WHITE, GridState.CAMERA));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 2), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 0), 1, ColorConstants.ORANGE));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 1), 1, ColorConstants.PURPLE));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 2), 1, ColorConstants.WHITE, GridState.END));
 
         // TODO : Get Mapinfo from server
         GenerateMap(ref mapArrs, 3);

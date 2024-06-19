@@ -1,61 +1,88 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 
+// Convert RGB to RYB
 [Serializable]
 public class ColorSet
 {
     public int r;
-    public int g;
+    public int y;
     public int b;
 
-    public int Total { get => (r + g + b); }
+    public int Total { get => (r + y + b); }
 
-    public ColorSet(int r, int g, int b)
+    public ColorSet(Color color)
     {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        SetColor(color);
     }
 
     public void SetColor(Color color)
     {
-        r = (int)color.r;
-        g = (int)color.g;
-        b = (int)color.b;
+
+        switch (color) {
+            case var _ when color.Equals(ColorConstants.RED):
+                r = 1; y = 0; b = 0;
+                break;
+            case var _ when color.Equals(ColorConstants.BLUE):
+                r = 0; y = 0; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.YELLOW):
+                r = 0; y = 1; b = 0;
+                break;
+            case var _ when color.Equals(ColorConstants.ORANGE):
+                r = 1; y = 1; b = 0;
+                break;
+            case var _ when color.Equals(ColorConstants.GREEN):
+                r = 0; y = 1; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.PURPLE):
+                r = 1; y = 0; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.BLACK):
+                r = 1; y = 1; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.WHITE):
+                r = 0; y = 0; b = 0;
+                break;
+
+        }
     }
 
-    // TODO : 1 do get color
     public Color GetColor()
     {
-        if (r == 0 && g == 0 && b == 0) return ColorConstants.BLACK;
-        else if (r == 1 && g == 1 && b == 1) return ColorConstants.WHITE;
+        if (r == 0 && y == 0 && b == 0) return ColorConstants.WHITE;
+        else if (r == 1 && y == 1 && b == 1) return ColorConstants.BLACK;
+        else if (r == 1 && y == 0 && b == 0) return ColorConstants.RED;
+        else if (r == 0 && y == 1 && b == 0) return ColorConstants.YELLOW;
+        else if (r == 0 && y == 0 && b == 1) return ColorConstants.BLUE;
+        else if (r == 0 && y == 1 && b == 1) return ColorConstants.GREEN;
+        else if (r == 1 && y == 1 && b == 0) return ColorConstants.ORANGE;
+        else if (r == 1 && y == 0 && b == 1) return ColorConstants.PURPLE;
 
-        return new Color(r, g, b);
+        Debug.LogError("Color Error : ryb can't matching color"); return Color.clear;
     }
 
     public bool IsEmpty()
     {
-        return (r== 0 && g == 0 && b== 0);
+        return (r== 0 && y == 0 && b== 0);
     }
 
     public void RemoveColor()
     {
-        r = 0; g=0; b=0;
+        r = 0; y=0; b=0;
     }
 
     public void BlendColor(ColorSet cSet)
     {
-        r = Mathf.Max(r, cSet.r);
-        g = Mathf.Max(g, cSet.g);
-        b = Mathf.Max(b, cSet.b);
+        r = (r + cSet.r) > 1 ? 1 : r + cSet.r;
+        y = (y + cSet.y) > 1 ? 1 : y + cSet.y;
+        b = (b + cSet.b) > 1 ? 1 : b + cSet.b;
     }
 
     public override string ToString()
     {
-        return "ColorSet : " + r + ", " + g + ", " + b; 
+        return "ColorSet(RYB) : " + r + ", " + y + ", " + b; 
     }
 }
 
@@ -71,13 +98,12 @@ public class GridInfo {
     public GridState State { get { return state; } }
     public ColorSet Colorset {  get { return colorSet; } }  
 
-    public GridInfo(Vector2Int pos, int height, GridState state = GridState.NONE)
+    public GridInfo(Vector2Int pos, int height, Color color, GridState state = GridState.NONE)
     {
         this.pos = pos;
         this.height = height;
         this.state = state;
-
-        this.colorSet = new ColorSet(0, 0, 0);
+        colorSet = new ColorSet(color);
     }
 }
 
@@ -90,24 +116,22 @@ public class MapGrid : MonoBehaviour
     // Process Grid According to GridState
     public void InitMapGrid(GridInfo info)
     {
-        gridinfo = new GridInfo(info.Pos, info.Height, info.State);
+        gridinfo = new GridInfo(info.Pos, info.Height, info.Colorset.GetColor(), info.State);
+        GetComponent<Renderer>().material.color = info.Colorset.GetColor();
 
         switch (info.State)
         {
-            case GridState.NONE: return;
+            case GridState.NONE: break;
             case GridState.START:
-                GetComponent<Renderer>().material.color = Color.red;
-                gridinfo.Colorset.SetColor(ColorConstants.RED);
                 break;
 
             case GridState.END:
-                GetComponent<Renderer>().material.color = Color.blue;
-                gridinfo.Colorset.SetColor(ColorConstants.BLUE);
                 break;
 
             case GridState.CAMERA:
                 Camera.main.GetComponent<CameraController>().SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
                 break;
+
         }
     }
 
@@ -115,4 +139,6 @@ public class MapGrid : MonoBehaviour
     {
         transform.DOMoveY(gridinfo.Height - transform.localScale.y/2 - Constant.BOX_SIZE/2, duration).SetEase(Ease.InOutElastic);
     }
+
+
 }
