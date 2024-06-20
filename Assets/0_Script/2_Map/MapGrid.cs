@@ -137,7 +137,7 @@ public class MapGrid : MonoBehaviour
 
     public void AppearGrid(float duration = 1f)
     {
-        transform.DOMoveY(gridinfo.Height - transform.localScale.y/2 - Constant.BOX_SIZE/2, duration).SetEase(Ease.InOutElastic);
+        transform.DOMoveY(gridinfo.Height * Constant.GRID_SIZE - transform.localScale.y/2 - Constant.BOX_SIZE/2, duration).SetEase(Ease.InOutElastic);
     }
 
 
