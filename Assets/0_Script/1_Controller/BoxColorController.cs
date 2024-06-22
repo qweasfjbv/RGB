@@ -102,6 +102,8 @@ public class BoxColorController : MonoBehaviour
         MapGenerator.Instance.SetGridColor(GetComponent<BoxController>().GetBoxPos(), gridC.GetColor());
 
     }
+
+
     /*
     public void AddBoxColor(BoxDir dir, Color color)
     {

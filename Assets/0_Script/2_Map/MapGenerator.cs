@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -73,10 +74,16 @@ public class MapGenerator : MonoBehaviour
         return;
     }
 
-    public void SetGridColor(Vector2Int pos, Color color)
+    private bool isSettingColor = false;
+    public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {
-        mapGrids[pos.x, pos.y].GetComponent<MeshRenderer>().material.color = color;
+        // TODO : gradation needed
+        mapGrids[pos.x, pos.y].GetComponent<MeshRenderer>().material.DOColor(color, duration);
     }
+
+
+
+
     public ColorSet GetGridColor(Vector2Int pos)
     {
         return mapGrids[pos.x, pos.y].Gridinfo.Colorset;
@@ -111,15 +118,31 @@ public class MapGenerator : MonoBehaviour
         mapArrs.Add(new GridInfo(new Vector2Int(0, 0), 0, ColorConstants.WHITE, GridState.START));
         mapArrs.Add(new GridInfo(new Vector2Int(0, 1), 0, ColorConstants.BLUE));
         mapArrs.Add(new GridInfo(new Vector2Int(0, 2), 0, ColorConstants.WHITE));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 0), 0, ColorConstants.RED));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 1), 0, ColorConstants.WHITE, GridState.CAMERA));
+        mapArrs.Add(new GridInfo(new Vector2Int(0, 3), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(0, 4), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 0), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 1), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(1, 2), 0, ColorConstants.WHITE));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 0), 1, ColorConstants.ORANGE));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 1), 1, ColorConstants.PURPLE));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 2), 1, ColorConstants.WHITE, GridState.END));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 3), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 4), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 0), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 1), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 2), 0, ColorConstants.WHITE, GridState.CAMERA));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 3), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(2, 4), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(3, 0), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(3, 1), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(3, 2), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(3, 3), 0, ColorConstants.RED));
+        mapArrs.Add(new GridInfo(new Vector2Int(3, 4), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(4, 0), 1, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(4, 1), 1, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(4, 2), 1, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(4, 3), 1, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(4, 4), 1, ColorConstants.WHITE));
 
         // TODO : Get Mapinfo from server
-        GenerateMap(ref mapArrs, 3);
+        GenerateMap(ref mapArrs, 5);
     }
 
 }
