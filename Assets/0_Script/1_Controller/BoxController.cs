@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 
@@ -8,7 +10,7 @@ public class BoxController : MonoBehaviour
 {
     [Header("Jump Variables")]
     [SerializeField] private int jumpDisWeight = 1;
-    [SerializeField] private float jumpHeight = 1.0f;
+    [SerializeField] private float jumpHeight = 0.6f;
     [SerializeField] private float jumpDuration = 0.3f;
 
     [SerializeField] private float scaleDuration = 0.1f;
@@ -221,7 +223,8 @@ public class BoxController : MonoBehaviour
             targetRotation = Quaternion.AngleAxis(90, rotateAxis) * startRotation;
 
             MoveBoxPos(key, jumpDisWeight);
-            StartCoroutine(JumpCoroutine(jumpDuration, jumpDistance * jumpDisWeight, jumpHeight));
+            // Logic needed
+            StartCoroutine(JumpCoroutine(jumpDuration,1 ));
         }
 
 
@@ -250,9 +253,10 @@ public class BoxController : MonoBehaviour
     }
     #endregion
 
-    private IEnumerator JumpCoroutine(float duration, float jDis, float jHei)
+    // Jump
+    private IEnumerator JumpCoroutine(float duration, float jDis)
     {
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.H_JUMP);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
 
         isJumping = true;
         jumpProgress = 0f;
@@ -298,11 +302,155 @@ public class BoxController : MonoBehaviour
         // If inputBuffer exist -> direct execute
         if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
-    
 
+    // Jump_1 block up
+    private IEnumerator JumpUpCoroutine(float duration)
+    {
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+
+        isJumping = true;
+        jumpProgress = 0f;
+
+        Vector3 scaleAxis = GetScaleYAxis();
+
+        float elapsedTime = 0f;
+        float scaleProgress = 0f;
+
+        while (scaleProgress < 1.0f)
+        {
+            scaleProgress = elapsedTime / scaleDuration;
+            float tmp = Mathf.Lerp(0, scaleEffect, scaleProgress);
+            transform.localScale = Vector3.one - tmp * scaleAxis;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = Vector3.one;
+
+
+        elapsedTime = 0f;
+        while (jumpProgress < 1.0f)
+        {
+            jumpProgress = elapsedTime / duration;
+            // Calculate parabola
+            float height = Mathf.Sin(5f/6*Mathf.PI * jumpProgress) * jumpHeight * 2;
+            transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+
+        // Jump Complete
+        transform.position = jumpTarget + new Vector3(0, Constant.GRID_SIZE, 0);
+        transform.rotation = targetRotation;
+
+
+        isJumping = false;
+
+        // If inputBuffer exist -> direct execute
+        if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
+    }
+
+    // Jump_block by wall
+    private IEnumerator JumpBlockCoroutine(float duration)
+    {
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+
+        isJumping = true;
+        jumpProgress = 0f;
+
+        Vector3 scaleAxis = GetScaleYAxis();
+
+        float elapsedTime = 0f;
+        float scaleProgress = 0f;
+
+        while (scaleProgress < 1.0f)
+        {
+            scaleProgress = elapsedTime / scaleDuration;
+            float tmpf = Mathf.Lerp(0, scaleEffect, scaleProgress);
+            transform.localScale = Vector3.one - tmpf * scaleAxis;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = Vector3.one;
+
+
+        elapsedTime = 0f;
+        while (jumpProgress < 0.3f)
+        {
+            jumpProgress = elapsedTime / duration;
+            // Calculate parabola
+            float height = Mathf.Sin(Mathf.PI * jumpProgress) * jumpHeight;
+            transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Vector3 tmp = jumpTarget;
+        jumpTarget = jumpStart;
+        jumpStart = tmp;
+
+        Quaternion tmpQ = targetRotation;
+        targetRotation = startRotation;
+        startRotation = tmpQ;
+
+        elapsedTime =  duration * 0.7f;
+
+        while (jumpProgress < 1f)
+        {
+            jumpProgress = elapsedTime / duration;
+            // Calculate parabola
+            float height = Mathf.Sin(Mathf.PI * jumpProgress) * jumpHeight;
+            transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+
+        // Jump Complete
+        transform.position = jumpTarget;
+        transform.rotation = targetRotation;
+
+
+        isJumping = false;
+
+        // If inputBuffer exist -> direct execute
+        if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
+    }
+
+    // Jump_fall'in hole
+    private IEnumerator JumpFallCoroutine(float duration)
+    {
+
+        yield return StartCoroutine(JumpCoroutine(duration, 1));
+
+        isJumping = true;
+
+        Vector3 tmpP = transform.position;
+
+        float elapsedTime = 0;
+        while (elapsedTime / 2 < duration)
+        {
+            tmpP.y -= Time.deltaTime * 10;
+            transform.position = tmpP;
+
+            transform.localScale *= 0.95f;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    // Stamp!
     private IEnumerator StampCoroutine(float duration)
     {
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.H_JUMP);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
 
         isJumping = true;
         GetComponent<BoxColorController>().StampColor(boxDirs[(int)BoxDir.BOTTOM]);
@@ -327,8 +475,6 @@ public class BoxController : MonoBehaviour
 
             // 위치 조정 - y축 방향으로 이동
             float scaleOffset = MathF.Abs(Vector3.Dot(originalScale, scaleAxis) - Vector3.Dot(transform.localScale, scaleAxis)) / 2;
-
-            
             transform.position = new Vector3(originalPosition.x, originalPosition.y - scaleOffset, originalPosition.z);
 
             elapsedTime += Time.deltaTime;

@@ -604,6 +604,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -700,6 +701,20 @@ MonoBehaviour:
   cameraArmLength: 10
   verticalRotate: 55
   horizontalRotate: 10
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 289f7db0d49db5c40a808166f64815bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pixelationMaterial: {fileID: 2100000, guid: 6475e0a30a5acea499f323a6fe709e8d, type: 2}
+  pixelDensity: 256
 --- !u!850595691 &1637289734
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -788,6 +803,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 322603410}
+    - target: {fileID: 5771594630038231016, guid: 6945d156808887a4aa10e0fd4a4db5be, type: 3}
+      propertyPath: jumpHeight
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 5771594630038231016, guid: 6945d156808887a4aa10e0fd4a4db5be, type: 3}
       propertyPath: scaleEffect
       value: 0.5
