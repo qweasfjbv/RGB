@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System.Linq.Expressions;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -58,16 +59,13 @@ public class MapGenerator : MonoBehaviour
 
         GridInfo grid;
 
-        for (int i = 0; i < wh; i++)
+        for (int i = 0; i < mapArr.Count; i++)
         {
-            for(int j=0; j<wh; j++)
-            {
-                grid = mapArr[i * wh + j];
-                mapGrids[j, i] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
-                mapGrids[j, i].transform.localScale = Vector3.one * Constant.GRID_SIZE;
-                mapGrids[j, i].InitMapGrid(grid);
+            grid = mapArr[i];
+            mapGrids[grid.Pos.y, grid.Pos.x] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
+            mapGrids[grid.Pos.y, grid.Pos.x].transform.localScale = Vector3.one * Constant.GRID_SIZE;
+            mapGrids[grid.Pos.y, grid.Pos.x].InitMapGrid(grid);
 
-            }
         }
 
         StartCoroutine(GridAppearEff(fallDuration));
@@ -81,7 +79,11 @@ public class MapGenerator : MonoBehaviour
         mapGrids[pos.x, pos.y].GetComponent<MeshRenderer>().material.DOColor(color, duration);
     }
 
-
+    public MapGrid GetMapGrid(Vector2Int pos)
+    {
+        if (pos.x < 0 || pos.y < 0 || pos.x >= mapGrids.GetLength(0) || pos.y >= mapGrids.GetLength(1)) return null;
+        return mapGrids[pos.x, pos.y];
+    }
 
 
     public ColorSet GetGridColor(Vector2Int pos)
@@ -98,6 +100,7 @@ public class MapGenerator : MonoBehaviour
         {
             for (int j = 0; j < mapGrids.GetLength(1); j++)
             {
+                if (mapGrids[i, j] == null) continue;
                 mapGrids[i, j].AppearGrid(duration);
                 yield return new WaitForSeconds(timeBetweenFall);
             }
@@ -125,7 +128,6 @@ public class MapGenerator : MonoBehaviour
         mapArrs.Add(new GridInfo(new Vector2Int(1, 2), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(1, 3), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(1, 4), 0, ColorConstants.WHITE));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 0), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(2, 1), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(2, 2), 0, ColorConstants.WHITE, GridState.CAMERA));
         mapArrs.Add(new GridInfo(new Vector2Int(2, 3), 0, ColorConstants.WHITE));

@@ -31,7 +31,9 @@ public class BoxController : MonoBehaviour
     [SerializeField] private BoxDir[] boxDirs;
     [SerializeField] private ColorSet[] boxColors;
     [SerializeField] private Vector2Int boxPosition;
-    
+    [SerializeField] private Vector2Int prevBoxPosition;
+    [SerializeField] private int boxHeight;
+
     private float jumpDistance = 1.0f;
 
     // Index sequence to rotate boxDirs
@@ -68,12 +70,14 @@ public class BoxController : MonoBehaviour
         direction = Vector3.zero;
         prevInputBuffer = KeyCode.None;
         isJumping = false;
-        SetStartPosition(new Vector2Int(0, 0));
+        SetStartPosition(new Vector2Int(0, 0), 0);
     }
 
-    public void SetStartPosition(Vector2Int pos)
+    public void SetStartPosition(Vector2Int pos, int height)
     {
-        boxPosition = pos; return;
+        prevBoxPosition = boxPosition = pos;
+        boxHeight = height;
+        return;
     }
 
     private void MoveBoxPos(KeyCode k, int dis)
@@ -89,6 +93,8 @@ public class BoxController : MonoBehaviour
             case KeyCode.LeftArrow:
                 tmp = new Vector2Int(0, -1); break;
         }
+
+        prevBoxPosition = boxPosition;
 
         boxPosition += tmp * dis;
     }
@@ -222,9 +228,8 @@ public class BoxController : MonoBehaviour
             startRotation = transform.rotation;
             targetRotation = Quaternion.AngleAxis(90, rotateAxis) * startRotation;
 
-            MoveBoxPos(key, jumpDisWeight);
-            // Logic needed
-            StartCoroutine(JumpCoroutine(jumpDuration,1 ));
+
+            JumpBox(key);
         }
 
 
@@ -252,6 +257,33 @@ public class BoxController : MonoBehaviour
         return new Vector3(Mathf.Abs(tmpV.x), Mathf.Abs(tmpV.y), Mathf.Abs(tmpV.z));
     }
     #endregion
+
+    private void JumpBox(KeyCode key)
+    {
+        MoveBoxPos(key, jumpDisWeight);
+
+        MapGrid mapGrid = MapGenerator.Instance.GetMapGrid(boxPosition);
+
+        if (mapGrid == null)
+        {
+            StartCoroutine(JumpFallCoroutine(jumpDuration));
+            return;
+        }
+        
+        if(mapGrid.Gridinfo.Height == boxHeight + 1)
+        {
+            boxHeight++;
+            StartCoroutine(JumpUpDownCoroutine(jumpDuration, true));
+        }
+        else if(mapGrid.Gridinfo.Height == boxHeight - 1)
+        {
+            boxHeight--;
+            StartCoroutine(JumpUpDownCoroutine(jumpDuration, false));
+        }
+        else StartCoroutine(JumpCoroutine(jumpDuration, 1));
+    }
+
+    #region JumpCoroutines
 
     // Jump
     private IEnumerator JumpCoroutine(float duration, float jDis)
@@ -303,8 +335,8 @@ public class BoxController : MonoBehaviour
         if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
 
-    // Jump_1 block up
-    private IEnumerator JumpUpCoroutine(float duration)
+    // Jump_1 block up/down
+    private IEnumerator JumpUpDownCoroutine(float duration, bool up)
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
 
@@ -329,11 +361,13 @@ public class BoxController : MonoBehaviour
 
 
         elapsedTime = 0f;
+        float height = 0;
         while (jumpProgress < 1.0f)
         {
             jumpProgress = elapsedTime / duration;
             // Calculate parabola
-            float height = Mathf.Sin(5f/6*Mathf.PI * jumpProgress) * jumpHeight * 2;
+            if (up) height = Mathf.Sin(5f/6*Mathf.PI * jumpProgress) * jumpHeight * 2;
+            else height = (Mathf.Sin(1f/6 * Mathf.PI +  5f / 6 * Mathf.PI * jumpProgress) - 0.5f) * jumpHeight * 2;
             transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
             transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
 
@@ -343,7 +377,8 @@ public class BoxController : MonoBehaviour
 
 
         // Jump Complete
-        transform.position = jumpTarget + new Vector3(0, Constant.GRID_SIZE, 0);
+        if (up) transform.position = jumpTarget + new Vector3(0, Constant.GRID_SIZE, 0);
+        else transform.position = jumpTarget - new Vector3(0, Constant.GRID_SIZE, 0);
         transform.rotation = targetRotation;
 
 
@@ -511,5 +546,7 @@ public class BoxController : MonoBehaviour
         // 입력 버퍼가 존재하면 바로 실행
         if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
+
+    #endregion
 
 }
