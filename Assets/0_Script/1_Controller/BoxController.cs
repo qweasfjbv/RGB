@@ -1,8 +1,7 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
+using System.Net;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 
@@ -33,6 +32,8 @@ public class BoxController : MonoBehaviour
     [SerializeField] private Vector2Int boxPosition;
     [SerializeField] private Vector2Int prevBoxPosition;
     [SerializeField] private int boxHeight;
+
+    public BoxDir[] BoxDirs { get { return boxDirs; } }     
 
     private float jumpDistance = 1.0f;
 
@@ -170,6 +171,8 @@ public class BoxController : MonoBehaviour
     }
 
 
+    int jDis = 1;
+    int hDis = 0;
     public void GetKeyInput(KeyCode key)
     {
         // Key Block during Jumping
@@ -182,10 +185,38 @@ public class BoxController : MonoBehaviour
         direction = Vector3.zero;
 
 
+
+        Color tmpC = GetComponent<BoxColorController>().GetBlendColorWithFloor();
+
+
+        forwardDir = BoxDir.FORWARD;
+        jDis = 1;
+        hDis = 0;
+        // Color Func
+        switch (tmpC)
+        {
+            case var _ when tmpC.Equals(ColorConstants.RED):
+                jDis = 2;
+                break;
+            case var _ when tmpC.Equals(ColorConstants.BLUE):
+                hDis = 1;
+                break;
+            case var _ when tmpC.Equals(ColorConstants.YELLOW):
+                forwardDir = BoxDir.RIGHT;
+                break;
+            case var _ when tmpC.Equals(ColorConstants.ORANGE):
+                forwardDir = BoxDir.BACK;
+                break;
+            case var _ when tmpC.Equals(ColorConstants.GREEN):
+                forwardDir = BoxDir.LEFT;
+                break;
+                //case var _ when tmpC.Equals(ColorConstants.PURPLE):
+                //jDis = 2; hDis = 1;
+                //break;
+        }
+
         if (key == KeyCode.Space)
         {
-            //GetComponent<BoxColorController>().TestToggle(boxDirs[(int)BoxDir.BACK]);
-
             StartCoroutine(StampCoroutine(jumpDuration));
             return;
         }
@@ -194,25 +225,21 @@ public class BoxController : MonoBehaviour
         switch (key) {
             case KeyCode.UpArrow:
                 direction = Vector3.forward;
-                RotateBox(BoxDir.FORWARD);
                 rotateAxis = new Vector3(1, 0, 0);
                 break;
 
             case KeyCode.DownArrow:
                 direction = Vector3.back;
-                RotateBox(BoxDir.BACK);
                 rotateAxis = new Vector3(-1, 0, 0);
                 break;
 
             case KeyCode.LeftArrow:
                 direction = Vector3.left;
-                RotateBox(BoxDir.LEFT);
                 rotateAxis = new Vector3(0, 0, 1);
                 break;
 
             case KeyCode.RightArrow:
                 direction = Vector3.right;
-                RotateBox(BoxDir.RIGHT);
                 rotateAxis = new Vector3(0, 0, -1);
                 break;
         }
@@ -222,8 +249,6 @@ public class BoxController : MonoBehaviour
         {
             // Jump Start
             jumpStart = transform.position;
-            jumpTarget = jumpStart + direction * jumpDistance * jumpDisWeight;
-            jumpTarget.y = jumpStart.y;
 
             startRotation = transform.rotation;
             targetRotation = Quaternion.AngleAxis(90, rotateAxis) * startRotation;
@@ -260,27 +285,99 @@ public class BoxController : MonoBehaviour
 
     private void JumpBox(KeyCode key)
     {
-        MoveBoxPos(key, jumpDisWeight);
 
-        MapGrid mapGrid = MapGenerator.Instance.GetMapGrid(boxPosition);
 
-        if (mapGrid == null)
+        jumpTarget = jumpStart + direction * jumpDistance * jumpDisWeight * jDis;
+        jumpTarget.y = jumpStart.y;
+
+        // Calc Position in advance
+        Vector2Int tmp = Vector2Int.zero;
+        switch (key)
         {
-            StartCoroutine(JumpFallCoroutine(jumpDuration));
-            return;
+            case KeyCode.UpArrow:
+                tmp = new Vector2Int(1, 0); break;
+            case KeyCode.DownArrow:
+                tmp = new Vector2Int(-1, 0); break;
+            case KeyCode.RightArrow:
+                tmp = new Vector2Int(0, 1); break;
+            case KeyCode.LeftArrow:
+                tmp = new Vector2Int(0, -1); break;
         }
-        
-        if(mapGrid.Gridinfo.Height == boxHeight + 1)
+
+        MapGrid mForGrid = MapGenerator.Instance.GetMapGrid(boxPosition + tmp);
+        tmp *= jDis;
+
+        MapGrid mGrid = MapGenerator.Instance.GetMapGrid(boxPosition + tmp);
+
+        // exceptions
+
+        if (jDis == 1)
         {
-            boxHeight++;
+            if (mGrid == null) // null -> fall
+            {
+                MoveBoxPos(key, jumpDisWeight * jDis);
+                StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
+            }
+
+            if (mGrid.Gridinfo.Height >= boxHeight + 2) { 
+                StartCoroutine(JumpBlockCoroutine(jumpDuration));
+                return;
+            }
+
+            if (mGrid.Gridinfo.Height == boxHeight + 1 && hDis <= 0)
+            {
+                Debug.Log(hDis);
+                StartCoroutine(JumpBlockCoroutine(jumpDuration));
+                return;
+            }
+        }
+        else
+        {
+            if (mForGrid.Gridinfo.Height >= boxHeight + 1)
+            {
+                StartCoroutine(JumpBlockCoroutine(jumpDuration));
+                return;
+            }
+
+            if (mGrid == null) // null -> fall
+            {
+                MoveBoxPos(key, jumpDisWeight * jDis);
+                StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
+            }
+        }
+
+
+        switch (key)
+        {
+            case KeyCode.UpArrow:
+                RotateBox(BoxDir.FORWARD); break;
+            case KeyCode.DownArrow:
+                RotateBox(BoxDir.BACK); break;
+            case KeyCode.RightArrow:
+                RotateBox(BoxDir.RIGHT); break;
+            case KeyCode.LeftArrow:
+                RotateBox(BoxDir.LEFT); break;
+        }
+
+        MoveBoxPos(key, jumpDisWeight * jDis);
+
+
+        if (mGrid.Gridinfo.Height == boxHeight + 1 && hDis == 1) // JumpUp or Block
+        {
             StartCoroutine(JumpUpDownCoroutine(jumpDuration, true));
         }
-        else if(mapGrid.Gridinfo.Height == boxHeight - 1)
+        else if (mGrid.Gridinfo.Height == boxHeight - 1)
         {
-            boxHeight--;
             StartCoroutine(JumpUpDownCoroutine(jumpDuration, false));
         }
-        else StartCoroutine(JumpCoroutine(jumpDuration, 1));
+        else
+        { 
+            StartCoroutine(JumpCoroutine(jumpDuration, jDis));
+        }
+
+
+
+
     }
 
     #region JumpCoroutines
@@ -339,6 +436,9 @@ public class BoxController : MonoBehaviour
     private IEnumerator JumpUpDownCoroutine(float duration, bool up)
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+
+        if (up) boxHeight++;
+        else boxHeight--;
 
         isJumping = true;
         jumpProgress = 0f;
@@ -471,7 +571,7 @@ public class BoxController : MonoBehaviour
         Vector3 tmpP = transform.position;
 
         float elapsedTime = 0;
-        while (elapsedTime / 2 < duration)
+        while (elapsedTime < duration * 3)
         {
             tmpP.y -= Time.deltaTime * 10;
             transform.position = tmpP;

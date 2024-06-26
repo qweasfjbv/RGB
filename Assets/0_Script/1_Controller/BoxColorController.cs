@@ -5,6 +5,8 @@ using UnityEngine.ProBuilder;
 
 public class BoxColorController : MonoBehaviour
 {
+    private BoxController boxController;
+
     // Top, Back, Right, Forward, Left, Bottom
     private Color[] colors = new Color[]
     { 
@@ -23,6 +25,7 @@ public class BoxColorController : MonoBehaviour
     private void Start()
     {
         pbMesh = GetComponent<ProBuilderMesh>();
+        boxController = GetComponent<BoxController>();  
         for (int i = 0; i < 6; i++) boxColorSet[i] = new ColorSet(ColorConstants.WHITE);
 
         if (pbMesh == null)
@@ -82,7 +85,7 @@ public class BoxColorController : MonoBehaviour
 
     public void StampColor(BoxDir dir)
     {
-        ColorSet gridC = MapGenerator.Instance.GetGridColor(GetComponent<BoxController>().GetBoxPos());
+        ColorSet gridC = MapGenerator.Instance.GetGridColor(boxController.GetBoxPos());
         ColorSet boxC = boxColorSet[(int)dir];
 
         // Empty-> get Color from grid
@@ -99,10 +102,18 @@ public class BoxColorController : MonoBehaviour
         }
 
         SetBoxColor(dir, boxC.GetColor());
-        MapGenerator.Instance.SetGridColor(GetComponent<BoxController>().GetBoxPos(), gridC.GetColor());
+        MapGenerator.Instance.SetGridColor(boxController.GetBoxPos(), gridC.GetColor());
 
     }
 
+    public Color GetBlendColorWithFloor()
+    {
+        ColorSet cs = new ColorSet(boxColorSet[(int)boxController.BoxDirs[(int)BoxDir.BOTTOM]].GetColor());
+
+        cs.BlendColor(MapGenerator.Instance.GetGridColor(boxController.GetBoxPos()));
+
+        return cs.GetColor();
+    }
 
     /*
     public void AddBoxColor(BoxDir dir, Color color)

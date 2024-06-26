@@ -72,7 +72,6 @@ public class MapGenerator : MonoBehaviour
         return;
     }
 
-    private bool isSettingColor = false;
     public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {
         // TODO : gradation needed
@@ -122,9 +121,9 @@ public class MapGenerator : MonoBehaviour
         mapArrs.Add(new GridInfo(new Vector2Int(0, 1), 0, ColorConstants.BLUE));
         mapArrs.Add(new GridInfo(new Vector2Int(0, 2), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(0, 3), 0, ColorConstants.WHITE));
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 4), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(0, 4), 0, ColorConstants.YELLOW));
         mapArrs.Add(new GridInfo(new Vector2Int(1, 0), 0, ColorConstants.WHITE));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 1), 0, ColorConstants.WHITE));
+        mapArrs.Add(new GridInfo(new Vector2Int(1, 1), 0, ColorConstants.GREEN));
         mapArrs.Add(new GridInfo(new Vector2Int(1, 2), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(1, 3), 0, ColorConstants.WHITE));
         mapArrs.Add(new GridInfo(new Vector2Int(1, 4), 0, ColorConstants.WHITE));
