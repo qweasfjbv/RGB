@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
-using System.Net;
-using System.Runtime.InteropServices;
+using System.ComponentModel;
 using UnityEngine;
 
 
 public class BoxController : MonoBehaviour
 {
     [Header("Jump Variables")]
-    [SerializeField] private int jumpDisWeight = 1;
     [SerializeField] private float jumpHeight = 0.6f;
     [SerializeField] private float jumpDuration = 0.3f;
 
@@ -16,7 +14,6 @@ public class BoxController : MonoBehaviour
     [SerializeField] private float scaleEffect = 0.3f;
 
     [Space(10)]
-
 
     [Header("Input Buffer")]
     [SerializeField, Range(0f, 1f)] private float inputThreshold;
@@ -27,15 +24,14 @@ public class BoxController : MonoBehaviour
     [Space(10)]
 
     [Header("DEBUG")]
-    [SerializeField] private BoxDir[] boxDirs;
-    [SerializeField] private ColorSet[] boxColors;
-    [SerializeField] private Vector2Int boxPosition;
-    [SerializeField] private Vector2Int prevBoxPosition;
-    [SerializeField] private int boxHeight;
-
+    [SerializeField, ReadOnly(true)] private BoxDir[] boxDirs;
+    [SerializeField, ReadOnly(true)] private ColorSet[] boxColors;
+    [SerializeField, ReadOnly(true)] private Vector2Int boxPosition;
+    [SerializeField, ReadOnly(true)] private int boxHeight;
+    
     public BoxDir[] BoxDirs { get { return boxDirs; } }     
 
-    private float jumpDistance = 1.0f;
+    private float jumpDistance = Constant.GRID_SIZE;
 
     // Index sequence to rotate boxDirs
     readonly KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow, KeyCode.LeftArrow, KeyCode.Space};
@@ -60,23 +56,20 @@ public class BoxController : MonoBehaviour
     private Quaternion startRotation;
 
     // Previous input buffer
-    private KeyCode prevInputBuffer;
+    private KeyCode inputBuffer;
 
     private void Start()
     {
         boxDirs = new BoxDir[6] { BoxDir.FORWARD, BoxDir.BOTTOM, BoxDir.BACK, BoxDir.TOP, BoxDir.LEFT, BoxDir.RIGHT };
-
-
-        jumpDistance = Constant.GRID_SIZE;
         direction = Vector3.zero;
-        prevInputBuffer = KeyCode.None;
+        inputBuffer = KeyCode.None;
         isJumping = false;
         SetStartPosition(new Vector2Int(0, 0), 0);
     }
 
     public void SetStartPosition(Vector2Int pos, int height)
     {
-        prevBoxPosition = boxPosition = pos;
+        boxPosition = pos;
         boxHeight = height;
         return;
     }
@@ -94,8 +87,6 @@ public class BoxController : MonoBehaviour
             case KeyCode.LeftArrow:
                 tmp = new Vector2Int(0, -1); break;
         }
-
-        prevBoxPosition = boxPosition;
 
         boxPosition += tmp * dis;
     }
@@ -158,6 +149,10 @@ public class BoxController : MonoBehaviour
 
     void Update()
     {
+        if (inputBuffer != KeyCode.None && !isJumping)
+        {
+            GetKeyInput(inputBuffer); return;
+        }
 
         foreach (KeyCode key in arrowKeys)
         {
@@ -166,7 +161,6 @@ public class BoxController : MonoBehaviour
                 GetKeyInput(key); return;
             }
         }
-
 
     }
 
@@ -178,10 +172,10 @@ public class BoxController : MonoBehaviour
         // Key Block during Jumping
         if (isJumping)
         {
-            if (jumpProgress > inputThreshold) prevInputBuffer = key;
+            if (jumpProgress > inputThreshold) inputBuffer = key;
             return;
         }
-        prevInputBuffer = KeyCode.None;
+        inputBuffer = KeyCode.None;
         direction = Vector3.zero;
 
 
@@ -287,7 +281,7 @@ public class BoxController : MonoBehaviour
     {
 
 
-        jumpTarget = jumpStart + direction * jumpDistance * jumpDisWeight * jDis;
+        jumpTarget = jumpStart + direction * jumpDistance * jDis;
         jumpTarget.y = jumpStart.y;
 
         // Calc Position in advance
@@ -315,7 +309,7 @@ public class BoxController : MonoBehaviour
         {
             if (mGrid == null) // null -> fall
             {
-                MoveBoxPos(key, jumpDisWeight * jDis);
+                MoveBoxPos(key, jDis);
                 StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
             }
 
@@ -341,7 +335,7 @@ public class BoxController : MonoBehaviour
 
             if (mGrid == null) // null -> fall
             {
-                MoveBoxPos(key, jumpDisWeight * jDis);
+                MoveBoxPos(key, jDis);
                 StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
             }
         }
@@ -359,7 +353,7 @@ public class BoxController : MonoBehaviour
                 RotateBox(BoxDir.LEFT); break;
         }
 
-        MoveBoxPos(key, jumpDisWeight * jDis);
+        MoveBoxPos(key, jDis);
 
 
         if (mGrid.Gridinfo.Height == boxHeight + 1 && hDis == 1) // JumpUp or Block
@@ -372,7 +366,7 @@ public class BoxController : MonoBehaviour
         }
         else
         { 
-            StartCoroutine(JumpCoroutine(jumpDuration, jDis));
+            StartCoroutine(JumpCoroutine(jumpDuration));
         }
 
 
@@ -383,7 +377,7 @@ public class BoxController : MonoBehaviour
     #region JumpCoroutines
 
     // Jump
-    private IEnumerator JumpCoroutine(float duration, float jDis)
+    private IEnumerator JumpCoroutine(float duration)
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
 
@@ -428,8 +422,6 @@ public class BoxController : MonoBehaviour
 
         isJumping = false;
 
-        // If inputBuffer exist -> direct execute
-        if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
 
     // Jump_1 block up/down
@@ -484,8 +476,6 @@ public class BoxController : MonoBehaviour
 
         isJumping = false;
 
-        // If inputBuffer exist -> direct execute
-        if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
 
     // Jump_block by wall
@@ -556,15 +546,13 @@ public class BoxController : MonoBehaviour
 
         isJumping = false;
 
-        // If inputBuffer exist -> direct execute
-        if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
 
     // Jump_fall'in hole
     private IEnumerator JumpFallCoroutine(float duration)
     {
 
-        yield return StartCoroutine(JumpCoroutine(duration, 1));
+        yield return StartCoroutine(JumpCoroutine(duration));
 
         isJumping = true;
 
@@ -643,8 +631,6 @@ public class BoxController : MonoBehaviour
 
         isJumping = false;
 
-        // 입력 버퍼가 존재하면 바로 실행
-        if (prevInputBuffer != KeyCode.None) GetKeyInput(prevInputBuffer);
     }
 
     #endregion

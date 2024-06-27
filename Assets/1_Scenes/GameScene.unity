@@ -493,7 +493,7 @@ GameObject:
   - component: {fileID: 643840642}
   - component: {fileID: 643840643}
   m_Layer: 0
-  m_Name: GridMap
+  m_Name: MapManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5731,6 +5731,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 322603410}
+    - target: {fileID: 5771594630038231016, guid: 6945d156808887a4aa10e0fd4a4db5be, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5771594630038231016, guid: 6945d156808887a4aa10e0fd4a4db5be, type: 3}
       propertyPath: jumpHeight
       value: 0.6

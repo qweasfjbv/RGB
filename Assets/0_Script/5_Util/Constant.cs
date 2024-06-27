@@ -19,4 +19,6 @@ public static class ColorConstants {
     public static readonly Color PURPLE = new Color(113f / 255, 0f / 147, 255f / 255, 1f);
     public static readonly Color BLACK = new Color(20f/255, 20f/255, 20f/255, 1f);
     public static readonly Color WHITE = new Color(1f, 1f, 1f, 1f);
+
+    public static Color[] COLORARR = new Color[]{ RED, BLUE, YELLOW, GREEN, ORANGE, PURPLE, BLACK, WHITE };
 }

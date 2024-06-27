@@ -7,17 +7,6 @@ public class BoxColorController : MonoBehaviour
 {
     private BoxController boxController;
 
-    // Top, Back, Right, Forward, Left, Bottom
-    private Color[] colors = new Color[]
-    { 
-        Color.red,
-        Color.green,
-        Color.blue,
-        Color.yellow,
-        Color.magenta,
-        Color.cyan
-    };
-
     private ProBuilderMesh pbMesh;
     private Face[] faces;
     private ColorSet[] boxColorSet = new ColorSet[6];
@@ -55,6 +44,7 @@ public class BoxColorController : MonoBehaviour
 
         boxColorSet[(int)dir].SetColor(color);
         pbMesh.SetFaceColor(faces[idx], color);
+
         pbMesh.ToMesh();
         pbMesh.Refresh();
         pbMesh.Optimize();
@@ -73,15 +63,6 @@ public class BoxColorController : MonoBehaviour
         pbMesh.Optimize();
     }
 
-    public void TestToggle(BoxDir dir)
-    {
-        if (boxColorSet[(int)dir].IsEmpty())
-        {
-            Debug.Log(boxColorSet[(int)dir].ToString());
-            SetBoxColor(dir, ColorConstants.RED);
-        }
-        else RemoveBoxColor(dir);
-    }
 
     public void StampColor(BoxDir dir)
     {

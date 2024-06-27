@@ -1,6 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
+using JetBrains.Annotations;
 
 // Convert RGB to RYB
 [Serializable]
@@ -98,12 +99,12 @@ public class GridInfo {
     public GridState State { get { return state; } }
     public ColorSet Colorset {  get { return colorSet; } }  
 
-    public GridInfo(Vector2Int pos, int height, Color color, GridState state = GridState.NONE)
+    public GridInfo(Vector2Int pos, int height, int colorIdx, int state = 0)
     {
         this.pos = pos;
         this.height = height;
-        this.state = state;
-        colorSet = new ColorSet(color);
+        this.state = (GridState)state;
+        colorSet = new ColorSet(ColorConstants.COLORARR[colorIdx]);
     }
 }
 
@@ -116,7 +117,7 @@ public class MapGrid : MonoBehaviour
     // Process Grid According to GridState
     public void InitMapGrid(GridInfo info)
     {
-        gridinfo = new GridInfo(info.Pos, info.Height, info.Colorset.GetColor(), info.State);
+        gridinfo = info;
         GetComponent<Renderer>().material.color = info.Colorset.GetColor();
 
         switch (info.State)
@@ -124,10 +125,6 @@ public class MapGrid : MonoBehaviour
             case GridState.NONE: break;
             case GridState.START:
                 break;
-
-            case GridState.END:
-                break;
-
             case GridState.CAMERA:
                 Camera.main.GetComponent<CameraController>().SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
                 break;
