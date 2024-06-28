@@ -25,7 +25,6 @@ public class BoxController : MonoBehaviour
 
     [Header("DEBUG")]
     [SerializeField, ReadOnly(true)] private BoxDir[] boxDirs;
-    [SerializeField, ReadOnly(true)] private ColorSet[] boxColors;
     [SerializeField, ReadOnly(true)] private Vector2Int boxPosition;
     [SerializeField, ReadOnly(true)] private int boxHeight;
     
@@ -320,7 +319,6 @@ public class BoxController : MonoBehaviour
 
             if (mGrid.Gridinfo.Height == boxHeight + 1 && hDis <= 0)
             {
-                Debug.Log(hDis);
                 StartCoroutine(JumpBlockCoroutine(jumpDuration));
                 return;
             }
@@ -337,6 +335,11 @@ public class BoxController : MonoBehaviour
             {
                 MoveBoxPos(key, jDis);
                 StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
+            }
+            else if (mGrid.Gridinfo.Height >= boxHeight + 1)
+            {
+                StartCoroutine(JumpOneBlockCoroutine(jumpDuration, mForGrid.Gridinfo.Pos));
+                return;
             }
         }
 
@@ -424,6 +427,8 @@ public class BoxController : MonoBehaviour
 
     }
 
+    
+
     // Jump_1 block up/down
     private IEnumerator JumpUpDownCoroutine(float duration, bool up)
     {
@@ -504,7 +509,7 @@ public class BoxController : MonoBehaviour
 
 
         elapsedTime = 0f;
-        while (jumpProgress < 0.3f)
+        while (jumpProgress < 0.2f)
         {
             jumpProgress = elapsedTime / duration;
             // Calculate parabola
@@ -524,7 +529,7 @@ public class BoxController : MonoBehaviour
         targetRotation = startRotation;
         startRotation = tmpQ;
 
-        elapsedTime =  duration * 0.7f;
+        elapsedTime =  duration * 0.8f;
 
         while (jumpProgress < 1f)
         {
@@ -547,6 +552,78 @@ public class BoxController : MonoBehaviour
         isJumping = false;
 
     }
+    // Jump_block by wall
+    private IEnumerator JumpOneBlockCoroutine(float duration, Vector2Int forPos)
+    {
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+
+        isJumping = true;
+        jumpProgress = 0f;
+
+        Vector3 scaleAxis = GetScaleYAxis();
+
+        float elapsedTime = 0f;
+        float scaleProgress = 0f;
+
+        while (scaleProgress < 1.0f)
+        {
+            scaleProgress = elapsedTime / scaleDuration;
+            float tmpf = Mathf.Lerp(0, scaleEffect, scaleProgress);
+            transform.localScale = Vector3.one - tmpf * scaleAxis;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = Vector3.one;
+
+
+        elapsedTime = 0f;
+        while (jumpProgress < 0.6f)
+        {
+            jumpProgress = elapsedTime / duration;
+            // Calculate parabola
+            float height = Mathf.Sin(Mathf.PI * jumpProgress) * jumpHeight;
+            transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Vector3 tmp = jumpTarget;
+        jumpTarget = jumpStart;
+        jumpStart = tmp;
+
+        Quaternion tmpQ = targetRotation;
+        targetRotation = startRotation;
+        startRotation = tmpQ;
+
+        elapsedTime = duration * 0.4f;
+
+        while (jumpProgress < 1f)
+        {
+            jumpProgress = elapsedTime / duration;
+            // Calculate parabola
+            float height = Mathf.Sin(Mathf.PI * jumpProgress) * jumpHeight;
+            transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+
+        // Jump Complete
+        transform.position = jumpTarget;
+        transform.rotation = targetRotation;
+
+
+        isJumping = false;
+
+    }
+
+
+
 
     // Jump_fall'in hole
     private IEnumerator JumpFallCoroutine(float duration)

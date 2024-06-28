@@ -46,6 +46,9 @@ public class ColorSet
             case var _ when color.Equals(ColorConstants.WHITE):
                 r = 0; y = 0; b = 0;
                 break;
+            default:
+                Debug.LogError("Color Error : color can't maching ryb");
+                break;
 
         }
     }
