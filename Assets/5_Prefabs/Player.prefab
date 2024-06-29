@@ -541,9 +541,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd1ee02631727c64f948f5a988a0d5b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpDistance: 1
   jumpHeight: 1
   jumpDuration: 0.3
+  scaleDuration: 0.1
+  scaleEffect: 0.3
+  appearDuration: 0.7
   inputThreshold: 0.7
   forwardDir: 0
   boxDirs: 
+  boxPosition: {x: 0, y: 0}
+  boxHeight: 0

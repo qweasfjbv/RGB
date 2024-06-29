@@ -37,9 +37,7 @@ public class ResourceManager
 
     public void Init()
     {
-        Debug.Log(Resources.Load<TextAsset>(mapInfoPath).text);
         mapInfos = JsonUtility.FromJson<MapInfos>(Resources.Load<TextAsset>(mapInfoPath).text);
-
     }
 
     public MapInfo GetMapInfo(int idx)

@@ -108,7 +108,7 @@ public class GridInfo {
         this.height = height;
 
         if (state < 0) this.state = 0;
-        else this.state = (GridState)state;
+        else this.state = state;
 
         colorSet = new ColorSet(ColorConstants.COLORARR[colorIdx]);
     }
@@ -143,5 +143,9 @@ public class MapGrid : MonoBehaviour
         transform.DOMoveY(gridinfo.Height * Constant.GRID_SIZE - transform.localScale.y/2 - Constant.BOX_SIZE/2, duration).SetEase(Ease.InOutElastic);
     }
 
+    public void DisappearGrid(float duration = 1f)
+    {
+        transform.DOMoveY(gridinfo.Height * Constant.GRID_SIZE - 10, duration).SetEase(Ease.InOutElastic).OnComplete(()=>Destroy(gameObject));
+    }
 
 }

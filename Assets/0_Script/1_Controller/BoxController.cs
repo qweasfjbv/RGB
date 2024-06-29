@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -7,11 +8,13 @@ using UnityEngine;
 public class BoxController : MonoBehaviour
 {
     [Header("Jump Variables")]
-    [SerializeField] private float jumpHeight = 0.6f;
-    [SerializeField] private float jumpDuration = 0.3f;
+    [SerializeField] private float jumpHeight;
+    [SerializeField] private float jumpDuration;
 
-    [SerializeField] private float scaleDuration = 0.1f;
-    [SerializeField] private float scaleEffect = 0.3f;
+    [SerializeField] private float scaleDuration;
+    [SerializeField] private float scaleEffect;
+
+    [SerializeField] private float appearDuration;
 
     [Space(10)]
 
@@ -23,7 +26,7 @@ public class BoxController : MonoBehaviour
     [SerializeField, Tooltip("DO NOT SELECT BOTTOM, TOP")] private BoxDir forwardDir;
     [Space(10)]
 
-    [Header("DEBUG")]
+    [Header("DEBUG (READONLY)")]
     [SerializeField, ReadOnly(true)] private BoxDir[] boxDirs;
     [SerializeField, ReadOnly(true)] private Vector2Int boxPosition;
     [SerializeField, ReadOnly(true)] private int boxHeight;
@@ -56,6 +59,13 @@ public class BoxController : MonoBehaviour
 
     // Previous input buffer
     private KeyCode inputBuffer;
+    private bool isInputBlock;
+
+    private void Awake()
+    {
+        isInputBlock = true;
+        gameObject.SetActive(false);
+    }
 
     private void Start()
     {
@@ -63,14 +73,26 @@ public class BoxController : MonoBehaviour
         direction = Vector3.zero;
         inputBuffer = KeyCode.None;
         isJumping = false;
-        SetStartPosition(new Vector2Int(0, 0), 0);
     }
 
-    public void SetStartPosition(Vector2Int pos, int height)
+    public void SetBoxController(Vector2Int pos, int height)
     {
         boxPosition = pos;
         boxHeight = height;
+
+        transform.position = new Vector3(pos.x, height, pos.y) * Constant.GRID_SIZE;
+        transform.localScale = Vector3.zero;
+
+        gameObject.SetActive(true);
+
+        transform.DOScale(new Vector3(1, 1, 1), appearDuration).SetEase(Ease.OutElastic).OnComplete(() => isInputBlock = false);
         return;
+    }
+
+    public void UnsetBoxController()
+    {
+        isInputBlock = true;
+        transform.DOScale(new Vector3(0, 0, 0), appearDuration).SetEase(Ease.InElastic).OnComplete(() => Destroy(gameObject));
     }
 
     private void MoveBoxPos(KeyCode k, int dis)
@@ -148,6 +170,8 @@ public class BoxController : MonoBehaviour
 
     void Update()
     {
+        if (isInputBlock) return;
+
         if (inputBuffer != KeyCode.None && !isJumping)
         {
             GetKeyInput(inputBuffer); return;

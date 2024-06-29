@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using Photon.Pun.Demo.Cockpit;
-using System.Linq;
-using System;
+using Unity.VisualScripting;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -32,8 +30,9 @@ public class MapGenerator : MonoBehaviour
     }
     #endregion
 
-    [Header("Grid Variables")]
+    [Header("Prefabs")]
     [SerializeField] private GameObject gridPrefab;
+    [SerializeField] private GameObject boxPrefab;
 
     [Space(10)]
 
@@ -43,36 +42,23 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private int camOffY;
     [Space(10)]
 
-
+    private BoxController curBoxController = null;
     private MapGrid[,] mapGrids;
 
-
-
-    // Generate Map by List1D
-    // TODO : Create 2DArray_Map to manage BoxControl
-    private void GenerateMap(ref List<GridInfo> mapArr, int wh)
+    int nn = 1;
+    private void Update()
     {
-        currentMapWidth = wh;
-        mapGrids = new MapGrid[wh, wh];
-
-        GridInfo grid;
-
-        for (int i = 0; i < mapArr.Count; i++)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            grid = mapArr[i];
-            mapGrids[grid.Pos.y, grid.Pos.x] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
-            mapGrids[grid.Pos.y, grid.Pos.x].transform.localScale = Vector3.one * Constant.GRID_SIZE;
-            mapGrids[grid.Pos.y, grid.Pos.x].InitMapGrid(grid);
-
+            ResetAndInit(nn);
+            nn++;
+            nn %= 2;
         }
-
-        StartCoroutine(GridAppearEff(fallDuration));
-        return;
     }
+
 
     public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {
-        // TODO : gradation needed
         mapGrids[pos.x, pos.y].GetComponent<MeshRenderer>().material.DOColor(color, duration);
     }
 
@@ -105,8 +91,11 @@ public class MapGenerator : MonoBehaviour
 
         yield return new WaitForSeconds(duration);
 
-        // Appear Box
 
+        curBoxController = Instantiate(boxPrefab).GetComponent<BoxController>();
+
+        // TODO : pos, height modify needed
+        curBoxController.SetBoxController(new Vector2Int(0, 0), 0);
     }
 
     public bool CheckMapClear()
@@ -126,7 +115,7 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
-    public void TestInit(int n)
+    public void GenerateMap(int n)
     {
 
         List<GridInfo> mapArrs = new List<GridInfo>();
@@ -137,22 +126,54 @@ public class MapGenerator : MonoBehaviour
             mapArrs.Add(new GridInfo(gi.pos, gi.height, gi.colorIdx, gi.state));
         }
 
-        GenerateMap(ref mapArrs, mapResource.width);
+
+        currentMapWidth = mapResource.width;
+        mapGrids = new MapGrid[currentMapWidth, currentMapWidth];
+
+        GridInfo grid;
+
+        for (int i = 0; i < mapArrs.Count; i++)
+        {
+            grid = mapArrs[i];
+            mapGrids[grid.Pos.y, grid.Pos.x] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
+            mapGrids[grid.Pos.y, grid.Pos.x].transform.localScale = Vector3.one * Constant.GRID_SIZE;
+            mapGrids[grid.Pos.y, grid.Pos.x].InitMapGrid(grid);
+
+        }
+
+        StartCoroutine(GridAppearEff(fallDuration));
+        return;
     }
 
+    // Restart or NextLevel in GameScene
     public void ResetAndInit(int n)
     {
-        // TODO : Disappear coroutine needed
+        StartCoroutine(GridDisappearEff(fallDuration, n));
 
-        for (int i = 0; i < currentMapWidth; i++)
+    }
+
+    private IEnumerator GridDisappearEff(float duration, int n)
+    {
+        curBoxController.UnsetBoxController();
+        curBoxController = null;
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Disappear Grids
+        for (int i = 0; i < mapGrids.GetLength(0); i++)
         {
-            for(int j=0; j<currentMapWidth; j++)
+            for (int j = 0; j < mapGrids.GetLength(1); j++)
             {
-                Destroy(mapGrids[i, j].gameObject);
+                if (mapGrids[i, j] == null) continue;
+                mapGrids[i, j].DisappearGrid(duration);
+                yield return new WaitForSeconds(timeBetweenFall);
             }
         }
-        
-        TestInit(n);
+
+        yield return new WaitForSeconds(duration);
+
+        GenerateMap(n);
+
     }
 
 }
