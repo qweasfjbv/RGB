@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using System.Linq.Expressions;
-using Unity.VisualScripting;
-using System.ComponentModel.Design.Serialization;
+using Photon.Pun.Demo.Cockpit;
+using System.Linq;
+using System;
 
 public class MapGenerator : MonoBehaviour
 {
 
     #region Singleton
     private static MapGenerator instance = null;
+
+    private int currentMapWidth = 0;
 
     void Awake()
     {
@@ -44,15 +46,13 @@ public class MapGenerator : MonoBehaviour
 
     private MapGrid[,] mapGrids;
 
-    private void Start()
-    {
-        TestInit();
-    }
+
 
     // Generate Map by List1D
     // TODO : Create 2DArray_Map to manage BoxControl
     private void GenerateMap(ref List<GridInfo> mapArr, int wh)
     {
+        currentMapWidth = wh;
         mapGrids = new MapGrid[wh, wh];
 
         GridInfo grid;
@@ -109,38 +109,50 @@ public class MapGenerator : MonoBehaviour
 
     }
 
-
-
-    // Test Init
-    private void TestInit()
+    public bool CheckMapClear()
     {
-        List<GridInfo> mapArrs = new List<GridInfo>();
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 0), 0, 7, 1));
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 1), 0, 1));
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 2), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 3), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(0, 4), 0, 2));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 0), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 1), 0, 3));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 2), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 3), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(1, 4), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 1), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 2), 0, 7, 2));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 3), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(2, 4), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(3, 0), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(3, 1), 0, 1));
-        mapArrs.Add(new GridInfo(new Vector2Int(3, 2), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(3, 3), 0, 0));
-        mapArrs.Add(new GridInfo(new Vector2Int(3, 4), 0, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(4, 0), 1, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(4, 1), 1, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(4, 2), 1, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(4, 3), 1, 7));
-        mapArrs.Add(new GridInfo(new Vector2Int(4, 4), 1, 7));
+        for (int i = 0; i < currentMapWidth; i++)
+        {
+            for (int j = 0; j < currentMapWidth; j++)
+            {
+                if (mapGrids[i, j] == null) continue;
 
-        GenerateMap(ref mapArrs, 5);
+                if (mapGrids[i, j].Gridinfo.Colorset.GetColor().Equals(ColorConstants.WHITE)) continue;
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void TestInit(int n)
+    {
+
+        List<GridInfo> mapArrs = new List<GridInfo>();
+
+        MapInfo mapResource = Managers.Resource.GetMapInfo(n);
+
+        foreach (GridInfoEx gi in mapResource.gridInfo) {
+            mapArrs.Add(new GridInfo(gi.pos, gi.height, gi.colorIdx, gi.state));
+        }
+
+        GenerateMap(ref mapArrs, mapResource.width);
+    }
+
+    public void ResetAndInit(int n)
+    {
+        // TODO : Disappear coroutine needed
+
+        for (int i = 0; i < currentMapWidth; i++)
+        {
+            for(int j=0; j<currentMapWidth; j++)
+            {
+                Destroy(mapGrids[i, j].gameObject);
+            }
+        }
+        
+        TestInit(n);
     }
 
 }

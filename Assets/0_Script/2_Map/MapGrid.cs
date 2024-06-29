@@ -102,11 +102,14 @@ public class GridInfo {
     public GridState State { get { return state; } }
     public ColorSet Colorset {  get { return colorSet; } }  
 
-    public GridInfo(Vector2Int pos, int height, int colorIdx, int state = 0)
+    public GridInfo(Vector2Int pos, int height, int colorIdx, GridState state)
     {
         this.pos = pos;
         this.height = height;
-        this.state = (GridState)state;
+
+        if (state < 0) this.state = 0;
+        else this.state = (GridState)state;
+
         colorSet = new ColorSet(ColorConstants.COLORARR[colorIdx]);
     }
 }

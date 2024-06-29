@@ -6,6 +6,9 @@ public static class Constant
     public const float BOX_SIZE     = 0.5f;
 
 
+    public const string GAME_SCENE = "GameScene";
+    public const string MAIN_SCENE = "MainScene";
+
 }
 
 public static class ColorConstants {
