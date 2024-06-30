@@ -30,7 +30,7 @@
             "y": 2
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 4,
           "state": 0
         },
         {
@@ -39,7 +39,7 @@
             "y": 0
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 1,
           "state": 0
         },
         {
@@ -48,7 +48,7 @@
             "y": 1
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 4,
           "state": 2
         },
         {
@@ -66,7 +66,7 @@
             "y": 0
           },
           "height": 1,
-          "colorIdx": 7,
+          "colorIdx": 1,
           "state": 0
         },
         {

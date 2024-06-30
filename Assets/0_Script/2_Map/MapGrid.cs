@@ -77,8 +77,23 @@ public class ColorSet
         r = 0; y=0; b=0;
     }
 
+    public void GetBlendedColor(ColorSet cSet)
+    {
+
+        r = (r + cSet.r) > 1 ? 1 : r + cSet.r;
+        y = (y + cSet.y) > 1 ? 1 : y + cSet.y;
+        b = (b + cSet.b) > 1 ? 1 : b + cSet.b;
+    }
+
     public void BlendColor(ColorSet cSet)
     {
+        if(this.Equals(cSet))
+        {
+            cSet.RemoveColor();
+            this.RemoveColor();
+            return;
+        }
+
         r = (r + cSet.r) > 1 ? 1 : r + cSet.r;
         y = (y + cSet.y) > 1 ? 1 : y + cSet.y;
         b = (b + cSet.b) > 1 ? 1 : b + cSet.b;
@@ -87,6 +102,16 @@ public class ColorSet
     public override string ToString()
     {
         return "ColorSet(RYB) : " + r + ", " + y + ", " + b; 
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is ColorSet c && c.r == r && c.b == b && c.y == y;
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 }
 

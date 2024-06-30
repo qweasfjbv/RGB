@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -91,9 +92,22 @@ public class BoxColorController : MonoBehaviour
     {
         ColorSet cs = new ColorSet(boxColorSet[(int)boxController.BoxDirs[(int)BoxDir.BOTTOM]].GetColor());
 
-        cs.BlendColor(MapGenerator.Instance.GetGridColor(boxController.GetBoxPos()));
+        cs.GetBlendedColor(MapGenerator.Instance.GetGridColor(boxController.GetBoxPos()));
 
         return cs.GetColor();
+    }
+
+    public bool CheckBoxClear()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (!boxColorSet[i].IsEmpty())
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /*

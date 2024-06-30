@@ -669,6 +669,8 @@ public class BoxController : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        GameManagerEx.Instance.GameFail();
     }
 
     // Stamp!
@@ -729,6 +731,12 @@ public class BoxController : MonoBehaviour
 
         transform.localScale = Vector3.one;
         transform.localPosition = originalPosition;
+
+        if (MapGenerator.Instance.CheckMapClear() && GetComponent<BoxColorController>().CheckBoxClear())
+        {
+            GameManagerEx.Instance.GameSuccess();
+            isInputBlock = true;
+        }
 
         isJumping = false;
 

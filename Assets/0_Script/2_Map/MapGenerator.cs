@@ -45,16 +45,6 @@ public class MapGenerator : MonoBehaviour
     private BoxController curBoxController = null;
     private MapGrid[,] mapGrids;
 
-    int nn = 1;
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ResetAndInit(nn);
-            nn++;
-            nn %= 2;
-        }
-    }
 
 
     public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
@@ -154,7 +144,7 @@ public class MapGenerator : MonoBehaviour
 
     private IEnumerator GridDisappearEff(float duration, int n)
     {
-        curBoxController.UnsetBoxController();
+        if (curBoxController != null)  curBoxController.UnsetBoxController();
         curBoxController = null;
 
         yield return new WaitForSeconds(0.5f);
