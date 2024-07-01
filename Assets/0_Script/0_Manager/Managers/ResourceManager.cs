@@ -45,5 +45,8 @@ public class ResourceManager
         return mapInfos.mapInfo[idx];
     }
 
-
+    public int GetMapCount()
+    {
+        return mapInfos.mapInfo.Length;
+    }
 }

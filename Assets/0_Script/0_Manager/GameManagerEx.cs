@@ -29,7 +29,7 @@ public class GameManagerEx : MonoBehaviour
     }
     #endregion
 
-    int currentLv = -1;
+    private int currentLv = -1;
 
     public void GameStart(int lvId)
     {

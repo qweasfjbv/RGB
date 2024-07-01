@@ -30,7 +30,9 @@ public class BoxController : MonoBehaviour
     [SerializeField, ReadOnly(true)] private BoxDir[] boxDirs;
     [SerializeField, ReadOnly(true)] private Vector2Int boxPosition;
     [SerializeField, ReadOnly(true)] private int boxHeight;
-    
+
+
+
     public BoxDir[] BoxDirs { get { return boxDirs; } }     
 
     private float jumpDistance = Constant.GRID_SIZE;
@@ -81,7 +83,7 @@ public class BoxController : MonoBehaviour
         boxHeight = height;
 
         transform.position = new Vector3(pos.x, height, pos.y) * Constant.GRID_SIZE;
-        transform.localScale = Vector3.zero;
+        transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 
         gameObject.SetActive(true);
 
@@ -92,7 +94,7 @@ public class BoxController : MonoBehaviour
     public void UnsetBoxController()
     {
         isInputBlock = true;
-        transform.DOScale(new Vector3(0, 0, 0), appearDuration).SetEase(Ease.InElastic).OnComplete(() => Destroy(gameObject));
+        transform.DOScale(new Vector3(0.01f, 0.01f, 0.01f), appearDuration).SetEase(Ease.InElastic).OnComplete(() => Destroy(gameObject));
     }
 
     private void MoveBoxPos(KeyCode k, int dis)
@@ -349,7 +351,7 @@ public class BoxController : MonoBehaviour
         }
         else
         {
-            if (mForGrid.Gridinfo.Height >= boxHeight + 1)
+            if (mForGrid!= null &&mForGrid.Gridinfo.Height >= boxHeight + 1)
             {
                 StartCoroutine(JumpBlockCoroutine(jumpDuration));
                 return;
