@@ -47,6 +47,7 @@ public class MainmenuUI : MonoBehaviour
     void UpdateStageTMP()
     {
         stageTMP.text = "Level " + currentSelectedIdx;
+        //Camera.main.GetComponent<CameraColorController>().SetTargetColor(ColorConstants.PCOLORARR[currentSelectedIdx-1]);
     }
 
 }

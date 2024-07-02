@@ -13,7 +13,7 @@ public static class Constant
 
 public static class ColorConstants {
 
-    // TODO : Color Modify Needed
+    // Primary Colors
     public static readonly Color RED = new Color(255f / 255, 50f / 255, 50f / 255, 1f);
     public static readonly Color BLUE = new Color(50f / 255, 50f / 255, 255f / 255, 1f);
     public static readonly Color YELLOW = new Color(255f / 255, 255f / 255, 30f / 255, 1f);
@@ -25,6 +25,7 @@ public static class ColorConstants {
 
     public static Color[] COLORARR = new Color[]{ RED, BLUE, YELLOW, GREEN, ORANGE, PURPLE, BLACK, WHITE };
 
+    // Pastel Tone colors
     public static readonly Color P_RED = new Color(255f / 255, 150f / 255, 150f / 255, 1f);
     public static readonly Color P_BLUE = new Color(150f / 255, 150f / 255, 255f / 255, 1f);
     public static readonly Color P_YELLOW = new Color(255f / 255, 255f / 255, 100f / 255, 1f);
