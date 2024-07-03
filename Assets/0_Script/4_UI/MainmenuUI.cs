@@ -8,6 +8,7 @@ public class MainmenuUI : MonoBehaviour
     [SerializeField] private Button rightButton;
     [SerializeField] private Button leftButton;
     [SerializeField] private TextMeshProUGUI stageTMP;
+    [SerializeField] private DisplayBoxController disBox;
 
     private int currentSelectedIdx = 1;
 
@@ -36,10 +37,7 @@ public class MainmenuUI : MonoBehaviour
 
     void OnLeftButtonClicked()
     {
-        if(currentSelectedIdx == 1)
-        { 
-            return;
-        }   
+        if(currentSelectedIdx == 1) return;
         currentSelectedIdx--;
         UpdateStageTMP();
     }
@@ -47,7 +45,7 @@ public class MainmenuUI : MonoBehaviour
     void UpdateStageTMP()
     {
         stageTMP.text = "Level " + currentSelectedIdx;
-        //Camera.main.GetComponent<CameraColorController>().SetTargetColor(ColorConstants.PCOLORARR[currentSelectedIdx-1]);
+        disBox.RotateDisBox(currentSelectedIdx);
     }
 
 }
