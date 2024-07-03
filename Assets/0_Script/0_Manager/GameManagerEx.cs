@@ -63,7 +63,7 @@ public class GameManagerEx : MonoBehaviour
 
     public void GameFail()
     {
-        MapGenerator.Instance.ResetAndInit(currentLv);
+        StartCoroutine(GameRestartCoroutine(currentLv));
     }
 
     public void GameSuccess()
@@ -88,7 +88,6 @@ public class GameManagerEx : MonoBehaviour
         // LoadScene and wait-> MapGenerate
         AsyncOperation async = SceneManager.LoadSceneAsync(Constant.GAME_SCENE);
         yield return async;
-
 
 
         FinSceneShade();

@@ -150,6 +150,7 @@ public class MapGrid : MonoBehaviour
     {
         gridinfo = info;
         GetComponent<Renderer>().material.color = info.Colorset.GetColor();
+        transform.position = new Vector3(transform.position.x, gridinfo.Height * Constant.GRID_SIZE - transform.localScale.y / 2 - Constant.BOX_SIZE / 2, transform.position.z);
 
         switch (info.State)
         {

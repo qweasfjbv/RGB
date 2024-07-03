@@ -1,8 +1,7 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
-using Unity.VisualScripting;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -18,6 +17,7 @@ public class MapGenerator : MonoBehaviour
         {
             instance = this;
         }
+
     }
 
     public static MapGenerator Instance
@@ -27,6 +27,11 @@ public class MapGenerator : MonoBehaviour
             if (null == instance) return null;
             return instance;
         }
+    }
+
+    private void Start()
+    {
+        isMapMaking = false;
     }
     #endregion
 
@@ -47,9 +52,10 @@ public class MapGenerator : MonoBehaviour
     [Header("Skybox Materials")]
     [SerializeField] private List<Material> skyboxMaterials;
 
+    private Coroutine gridAppearCoroutine = null;
     private BoxController curBoxController = null;
     private MapGrid[,] mapGrids;
-
+    private bool isMapMaking;
 
 
     public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
@@ -67,30 +73,6 @@ public class MapGenerator : MonoBehaviour
     public ColorSet GetGridColor(Vector2Int pos)
     {
         return mapGrids[pos.x, pos.y].Gridinfo.Colorset;
-    }
-
-    private IEnumerator GridAppearEff(float duration)
-    {
-        yield return new WaitForSeconds(1f);
-
-        // Appear Grids
-        for (int i = 0; i < mapGrids.GetLength(0); i++)
-        {
-            for (int j = 0; j < mapGrids.GetLength(1); j++)
-            {
-                if (mapGrids[i, j] == null) continue;
-                mapGrids[i, j].AppearGrid(duration);
-                yield return new WaitForSeconds(timeBetweenFall);
-            }
-        }
-
-        yield return new WaitForSeconds(duration);
-
-
-        curBoxController = Instantiate(boxPrefab).GetComponent<BoxController>();
-
-        // TODO : pos, height modify needed
-        curBoxController.SetBoxController(new Vector2Int(0, 0), 0);
     }
 
     public bool CheckMapClear()
@@ -112,6 +94,7 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap(int n)
     {
+
         gameSceneUI.UpdateStageText(n);
         if (n == 1)
             RenderSettings.skybox = skyboxMaterials[1];
@@ -120,6 +103,7 @@ public class MapGenerator : MonoBehaviour
         List<GridInfo> mapArrs = new List<GridInfo>();
 
         MapInfo mapResource = Managers.Resource.GetMapInfo(n);
+
 
         foreach (GridInfoEx gi in mapResource.gridInfo) {
             mapArrs.Add(new GridInfo(gi.pos, gi.height, gi.colorIdx, gi.state));
@@ -134,25 +118,26 @@ public class MapGenerator : MonoBehaviour
         for (int i = 0; i < mapArrs.Count; i++)
         {
             grid = mapArrs[i];
-            mapGrids[grid.Pos.y, grid.Pos.x] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE + new Vector3(0, camOffY, 0), Quaternion.identity, transform).GetComponent<MapGrid>();
+            mapGrids[grid.Pos.y, grid.Pos.x] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE, Quaternion.identity, transform).GetComponent<MapGrid>();
             mapGrids[grid.Pos.y, grid.Pos.x].transform.localScale = Vector3.one * Constant.GRID_SIZE;
             mapGrids[grid.Pos.y, grid.Pos.x].InitMapGrid(grid);
 
         }
 
-        StartCoroutine(GridAppearEff(fallDuration));
+        curBoxController = Instantiate(boxPrefab).GetComponent<BoxController>();
+
+        // TODO : pos, height modify needed
+        curBoxController.SetBoxController(new Vector2Int(0, 0), 0);
         return;
     }
 
-    // Restart or NextLevel in GameScene
-    public void ResetAndInit(int n)
-    {
-        StartCoroutine(GridDisappearEff(fallDuration, n));
-    }
 
     public void EraseAllObject()
     {
-        Destroy(curBoxController.gameObject);
+        if (isMapMaking) StopCoroutine(gridAppearCoroutine);
+
+        if (curBoxController != null)
+            Destroy(curBoxController.gameObject);
         // Disappear Grids
         for (int i = 0; i < mapGrids.GetLength(0); i++)
         {
@@ -164,28 +149,5 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    private IEnumerator GridDisappearEff(float duration, int n)
-    {
-        if (curBoxController != null)  curBoxController.UnsetBoxController();
-        curBoxController = null;
-
-        yield return new WaitForSeconds(0.1f);
-
-        // Disappear Grids
-        for (int i = 0; i < mapGrids.GetLength(0); i++)
-        {
-            for (int j = 0; j < mapGrids.GetLength(1); j++)
-            {
-                if (mapGrids[i, j] == null) continue;
-                mapGrids[i, j].DisappearGrid(duration);
-                yield return new WaitForSeconds(timeBetweenFall);
-            }
-        }
-
-        yield return new WaitForSeconds(duration);
-
-        GenerateMap(n);
-
-    }
 
 }
