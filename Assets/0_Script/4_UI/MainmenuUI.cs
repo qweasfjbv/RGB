@@ -44,7 +44,7 @@ public class MainmenuUI : MonoBehaviour
 
     void UpdateStageTMP()
     {
-        stageTMP.text = "Level " + currentSelectedIdx;
+        stageTMP.text = "Stage " + currentSelectedIdx;
         disBox.RotateDisBox(currentSelectedIdx);
     }
 

@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -67,8 +68,16 @@ public class GameManagerEx : MonoBehaviour
 
     public void GameSuccess()
     {
-        // TODO : DataManager에 접근 필요
-        MapGenerator.Instance.ResetAndInit(++currentLv);
+        if (currentLv == Managers.Resource.GetMapCount())
+        {
+            // All Clear!
+        }
+        else
+        {
+            // TODO : DataManager에 접근 필요
+            StartCoroutine(GameRestartCoroutine(++currentLv));
+        }
+
     }
 
 
@@ -79,6 +88,8 @@ public class GameManagerEx : MonoBehaviour
         // LoadScene and wait-> MapGenerate
         AsyncOperation async = SceneManager.LoadSceneAsync(Constant.GAME_SCENE);
         yield return async;
+
+
 
         FinSceneShade();
         MapGenerator.Instance.GenerateMap(idx);
@@ -97,6 +108,14 @@ public class GameManagerEx : MonoBehaviour
         
     }
 
+    public IEnumerator GameRestartCoroutine(int idx)
+    {
+        yield return StartCoroutine(RevStartSceneShade());
+
+        MapGenerator.Instance.EraseAllObject();
+        FinSceneShade();
+        MapGenerator.Instance.GenerateMap(idx);
+    }
     // Scene Convert Eff
     
     private IEnumerator StartSceneShade()
@@ -123,7 +142,7 @@ public class GameManagerEx : MonoBehaviour
         shade.GetComponent<Image>().DOColor(ColorConstants.WHITE, duration).OnComplete(() => tmpB = true);
         while (!tmpB) yield return null;
     }
-    
+
     private void FinSceneShade()
     {
         shade.GetComponent<Image>().DOColor(Color.clear, duration).OnComplete(()=>shade.gameObject.SetActive(false));

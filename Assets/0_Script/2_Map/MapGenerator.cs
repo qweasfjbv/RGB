@@ -42,6 +42,11 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private int camOffY;
     [Space(10)]
 
+    [SerializeField] private GameSceneUI gameSceneUI;
+
+    [Header("Skybox Materials")]
+    [SerializeField] private List<Material> skyboxMaterials;
+
     private BoxController curBoxController = null;
     private MapGrid[,] mapGrids;
 
@@ -107,6 +112,10 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap(int n)
     {
+        gameSceneUI.UpdateStageText(n);
+        if (n == 1)
+            RenderSettings.skybox = skyboxMaterials[1];
+        else RenderSettings.skybox = skyboxMaterials[0];
 
         List<GridInfo> mapArrs = new List<GridInfo>();
 
@@ -139,7 +148,20 @@ public class MapGenerator : MonoBehaviour
     public void ResetAndInit(int n)
     {
         StartCoroutine(GridDisappearEff(fallDuration, n));
+    }
 
+    public void EraseAllObject()
+    {
+        Destroy(curBoxController.gameObject);
+        // Disappear Grids
+        for (int i = 0; i < mapGrids.GetLength(0); i++)
+        {
+            for (int j = 0; j < mapGrids.GetLength(1); j++)
+            {
+                if (mapGrids[i, j] == null) continue;
+                Destroy(mapGrids[i, j].gameObject);
+            }
+        }
     }
 
     private IEnumerator GridDisappearEff(float duration, int n)
@@ -147,7 +169,7 @@ public class MapGenerator : MonoBehaviour
         if (curBoxController != null)  curBoxController.UnsetBoxController();
         curBoxController = null;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.1f);
 
         // Disappear Grids
         for (int i = 0; i < mapGrids.GetLength(0); i++)

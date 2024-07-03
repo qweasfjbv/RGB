@@ -12,6 +12,35 @@ public class CameraController : MonoBehaviour
 
     private Vector3 camTarget;
 
+
+
+    private void Start()
+    {
+        var camera = GetComponent<Camera>();
+        var r = camera.rect;
+        var scaleH = ((float)Screen.width / Screen.height) / (9f / 16f);
+        var scaleW = 1f / scaleH;
+
+        if (scaleH < 1f)
+        {
+            r.height = scaleH;
+            r.y = (1f - scaleH) / 2f;
+        }
+        else
+        {
+            r.width = scaleW;
+            r.x = (1f - scaleW) / 2f;
+        }
+
+        camera.rect = r;
+    }
+
+    private void OnPreCull()
+    {
+        GL.Clear(true, true, Color.black);
+    }
+
+
     // Calc Spherical to orthogonal coordinate
     private Vector3 CalcOrthoPos(Vector3 target)
     {

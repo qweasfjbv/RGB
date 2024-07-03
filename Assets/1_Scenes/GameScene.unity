@@ -322,6 +322,10 @@ MonoBehaviour:
   fallDuration: 1
   timeBetweenFall: 0.1
   camOffY: 7
+  gameSceneUI: {fileID: 828599497}
+  skyboxMaterials:
+  - {fileID: 2100000, guid: 17268e32e59195741b9cdd6e90cfe1f1, type: 2}
+  - {fileID: 2100000, guid: 8b7d1cc75ce47d149b8d3b403756bb8f, type: 2}
 --- !u!1 &694870890
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,6 +607,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BackButton: {fileID: 1232339613}
   RetryButton: {fileID: 1058425924}
+  stageText: {fileID: 2017321508}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
