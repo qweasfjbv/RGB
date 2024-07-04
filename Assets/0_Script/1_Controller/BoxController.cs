@@ -230,9 +230,9 @@ public class BoxController : MonoBehaviour
             case var _ when tmpC.Equals(ColorConstants.GREEN):
                 forwardDir = BoxDir.LEFT;
                 break;
-                //case var _ when tmpC.Equals(ColorConstants.PURPLE):
-                //jDis = 2; hDis = 1;
-                //break;
+            case var _ when tmpC.Equals(ColorConstants.PURPLE):
+                jDis = 0; hDis = 0;
+                break;
         }
 
         if (key == KeyCode.Space)
@@ -409,7 +409,7 @@ public class BoxController : MonoBehaviour
     // Jump
     private IEnumerator JumpCoroutine(float duration)
     {
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping++;
         jumpProgress = 0f;
@@ -459,7 +459,7 @@ public class BoxController : MonoBehaviour
     // Jump_1 block up/down
     private IEnumerator JumpUpDownCoroutine(float duration, bool up)
     {
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         if (up) boxHeight++;
         else boxHeight--;
@@ -513,7 +513,7 @@ public class BoxController : MonoBehaviour
     // Jump_block by wall
     private IEnumerator JumpBlockCoroutine(float duration)
     {
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping++;
         jumpProgress = 0f;
@@ -582,7 +582,7 @@ public class BoxController : MonoBehaviour
     // Jump_block by wall
     private IEnumerator JumpOneBlockCoroutine(float duration, Vector2Int forPos)
     {
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping++;
         jumpProgress = 0f;
@@ -658,6 +658,8 @@ public class BoxController : MonoBehaviour
 
         yield return StartCoroutine(JumpCoroutine(duration));
 
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.FALL);
+
         isJumping++;
 
         Vector3 tmpP = transform.position;
@@ -679,7 +681,7 @@ public class BoxController : MonoBehaviour
     // Stamp!
     private IEnumerator StampCoroutine(float duration)
     {
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.D_JUMP);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.STAMP);
 
         isJumping++;
         GetComponent<BoxColorController>().StampColor(boxDirs[(int)BoxDir.BOTTOM]);

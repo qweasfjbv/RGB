@@ -119,6 +119,8 @@ public class GameManagerEx : MonoBehaviour
     
     private IEnumerator StartSceneShade()
     {
+
+        SoundManager.Instance.CreateAudioSource(Vector3.zero, EffectClip.SHADE);
         shade.sizeDelta = new Vector2(0, 0);
         shade.gameObject.SetActive(true);
         bool tmpB = false;
@@ -133,6 +135,7 @@ public class GameManagerEx : MonoBehaviour
 
     private IEnumerator RevStartSceneShade()
     {
+        SoundManager.Instance.CreateAudioSource(Vector3.zero, EffectClip.SHADE);
         shade.sizeDelta = new Vector2(1000, 1000);
         shade.GetComponent<Image>().color = Color.clear;
         shade.gameObject.SetActive(true);

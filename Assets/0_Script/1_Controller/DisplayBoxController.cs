@@ -1,6 +1,3 @@
-using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DisplayBoxController : MonoBehaviour
@@ -12,11 +9,18 @@ public class DisplayBoxController : MonoBehaviour
     [SerializeField] private float rotateDuration;
 
     private Vector3 startPosition;
+    private float targetRotation;
+    private float currentRotation;
+    private float progress;
 
     void Start()
     {
         startPosition = transform.position;
+        progress = 0f;
     }
+
+    
+    float rY= 0;
 
     void Update()
     {
@@ -24,12 +28,18 @@ public class DisplayBoxController : MonoBehaviour
 
         transform.position = new Vector3(startPosition.x, newY, startPosition.z);
 
+        rY = Mathf.Lerp(currentRotation, targetRotation, progress / rotateDuration);
+        transform.rotation = Quaternion.Euler(new Vector3(0, rY, 0));
+        progress += Time.deltaTime;
     }
 
 
     public void RotateDisBox(int idx)
     {
-        transform.DORotate(new Vector3(0, 90 * (idx-1), 0), rotateDuration);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BOX_TURN);
+        currentRotation = rY;
+        progress = 0f;
+        targetRotation = 90 * (idx - 1);
     }
 
 }
