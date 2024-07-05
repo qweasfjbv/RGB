@@ -8,4 +8,4 @@ public enum BoxDir { FORWARD = 0, BOTTOM, BACK, TOP, LEFT, RIGHT }
 
 public enum EffectClip { BASIC_JUMP =0, STAMP, BOX_TURN, SHADE, FALL}
 
-public enum BGMClip { MAIN_BGM = 0, STAGE_1,  STAGE_2}
+public enum BGMClip { MAIN_BGM = 0, GAME_BGM}

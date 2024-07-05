@@ -825,8 +825,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: bbbaa22140ce6db4f8027da9dcdf9402, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0
+  m_PlayOnAwake: 0
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -924,15 +924,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioPrefab: {fileID: 4269131961237391424, guid: c379ce4001969f14fa9a63612c731f2f, type: 3}
   bgmClips:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 8300000, guid: bbbaa22140ce6db4f8027da9dcdf9402, type: 3}
+  - {fileID: 8300000, guid: 2385d92b78998404e96cc63a34685b98, type: 3}
   effClips:
   - {fileID: 8300000, guid: 1340ba1fa579f674ab71453241682a8a, type: 3}
   - {fileID: 8300000, guid: ba514ada155c59c4d9e5528205e4c5c8, type: 3}
   - {fileID: 8300000, guid: e5c0b5435124eee4a9bab0e4dc5c16b7, type: 3}
   - {fileID: 8300000, guid: 6d7de8120ee89d14bafc695082fc1d62, type: 3}
   - {fileID: 8300000, guid: 5ec0099020465814082f63e2ff3d2386, type: 3}
+  fadeDuration: 2
 --- !u!4 &658225864
 Transform:
   m_ObjectHideFlags: 0

@@ -44,6 +44,7 @@ public class GameManagerEx : MonoBehaviour
     private void Start()
     {
         shade.gameObject.SetActive(false);
+        SoundManager.Instance.ChangeBGM(BGMClip.MAIN_BGM);
     }
 
     public void GameStart(int lvId)
@@ -83,12 +84,13 @@ public class GameManagerEx : MonoBehaviour
 
     public IEnumerator GameStartCoroutine(int idx)
     {
+        SoundManager.Instance.SilentBGM();
         yield return StartCoroutine(StartSceneShade());
 
         // LoadScene and wait-> MapGenerate
         AsyncOperation async = SceneManager.LoadSceneAsync(Constant.GAME_SCENE);
         yield return async;
-
+        SoundManager.Instance.ChangeBGM(BGMClip.GAME_BGM);
 
         FinSceneShade();
         MapGenerator.Instance.GenerateMap(idx);
@@ -98,10 +100,12 @@ public class GameManagerEx : MonoBehaviour
     // Convert Scene Game -> MainMenu
     public IEnumerator GameEndCoroutine()
     {
+        SoundManager.Instance.SilentBGM();
         yield return StartCoroutine(RevStartSceneShade());
 
         AsyncOperation async = SceneManager.LoadSceneAsync(Constant.MAIN_SCENE);
         yield return async;
+        SoundManager.Instance.ChangeBGM(BGMClip.MAIN_BGM);
 
         RevFinSceneShade();
         
