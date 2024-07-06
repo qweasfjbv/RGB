@@ -1,11 +1,12 @@
 using DG.Tweening;
+using Fusion;
 using System;
 using System.Collections;
 using System.ComponentModel;
 using UnityEngine;
 
 
-public class BoxController : MonoBehaviour
+public class BoxController : NetworkBehaviour
 {
     [Header("Jump Variables")]
     [SerializeField] private float jumpHeight;
@@ -27,9 +28,9 @@ public class BoxController : MonoBehaviour
     [Space(10)]
 
     [Header("DEBUG (READONLY)")]
-    [SerializeField, ReadOnly(true)] private BoxDir[] boxDirs;
-    [SerializeField, ReadOnly(true)] private Vector2Int boxPosition;
-    [SerializeField, ReadOnly(true)] private int boxHeight;
+    [SerializeField] private BoxDir[] boxDirs;
+    [SerializeField] private Vector2Int boxPosition;
+    [SerializeField] private int boxHeight;
 
 
 
@@ -66,7 +67,7 @@ public class BoxController : MonoBehaviour
     private void Awake()
     {
         isInputBlock = true;
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
     }
 
     private void Start()
@@ -169,6 +170,7 @@ public class BoxController : MonoBehaviour
 
     }
 
+    /*
 
     void Update()
     {
@@ -189,10 +191,35 @@ public class BoxController : MonoBehaviour
 
     }
 
+    */
+
+    private bool _spacePressed = false;
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _spacePressed = true;
+        }
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        if (HasStateAuthority == false) return;
+
+        if (_spacePressed && !isJumping)
+        {
+            RPC_GetKeyInput(KeyCode.UpArrow);
+        }
+
+        _spacePressed = false;
+
+    }
 
     int jDis = 1;
-    int hDis = 0;
-    public void GetKeyInput(KeyCode key)
+    int hDis = 0; 
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_GetKeyInput(KeyCode key)
     {
         // Key Block during Jumping
         if (isJumping)
@@ -267,7 +294,7 @@ public class BoxController : MonoBehaviour
         if (direction != Vector3.zero)
         {
             // Jump Start
-            jumpStart = transform.position;
+            jumpStart = new Vector3(boxPosition.y , boxHeight, boxPosition.x) * Constant.GRID_SIZE;
 
             startRotation = transform.rotation;
             targetRotation = Quaternion.AngleAxis(90, rotateAxis) * startRotation;
@@ -305,7 +332,6 @@ public class BoxController : MonoBehaviour
     private void JumpBox(KeyCode key)
     {
 
-
         jumpTarget = jumpStart + direction * jumpDistance * jDis;
         jumpTarget.y = jumpStart.y;
 
@@ -323,6 +349,7 @@ public class BoxController : MonoBehaviour
                 tmp = new Vector2Int(0, -1); break;
         }
 
+        /*
         MapGrid mForGrid = MapGenerator.Instance.GetMapGrid(boxPosition + tmp);
         tmp *= jDis;
 
@@ -368,7 +395,7 @@ public class BoxController : MonoBehaviour
                 return;
             }
         }
-
+        */
 
         switch (key)
         {
@@ -383,7 +410,7 @@ public class BoxController : MonoBehaviour
         }
 
         MoveBoxPos(key, jDis);
-
+        /*
 
         if (mGrid.Gridinfo.Height == boxHeight + 1 && hDis == 1) // JumpUp or Block
         {
@@ -397,7 +424,9 @@ public class BoxController : MonoBehaviour
         { 
             StartCoroutine(JumpCoroutine(jumpDuration));
         }
+        */
 
+        StartCoroutine(JumpCoroutine(jumpDuration));
 
 
 
@@ -429,6 +458,7 @@ public class BoxController : MonoBehaviour
 
         transform.localScale = Vector3.one;
 
+        Debug.Log("LOCALSCALE 1 :  " + transform.localScale);
 
         elapsedTime = 0f;
         while (jumpProgress < 1.0f)
@@ -437,10 +467,13 @@ public class BoxController : MonoBehaviour
             // Calculate parabola
             float height = Mathf.Sin(Mathf.PI * jumpProgress) * jumpHeight;
             transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
+            Debug.Log("LOCALSCALE 2 :  " + transform.localScale);
             transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
 
+            Debug.Log("LOCALSCALE 3 :  " + transform.localScale);
             elapsedTime += Time.deltaTime;
             yield return null;
+
         }
 
 

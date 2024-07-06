@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -57,6 +58,7 @@ public class MapGenerator : MonoBehaviour
     private MapGrid[,] mapGrids;
     private bool isMapMaking;
 
+    
 
     public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {

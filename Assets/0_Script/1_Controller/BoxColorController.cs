@@ -86,6 +86,9 @@ public class BoxColorController : MonoBehaviour
 
     public Color GetBlendColorWithFloor()
     {
+        // TODO : ERASE
+        return Color.white;
+
         ColorSet cs = new ColorSet(boxColorSet[(int)boxController.BoxDirs[(int)BoxDir.BOTTOM]].GetColor());
 
         cs.GetBlendedColor(MapGenerator.Instance.GetGridColor(boxController.GetBoxPos()));
