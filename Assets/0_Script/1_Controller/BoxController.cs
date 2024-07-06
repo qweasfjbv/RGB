@@ -3,6 +3,8 @@ using Fusion;
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Security.Cryptography;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
 
@@ -50,7 +52,7 @@ public class BoxController : NetworkBehaviour
         { 3, 2, 0, 1 },
         { 2, 3, 1, 0 } };
 
-    private bool isJumping;
+    private bool isJumping = true;
 
     private float jumpProgress = 0f;
     private Vector3 jumpStart;
@@ -75,6 +77,9 @@ public class BoxController : NetworkBehaviour
         boxDirs = new BoxDir[6] { BoxDir.FORWARD, BoxDir.BOTTOM, BoxDir.BACK, BoxDir.TOP, BoxDir.LEFT, BoxDir.RIGHT };
         direction = Vector3.zero;
         inputBuffer = KeyCode.None;
+
+        jumpTarget = transform.position;
+        targetRotation = transform.rotation;
         isJumping = false;
     }
 
@@ -170,28 +175,6 @@ public class BoxController : NetworkBehaviour
 
     }
 
-    /*
-
-    void Update()
-    {
-        if (isInputBlock) return;
-
-        if (inputBuffer != KeyCode.None && !isJumping)
-        {
-            GetKeyInput(inputBuffer); return;
-        }
-
-        foreach (KeyCode key in arrowKeys)
-        {
-            if (Input.GetKey(key))
-            {
-                GetKeyInput(key); return;
-            }
-        }
-
-    }
-
-    */
 
     private bool _spacePressed = false;
     private void Update()
@@ -202,15 +185,35 @@ public class BoxController : NetworkBehaviour
         }
     }
 
+    private bool isSynced = false;
+    private bool isScaleSynced = false;
     public override void FixedUpdateNetwork()
     {
+
         if (HasStateAuthority == false) return;
 
-        if (_spacePressed && !isJumping)
+        if (!isScaleSynced)
         {
-            RPC_GetKeyInput(KeyCode.UpArrow);
+            transform.localScale = Vector3.one;
+            isScaleSynced = true;
         }
 
+        if (!isJumping)
+        {
+            if (!isSynced)
+            {
+                transform.position = jumpTarget;
+                transform.rotation = targetRotation;
+                isSynced = true;
+            }
+
+            if (_spacePressed)
+            {
+                isSynced = false;
+                RPC_GetKeyInput(KeyCode.UpArrow);
+            }
+        }
+        
         _spacePressed = false;
 
     }
@@ -297,7 +300,14 @@ public class BoxController : NetworkBehaviour
             jumpStart = new Vector3(boxPosition.y , boxHeight, boxPosition.x) * Constant.GRID_SIZE;
 
             startRotation = transform.rotation;
+
+
             targetRotation = Quaternion.AngleAxis(90, rotateAxis) * startRotation;
+            Vector3 euler = targetRotation.eulerAngles;
+            euler.x = Mathf.Round(euler.x / 90) * 90;
+            euler.y = Mathf.Round(euler.y / 90) * 90;
+            euler.z = Mathf.Round(euler.z / 90) * 90;
+            targetRotation = Quaternion.Euler(euler);
 
 
             JumpBox(key);
@@ -456,9 +466,7 @@ public class BoxController : NetworkBehaviour
             yield return null;
         }
 
-        transform.localScale = Vector3.one;
-
-        Debug.Log("LOCALSCALE 1 :  " + transform.localScale);
+        isScaleSynced = false;
 
         elapsedTime = 0f;
         while (jumpProgress < 1.0f)
@@ -467,19 +475,15 @@ public class BoxController : NetworkBehaviour
             // Calculate parabola
             float height = Mathf.Sin(Mathf.PI * jumpProgress) * jumpHeight;
             transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
-            Debug.Log("LOCALSCALE 2 :  " + transform.localScale);
             transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
 
-            Debug.Log("LOCALSCALE 3 :  " + transform.localScale);
             elapsedTime += Time.deltaTime;
             yield return null;
 
         }
 
+        // JumpComplete
 
-        // Jump Complete
-        transform.position = jumpTarget;
-        transform.rotation = targetRotation;
 
         isJumping = false;
 

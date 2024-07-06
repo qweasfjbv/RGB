@@ -5,12 +5,14 @@ using UnityEngine;
 public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
 {
     public GameObject PlayerPrefab;
+    public GameObject tmp;
 
     public void PlayerJoined(PlayerRef player)
     {
         if (player == Runner.LocalPlayer)
         {
-            Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            tmp = Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity).gameObject;
+            tmp.GetComponent<BoxController>().SetBoxController(new Vector2Int(0, 0), 0);
         }
     }
 }
