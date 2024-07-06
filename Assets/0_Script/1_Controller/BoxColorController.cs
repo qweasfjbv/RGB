@@ -1,6 +1,4 @@
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.ProBuilder;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -48,7 +46,6 @@ public class BoxColorController : MonoBehaviour
 
         pbMesh.ToMesh();
         pbMesh.Refresh();
-        pbMesh.Optimize();
 
     }
 
@@ -61,7 +58,6 @@ public class BoxColorController : MonoBehaviour
         pbMesh.SetFaceColor(faces[idx], ColorConstants.WHITE);
         pbMesh.ToMesh();
         pbMesh.Refresh();
-        pbMesh.Optimize();
     }
 
 

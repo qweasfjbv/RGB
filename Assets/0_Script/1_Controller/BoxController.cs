@@ -49,8 +49,7 @@ public class BoxController : MonoBehaviour
         { 3, 2, 0, 1 },
         { 2, 3, 1, 0 } };
 
-    // Act like Semaphore
-    static int isJumping;
+    private bool isJumping;
 
     private float jumpProgress = 0f;
     private Vector3 jumpStart;
@@ -75,7 +74,7 @@ public class BoxController : MonoBehaviour
         boxDirs = new BoxDir[6] { BoxDir.FORWARD, BoxDir.BOTTOM, BoxDir.BACK, BoxDir.TOP, BoxDir.LEFT, BoxDir.RIGHT };
         direction = Vector3.zero;
         inputBuffer = KeyCode.None;
-        isJumping = 0;
+        isJumping = false;
     }
 
     public void SetBoxController(Vector2Int pos, int height)
@@ -175,7 +174,7 @@ public class BoxController : MonoBehaviour
     {
         if (isInputBlock) return;
 
-        if (inputBuffer != KeyCode.None && isJumping == 0)
+        if (inputBuffer != KeyCode.None && !isJumping)
         {
             GetKeyInput(inputBuffer); return;
         }
@@ -196,7 +195,7 @@ public class BoxController : MonoBehaviour
     public void GetKeyInput(KeyCode key)
     {
         // Key Block during Jumping
-        if (isJumping != 0)
+        if (isJumping)
         {
             if (jumpProgress > inputThreshold) inputBuffer = key;
             return;
@@ -411,7 +410,7 @@ public class BoxController : MonoBehaviour
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
-        isJumping++;
+        isJumping = true;
         jumpProgress = 0f;
 
         Vector3 scaleAxis = GetScaleYAxis();
@@ -449,8 +448,7 @@ public class BoxController : MonoBehaviour
         transform.position = jumpTarget;
         transform.rotation = targetRotation;
 
-
-        isJumping--;
+        isJumping = false;
 
     }
 
@@ -464,7 +462,7 @@ public class BoxController : MonoBehaviour
         if (up) boxHeight++;
         else boxHeight--;
 
-        isJumping++;
+        isJumping = true;
         jumpProgress = 0f;
 
         Vector3 scaleAxis = GetScaleYAxis();
@@ -505,8 +503,7 @@ public class BoxController : MonoBehaviour
         else transform.position = jumpTarget - new Vector3(0, Constant.GRID_SIZE, 0);
         transform.rotation = targetRotation;
 
-
-        isJumping--;
+        isJumping = false;
 
     }
 
@@ -515,7 +512,7 @@ public class BoxController : MonoBehaviour
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
-        isJumping++;
+        isJumping = true;
         jumpProgress = 0f;
 
         Vector3 scaleAxis = GetScaleYAxis();
@@ -576,7 +573,7 @@ public class BoxController : MonoBehaviour
         transform.rotation = targetRotation;
 
 
-        isJumping--;
+        isJumping = false;
 
     }
     // Jump_block by wall
@@ -584,7 +581,7 @@ public class BoxController : MonoBehaviour
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
-        isJumping++;
+        isJumping = true;
         jumpProgress = 0f;
 
         Vector3 scaleAxis = GetScaleYAxis();
@@ -645,7 +642,7 @@ public class BoxController : MonoBehaviour
         transform.rotation = targetRotation;
 
 
-        isJumping--;
+        isJumping = false;
 
     }
 
@@ -660,8 +657,8 @@ public class BoxController : MonoBehaviour
 
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.FALL);
 
-        isJumping++;
 
+        isJumping = true;
         Vector3 tmpP = transform.position;
 
         float elapsedTime = 0;
@@ -683,7 +680,7 @@ public class BoxController : MonoBehaviour
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.STAMP);
 
-        isJumping++;
+        isJumping = true;
         GetComponent<BoxColorController>().StampColor(boxDirs[(int)BoxDir.BOTTOM]);
         jumpProgress = 0f;
 
@@ -743,7 +740,7 @@ public class BoxController : MonoBehaviour
             isInputBlock = true;
         }
 
-        isJumping--;
+        isJumping = false;
 
     }
 

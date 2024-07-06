@@ -167,50 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 139296edf3142184b93118e1fe108742, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &33220207
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 33220209}
-  - component: {fileID: 33220208}
-  m_Layer: 0
-  m_Name: NetworkManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &33220208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 33220207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eef71d5b7e1ebf4fb1af2cf984bb430, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &33220209
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 33220207}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.535806, y: -0.10912993, z: 0.23517762}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &80800890
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,7 +441,8 @@ MonoBehaviour:
 '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
-  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
+  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -922,7 +879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfad33879e0291541867ddea766ad0e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioPrefab: {fileID: 4269131961237391424, guid: c379ce4001969f14fa9a63612c731f2f, type: 3}
+  audioPrefab: {fileID: 4269131961237391424, guid: c379ce4001969f14fa9a63612c731f2f,
+    type: 3}
   bgmClips:
   - {fileID: 8300000, guid: bbbaa22140ce6db4f8027da9dcdf9402, type: 3}
   - {fileID: 8300000, guid: 2385d92b78998404e96cc63a34685b98, type: 3}
@@ -960,6 +918,7 @@ GameObject:
   - component: {fileID: 671804854}
   - component: {fileID: 671804853}
   - component: {fileID: 671804856}
+  - component: {fileID: 671804857}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1056,6 +1015,22 @@ MonoBehaviour:
   cameraArmLength: 0
   verticalRotate: 0
   horizontalRotate: 0
+--- !u!114 &671804857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671804852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 671804853}
+  _guid: 5f67fa26-de94-4ade-
 --- !u!1 &753867529
 GameObject:
   m_ObjectHideFlags: 0
@@ -1323,7 +1298,8 @@ MonoBehaviour:
   m_text: Stage 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
-  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
+  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1665,7 +1641,8 @@ MonoBehaviour:
   m_text: click cube to start
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
-  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
+  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1821,6 +1798,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1368837215}
   - component: {fileID: 1368837214}
+  - component: {fileID: 1368837216}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -1905,6 +1883,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1368837216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1368837213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 1368837214}
+  _guid: f60a4d57-b7b7-40cf-
 --- !u!1 &1408381117
 GameObject:
   m_ObjectHideFlags: 0
@@ -2477,7 +2471,8 @@ MonoBehaviour:
   m_text: tamp
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
-  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
+  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2611,7 +2606,8 @@ MonoBehaviour:
   m_text: S
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
-  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14, type: 2}
+  m_sharedMaterial: {fileID: 4903718055653466778, guid: e822ddbf05892bd4ea5e5684a6b42f14,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3222,7 +3218,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 671804855}
   - {fileID: 1368837215}
-  - {fileID: 33220209}
   - {fileID: 658225864}
   - {fileID: 9193153120407606825}
   - {fileID: 1628137650}
