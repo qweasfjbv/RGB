@@ -89,7 +89,7 @@ public class GameManagerEx : MonoBehaviour
         SoundManager.Instance.ChangeBGM(BGMClip.GAME_BGM);
 
         FinSceneShade();
-        MapGenerator.Instance.GenerateMap(idx);
+        //MapGenerator.Instance.GenerateMap(idx);
 
     }
 
@@ -113,7 +113,7 @@ public class GameManagerEx : MonoBehaviour
 
         MapGenerator.Instance.EraseAllObject();
         FinSceneShade();
-        MapGenerator.Instance.GenerateMap(idx);
+        //MapGenerator.Instance.GenerateMap(idx);
     }
     // Scene Convert Eff
     

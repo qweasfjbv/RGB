@@ -254,6 +254,7 @@ public class BoxController : NetworkBehaviour
                 forwardDir = BoxDir.RIGHT;
                 break;
             case var _ when tmpC.Equals(ColorConstants.ORANGE):
+                Debug.Log("ORANGE : " + ColorConstants.ORANGE);
                 forwardDir = BoxDir.BACK;
                 break;
             case var _ when tmpC.Equals(ColorConstants.GREEN):

@@ -1,27 +1,22 @@
 using UnityEngine;
 using DG.Tweening;
 using System;
-using JetBrains.Annotations;
+using Fusion;
 
 // Convert RGB to RYB
 [Serializable]
-public class ColorSet
+public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
 {
     public int r;
     public int y;
     public int b;
 
-    public int Total { get => (r + y + b); }
-
     public ColorSet(Color color)
     {
-        SetColor(color);
-    }
+        r = 0; y = 0; b = 0;
 
-    public void SetColor(Color color)
-    {
-
-        switch (color) {
+        switch (color)
+        {
             case var _ when color.Equals(ColorConstants.RED):
                 r = 1; y = 0; b = 0;
                 break;
@@ -49,6 +44,69 @@ public class ColorSet
             default:
                 Debug.LogError("Color Error : color can't maching ryb");
                 break;
+
+        }
+    }
+
+    public void SetColor(Color color)
+    {
+
+        switch (color)
+        {
+            case var _ when color.Equals(ColorConstants.RED):
+                r = 1; y = 0; b = 0;
+                break;
+            case var _ when color.Equals(ColorConstants.BLUE):
+                r = 0; y = 0; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.YELLOW):
+                r = 0; y = 1; b = 0;
+                break;
+            case var _ when color.Equals(ColorConstants.ORANGE):
+                r = 1; y = 1; b = 0;
+                break;
+            case var _ when color.Equals(ColorConstants.GREEN):
+                r = 0; y = 1; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.PURPLE):
+                r = 1; y = 0; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.BLACK):
+                r = 1; y = 1; b = 1;
+                break;
+            case var _ when color.Equals(ColorConstants.WHITE):
+                r = 0; y = 0; b = 0;
+                break;
+            default:
+                Debug.LogError("Color Error : color can't maching ryb");
+                break;
+
+        }
+    }
+
+    public int GetColorIdx()
+    {
+        Color color = GetColor();
+        switch (color)
+        {
+            case var _ when color.Equals(ColorConstants.RED):
+                return 0;
+            case var _ when color.Equals(ColorConstants.BLUE):
+                return 1;
+            case var _ when color.Equals(ColorConstants.YELLOW):
+                return 2;
+            case var _ when color.Equals(ColorConstants.ORANGE):
+                return 3;
+            case var _ when color.Equals(ColorConstants.GREEN):
+                return 4;
+            case var _ when color.Equals(ColorConstants.PURPLE):
+                return 5;
+            case var _ when color.Equals(ColorConstants.BLACK):
+                return 6;
+            case var _ when color.Equals(ColorConstants.WHITE):
+                return 7;
+            default:
+                return -1;
 
         }
     }
@@ -113,44 +171,49 @@ public class ColorSet
     {
         return base.GetHashCode();
     }
-}
 
-public class GridInfo {
-
-    private Vector2Int pos;
-    private int height;
-    private GridState state;
-    private ColorSet colorSet;
-
-    public Vector2Int Pos { get { return pos; } }
-    public int Height { get { return height; } }
-    public GridState State { get { return state; } }
-    public ColorSet Colorset {  get { return colorSet; } }  
-
-    public GridInfo(Vector2Int pos, int height, int colorIdx, GridState state)
+    bool IEquatable<ColorSet>.Equals(ColorSet other)
     {
-        this.pos = pos;
-        this.height = height;
-
-        if (state < 0) this.state = 0;
-        else this.state = state;
-
-        colorSet = new ColorSet(ColorConstants.COLORARR[colorIdx]);
+        return other is ColorSet c && c.r == r && c.b == b && c.y == y;
     }
 }
 
-public class MapGrid : MonoBehaviour
-{
-    private GridInfo gridinfo;
-    public GridInfo Gridinfo { get { return gridinfo; } }   
+[Serializable]
+public struct NetworkGridInfo : INetworkStruct{
 
+    [Networked] public Vector2Int Pos { get; set; }
+    [Networked] public int Height { get; set; }
+    [Networked] public GridState State { get; set; }
+    [Networked] public ColorSet colorset { get; set; }
+
+
+    public NetworkGridInfo(Vector2Int pos, int height, int colorIdx, GridState state)
+    {
+        this.Pos = pos;
+        this.Height = height;
+
+        if (state < 0) this.State = 0;
+        else this.State = state;
+
+
+        colorset = new ColorSet(ColorConstants.COLORARR[colorIdx]);
+    }
+
+}
+
+
+public class MapGrid : NetworkBehaviour
+{
+    [SerializeField, Networked]
+    public NetworkGridInfo NetworkedGridInfo { get; set; }
 
     // Process Grid According to GridState
-    public void InitMapGrid(GridInfo info)
+    public void InitMapGrid(NetworkGridInfo info)
     {
-        gridinfo = info;
-        GetComponent<Renderer>().material.color = info.Colorset.GetColor();
-        transform.position = new Vector3(transform.position.x, gridinfo.Height * Constant.GRID_SIZE - transform.localScale.y / 2 - Constant.BOX_SIZE / 2, transform.position.z);
+        NetworkedGridInfo = new NetworkGridInfo(info.Pos, info.Height, info.colorset.GetColorIdx(), info.State);
+        GetComponent<Renderer>().material.color = info.colorset.GetColor();
+        transform.position = new Vector3(transform.position.x, NetworkedGridInfo.Height * Constant.GRID_SIZE - transform.localScale.y / 2 - Constant.BOX_SIZE / 2, transform.position.z);
+
 
         switch (info.State)
         {
@@ -166,12 +229,12 @@ public class MapGrid : MonoBehaviour
 
     public void AppearGrid(float duration = 1f)
     {
-        transform.DOMoveY(gridinfo.Height * Constant.GRID_SIZE - transform.localScale.y/2 - Constant.BOX_SIZE/2, duration).SetEase(Ease.InOutElastic);
+        transform.DOMoveY(NetworkedGridInfo.Height * Constant.GRID_SIZE - transform.localScale.y/2 - Constant.BOX_SIZE/2, duration).SetEase(Ease.InOutElastic);
     }
 
     public void DisappearGrid(float duration = 1f)
     {
-        transform.DOMoveY(gridinfo.Height * Constant.GRID_SIZE - 10, duration).SetEase(Ease.InOutElastic).OnComplete(()=>Destroy(gameObject));
+        transform.DOMoveY(NetworkedGridInfo.Height * Constant.GRID_SIZE - 10, duration).SetEase(Ease.InOutElastic).OnComplete(()=>Destroy(gameObject));
     }
 
 }

@@ -1,12 +1,15 @@
+using Fusion;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
-public class BoxColorController : MonoBehaviour
+public class BoxColorController : NetworkBehaviour
 {
     private BoxController boxController;
 
     private ProBuilderMesh pbMesh;
+
+    
     private Face[] faces;
     private ColorSet[] boxColorSet = new ColorSet[6];
 
@@ -86,9 +89,7 @@ public class BoxColorController : MonoBehaviour
 
     public Color GetBlendColorWithFloor()
     {
-        // TODO : ERASE
-        return Color.white;
-
+        
         ColorSet cs = new ColorSet(boxColorSet[(int)boxController.BoxDirs[(int)BoxDir.BOTTOM]].GetColor());
 
         cs.GetBlendedColor(MapGenerator.Instance.GetGridColor(boxController.GetBoxPos()));

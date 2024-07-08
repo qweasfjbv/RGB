@@ -1,16 +1,16 @@
 using DG.Tweening;
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class MapGenerator : MonoBehaviour
+public class MapGenerator : NetworkBehaviour
 {
 
     #region Singleton
     private static MapGenerator instance = null;
-
-    private int currentMapWidth = 0;
 
     void Awake()
     {
@@ -47,7 +47,7 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private float timeBetweenFall;
     [SerializeField] private int camOffY;
     [Space(10)]
-
+    
     [SerializeField] private GameSceneUI gameSceneUI;
 
     [Header("Skybox Materials")]
@@ -55,37 +55,44 @@ public class MapGenerator : MonoBehaviour
 
     private Coroutine gridAppearCoroutine = null;
     private BoxController curBoxController = null;
-    private MapGrid[,] mapGrids;
+
+
+    //public MapGrid[,] NetworkedMapGrids { get; set; }
     private bool isMapMaking;
 
-    
+    [UnitySerializeField, Networked, Capacity(50)]
+    public NetworkDictionary<Vector2Int, MapGrid> NetworkedMapGrids => default;
+
+    [Networked]
+    public int NetworkedCurMapWidth { get; set; }
 
     public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {
-        mapGrids[pos.x, pos.y].GetComponent<MeshRenderer>().material.DOColor(color, duration);
+
+        NetworkedMapGrids[pos].GetComponent<MeshRenderer>().material.DOColor(color, duration);
     }
 
     public MapGrid GetMapGrid(Vector2Int pos)
     {
-        if (pos.x < 0 || pos.y < 0 || pos.x >= mapGrids.GetLength(0) || pos.y >= mapGrids.GetLength(1)) return null;
-        return mapGrids[pos.x, pos.y];
+        if (pos.x < 0 || pos.y < 0 || pos.x >= NetworkedCurMapWidth || pos.y >= NetworkedCurMapWidth) return null;
+        return NetworkedMapGrids[pos];
     }
 
 
     public ColorSet GetGridColor(Vector2Int pos)
     {
-        return mapGrids[pos.x, pos.y].Gridinfo.Colorset;
+        return NetworkedMapGrids[pos].NetworkedGridInfo.colorset;
     }
 
     public bool CheckMapClear()
     {
-        for (int i = 0; i < currentMapWidth; i++)
+        for (int i = 0; i < NetworkedCurMapWidth; i++)
         {
-            for (int j = 0; j < currentMapWidth; j++)
+            for (int j = 0; j < NetworkedCurMapWidth; j++)
             {
-                if (mapGrids[i, j] == null) continue;
+                if (NetworkedMapGrids[new Vector2Int(i, j)] == null) continue;
 
-                if (mapGrids[i, j].Gridinfo.Colorset.GetColor().Equals(ColorConstants.WHITE)) continue;
+                if (NetworkedMapGrids[new Vector2Int(i, j)].NetworkedGridInfo.colorset.GetColor().Equals(ColorConstants.WHITE)) continue;
 
                 return false;
             }
@@ -94,42 +101,40 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
-    public void GenerateMap(int n)
+    public void GenerateMap(int n, NetworkRunner runner)
     {
-
         gameSceneUI.UpdateStageText(n);
         if (n == 1)
             RenderSettings.skybox = skyboxMaterials[1];
         else RenderSettings.skybox = skyboxMaterials[0];
 
-        List<GridInfo> mapArrs = new List<GridInfo>();
+        List<NetworkGridInfo> mapArrs = new List<NetworkGridInfo>();
 
         MapInfo mapResource = Managers.Resource.GetMapInfo(n);
 
 
         foreach (GridInfoEx gi in mapResource.gridInfo) {
-            mapArrs.Add(new GridInfo(gi.pos, gi.height, gi.colorIdx, gi.state));
+            mapArrs.Add(new NetworkGridInfo(gi.pos, gi.height, gi.colorIdx, gi.state));
         }
 
 
-        currentMapWidth = mapResource.width;
-        mapGrids = new MapGrid[currentMapWidth, currentMapWidth];
 
-        GridInfo grid;
+        NetworkGridInfo grid;
 
         for (int i = 0; i < mapArrs.Count; i++)
         {
             grid = mapArrs[i];
-            mapGrids[grid.Pos.y, grid.Pos.x] = Instantiate(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE, Quaternion.identity, transform).GetComponent<MapGrid>();
-            mapGrids[grid.Pos.y, grid.Pos.x].transform.localScale = Vector3.one * Constant.GRID_SIZE;
-            mapGrids[grid.Pos.y, grid.Pos.x].InitMapGrid(grid);
+            NetworkedMapGrids.Set(new Vector2Int(grid.Pos.y, grid.Pos.x), runner.Spawn(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE, Quaternion.identity).GetComponent<MapGrid>());
+            NetworkedMapGrids[new Vector2Int(grid.Pos.y, grid.Pos.x)].transform.localScale = Vector3.one * Constant.GRID_SIZE;
+            NetworkedMapGrids[new Vector2Int(grid.Pos.y, grid.Pos.x)].InitMapGrid(grid);
 
         }
 
-        curBoxController = Instantiate(boxPrefab).GetComponent<BoxController>();
+        NetworkedCurMapWidth = n;
+        //curBoxController = Instantiate(boxPrefab).GetComponent<BoxController>();
 
         // TODO : pos, height modify needed
-        curBoxController.SetBoxController(new Vector2Int(0, 0), 0);
+        //curBoxController.SetBoxController(new Vector2Int(0, 0), 0);
         return;
     }
 
@@ -141,12 +146,13 @@ public class MapGenerator : MonoBehaviour
         if (curBoxController != null)
             Destroy(curBoxController.gameObject);
         // Disappear Grids
-        for (int i = 0; i < mapGrids.GetLength(0); i++)
+        for (int i = 0; i < NetworkedCurMapWidth; i++)
         {
-            for (int j = 0; j < mapGrids.GetLength(1); j++)
+            for (int j = 0; j < NetworkedCurMapWidth; j++)
             {
-                if (mapGrids[i, j] == null) continue;
-                Destroy(mapGrids[i, j].gameObject);
+                if (NetworkedMapGrids.TryGet(new Vector2Int(i, j), out var value)){
+                    Destroy(value.gameObject);
+                }
             }
         }
     }
