@@ -428,18 +428,19 @@ public class BoxController : NetworkBehaviour
         {
             jumpTarget.y += Constant.GRID_SIZE;
             StartCoroutine(JumpUpDownCoroutine(jumpDuration, true));
+            return;
         }
         else if (mGrid.NetworkedGridInfo.Height == boxHeight - 1)
         {
             jumpTarget.y -= Constant.GRID_SIZE;
             StartCoroutine(JumpUpDownCoroutine(jumpDuration, false));
+            return;
         }
         else
         { 
             StartCoroutine(JumpCoroutine(jumpDuration));
+            return;
         }
-
-        StartCoroutine(JumpCoroutine(jumpDuration));
 
 
 
@@ -450,6 +451,8 @@ public class BoxController : NetworkBehaviour
     // Jump
     private IEnumerator JumpCoroutine(float duration)
     {
+
+        Debug.Log("jumpcoroutine");
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping = true;
@@ -497,6 +500,8 @@ public class BoxController : NetworkBehaviour
     // Jump_1 block up/down
     private IEnumerator JumpUpDownCoroutine(float duration, bool up)
     {
+
+        Debug.Log("JUMPUPDOWN");
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         if (up) boxHeight++;
@@ -550,6 +555,7 @@ public class BoxController : NetworkBehaviour
     // Jump_block by wall
     private IEnumerator JumpBlockCoroutine(float duration)
     {
+        Debug.Log("JUMPBLOCK");
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping = true;

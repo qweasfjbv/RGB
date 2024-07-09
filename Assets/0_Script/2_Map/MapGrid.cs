@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System;
 using Fusion;
+using Unity.VisualScripting;
 
 // Convert RGB to RYB
 [Serializable]
@@ -51,7 +52,6 @@ public struct ColorSet : INetworkStruct
 
     public void SetColor(Color color)
     {
-
         switch (color)
         {
             case var _ when color.Equals(ColorConstants.RED):
@@ -85,7 +85,6 @@ public struct ColorSet : INetworkStruct
         }
 
 
-        Debug.Log("JUST AFTER SET :" + ToString());
     }
 
     public int GetColorIdx()
@@ -214,16 +213,16 @@ public class MapGrid : NetworkBehaviour
         RPC_UpdateGridVisuals();
     }
 
-    public override void FixedUpdateNetwork()
-    {
-        if (!HasStateAuthority) return;
-
-        RPC_UpdateGridVisuals();
-    }
 
     [Rpc(RpcSources.All, RpcTargets.All)]
-    private void RPC_UpdateGridVisuals()
+    public void RPC_UpdateGridVisuals()
     {
+
+        if (NetworkedGridInfo.Pos.x == 1 && NetworkedGridInfo.Pos.y == 0)
+        {
+            Debug.Log(NetworkedGridInfo.colorset.ToString());
+        }
+         
         GetComponent<Renderer>().material.color = NetworkedGridInfo.colorset.GetColor();
           switch (NetworkedGridInfo.State)
         {
@@ -234,6 +233,13 @@ public class MapGrid : NetworkBehaviour
                 Camera.main.GetComponent<CameraController>().SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
                 break;
         }
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        if (!Runner.IsSharedModeMasterClient) return;
+
+        RPC_UpdateGridVisuals();
     }
 
     public void SetGridInfo(NetworkGridInfo info)

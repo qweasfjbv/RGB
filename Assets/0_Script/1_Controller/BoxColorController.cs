@@ -46,8 +46,16 @@ public class BoxColorController : NetworkBehaviour
         _ => -1
     };
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_SetBoxColor(BoxDir dir, Color color)
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_ColorPBMesh(int idx, Color color)
+    {
+        Debug.Log("COLOR CHAGNE");
+        pbMesh.SetFaceColor(faces[idx], color);
+        pbMesh.ToMesh();
+        pbMesh.Refresh();
+    }
+
+    public void SetBoxColor(BoxDir dir, Color color)
     {
         int idx = DirToFaceIdx(dir);
 
@@ -55,14 +63,11 @@ public class BoxColorController : NetworkBehaviour
         cSet.SetColor(color);
         NetworkBoxColorset.Set((int)dir, cSet);
 
-        pbMesh.SetFaceColor(faces[idx], color);
-        pbMesh.ToMesh();
-        pbMesh.Refresh();
-
+        RPC_ColorPBMesh(idx, color);
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_RemoveBoxColor(BoxDir dir)
+
+    public void RemoveBoxColor(BoxDir dir)
     {
         int idx = DirToFaceIdx(dir);
 
@@ -71,14 +76,14 @@ public class BoxColorController : NetworkBehaviour
         NetworkBoxColorset.Set((int)dir, cSet);
 
 
-        pbMesh.SetFaceColor(faces[idx], ColorConstants.WHITE);
-        pbMesh.ToMesh();
-        pbMesh.Refresh();
-    }
+        RPC_ColorPBMesh(idx, ColorConstants.WHITE);
 
+    }
 
     public void StampColor(BoxDir dir)
     {
+        if (!Runner.IsSharedModeMasterClient) return;
+
         ColorSet gridC = MapGenerator.Instance.GetGridColor(boxController.GetBoxPos());
         ColorSet boxC = NetworkBoxColorset[(int)dir];
 
@@ -97,8 +102,8 @@ public class BoxColorController : NetworkBehaviour
         }
 
 
-        RPC_SetBoxColor(dir, boxC.GetColor());
-        MapGenerator.Instance.RPC_SetGridColor(boxController.GetBoxPos(), gridC.GetColor());
+        SetBoxColor(dir, boxC.GetColor());
+        MapGenerator.Instance.SetGridColor(boxController.GetBoxPos(), gridC.GetColor());
 
     }
 

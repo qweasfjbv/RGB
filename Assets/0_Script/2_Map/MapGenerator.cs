@@ -2,6 +2,7 @@ using DG.Tweening;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -66,9 +67,9 @@ public class MapGenerator : NetworkBehaviour
     [Networked]
     public int NetworkedCurMapWidth { get; set; }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
+    public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {
+        if (!HasStateAuthority) return;
 
         var tGridInfo= NetworkedMapGrids[pos].NetworkedGridInfo;
         var tColorSet = tGridInfo.colorset;
