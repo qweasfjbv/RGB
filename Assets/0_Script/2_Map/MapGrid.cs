@@ -5,7 +5,7 @@ using Fusion;
 
 // Convert RGB to RYB
 [Serializable]
-public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
+public struct ColorSet : INetworkStruct
 {
     public int r;
     public int y;
@@ -48,6 +48,7 @@ public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
         }
     }
 
+
     public void SetColor(Color color)
     {
 
@@ -82,6 +83,9 @@ public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
                 break;
 
         }
+
+
+        Debug.Log("JUST AFTER SET :" + ToString());
     }
 
     public int GetColorIdx()
@@ -95,9 +99,9 @@ public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
                 return 1;
             case var _ when color.Equals(ColorConstants.YELLOW):
                 return 2;
-            case var _ when color.Equals(ColorConstants.ORANGE):
-                return 3;
             case var _ when color.Equals(ColorConstants.GREEN):
+                return 3;
+            case var _ when color.Equals(ColorConstants.ORANGE):
                 return 4;
             case var _ when color.Equals(ColorConstants.PURPLE):
                 return 5;
@@ -127,12 +131,12 @@ public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
 
     public bool IsEmpty()
     {
-        return (r== 0 && y == 0 && b== 0);
+        return (r == 0 && y == 0 && b == 0);
     }
 
     public void RemoveColor()
     {
-        r = 0; y=0; b=0;
+        r = 0; y = 0; b = 0;
     }
 
     public void GetBlendedColor(ColorSet cSet)
@@ -145,7 +149,7 @@ public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
 
     public void BlendColor(ColorSet cSet)
     {
-        if(this.Equals(cSet))
+        if (this.Equals(cSet))
         {
             cSet.RemoveColor();
             this.RemoveColor();
@@ -159,7 +163,7 @@ public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
 
     public override string ToString()
     {
-        return "ColorSet(RYB) : " + r + ", " + y + ", " + b; 
+        return "ColorSet(RYB) : " + r + ", " + y + ", " + b;
     }
 
     public override bool Equals(object obj)
@@ -169,12 +173,7 @@ public struct ColorSet : INetworkStruct, IEquatable<ColorSet>
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
-    }
-
-    bool IEquatable<ColorSet>.Equals(ColorSet other)
-    {
-        return other is ColorSet c && c.r == r && c.b == b && c.y == y;
+        return HashCode.Combine(r, y, b);
     }
 }
 
@@ -211,11 +210,22 @@ public class MapGrid : NetworkBehaviour
     public void InitMapGrid(NetworkGridInfo info)
     {
         NetworkedGridInfo = new NetworkGridInfo(info.Pos, info.Height, info.colorset.GetColorIdx(), info.State);
-        GetComponent<Renderer>().material.color = info.colorset.GetColor();
         transform.position = new Vector3(transform.position.x, NetworkedGridInfo.Height * Constant.GRID_SIZE - transform.localScale.y / 2 - Constant.BOX_SIZE / 2, transform.position.z);
+        RPC_UpdateGridVisuals();
+    }
 
+    public override void FixedUpdateNetwork()
+    {
+        if (!HasStateAuthority) return;
 
-        switch (info.State)
+        RPC_UpdateGridVisuals();
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_UpdateGridVisuals()
+    {
+        GetComponent<Renderer>().material.color = NetworkedGridInfo.colorset.GetColor();
+          switch (NetworkedGridInfo.State)
         {
             case GridState.NONE: break;
             case GridState.START:
@@ -223,18 +233,11 @@ public class MapGrid : NetworkBehaviour
             case GridState.CAMERA:
                 Camera.main.GetComponent<CameraController>().SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
                 break;
-
         }
     }
 
-    public void AppearGrid(float duration = 1f)
+    public void SetGridInfo(NetworkGridInfo info)
     {
-        transform.DOMoveY(NetworkedGridInfo.Height * Constant.GRID_SIZE - transform.localScale.y/2 - Constant.BOX_SIZE/2, duration).SetEase(Ease.InOutElastic);
+        NetworkedGridInfo = info;
     }
-
-    public void DisappearGrid(float duration = 1f)
-    {
-        transform.DOMoveY(NetworkedGridInfo.Height * Constant.GRID_SIZE - 10, duration).SetEase(Ease.InOutElastic).OnComplete(()=>Destroy(gameObject));
-    }
-
 }

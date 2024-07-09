@@ -6,18 +6,24 @@ using UnityEngine.ProBuilder;
 public class BoxColorController : NetworkBehaviour
 {
     private BoxController boxController;
-
     private ProBuilderMesh pbMesh;
 
-    
     private Face[] faces;
-    private ColorSet[] boxColorSet = new ColorSet[6];
+
+    [Networked, Capacity(6), UnitySerializeField]
+    private NetworkArray<ColorSet> NetworkBoxColorset { get; } =
+        MakeInitializer(new ColorSet[]{
+        new ColorSet(ColorConstants.WHITE),
+        new ColorSet(ColorConstants.WHITE),
+        new ColorSet(ColorConstants.WHITE),
+        new ColorSet(ColorConstants.WHITE),
+        new ColorSet(ColorConstants.WHITE),
+        new ColorSet(ColorConstants.WHITE)});
 
     private void Start()
     {
         pbMesh = GetComponent<ProBuilderMesh>();
-        boxController = GetComponent<BoxController>();  
-        for (int i = 0; i < 6; i++) boxColorSet[i] = new ColorSet(ColorConstants.WHITE);
+        boxController = GetComponent<BoxController>();
 
         if (pbMesh == null)
         {
@@ -40,23 +46,30 @@ public class BoxColorController : NetworkBehaviour
         _ => -1
     };
 
-    public void SetBoxColor(BoxDir dir, Color color)
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_SetBoxColor(BoxDir dir, Color color)
     {
         int idx = DirToFaceIdx(dir);
 
-        boxColorSet[(int)dir].SetColor(color);
-        pbMesh.SetFaceColor(faces[idx], color);
+        var cSet = NetworkBoxColorset[(int)dir];
+        cSet.SetColor(color);
+        NetworkBoxColorset.Set((int)dir, cSet);
 
+        pbMesh.SetFaceColor(faces[idx], color);
         pbMesh.ToMesh();
         pbMesh.Refresh();
 
     }
 
-    public void RemoveBoxColor(BoxDir dir)
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_RemoveBoxColor(BoxDir dir)
     {
         int idx = DirToFaceIdx(dir);
 
-        boxColorSet[(int)dir].SetColor(Color.clear);
+        var cSet = NetworkBoxColorset[(int)dir];
+        cSet.SetColor(Color.white);
+        NetworkBoxColorset.Set((int)dir, cSet);
+
 
         pbMesh.SetFaceColor(faces[idx], ColorConstants.WHITE);
         pbMesh.ToMesh();
@@ -67,13 +80,14 @@ public class BoxColorController : NetworkBehaviour
     public void StampColor(BoxDir dir)
     {
         ColorSet gridC = MapGenerator.Instance.GetGridColor(boxController.GetBoxPos());
-        ColorSet boxC = boxColorSet[(int)dir];
+        ColorSet boxC = NetworkBoxColorset[(int)dir];
 
         // Empty-> get Color from grid
-        if (boxColorSet[(int)dir].IsEmpty())
+        if (NetworkBoxColorset[(int)dir].IsEmpty())
         {
             boxC.BlendColor(gridC);
             gridC.RemoveColor();
+
         }
         // !Empty -> Blend color to grid
         else
@@ -82,15 +96,17 @@ public class BoxColorController : NetworkBehaviour
             boxC.RemoveColor();
         }
 
-        SetBoxColor(dir, boxC.GetColor());
-        MapGenerator.Instance.SetGridColor(boxController.GetBoxPos(), gridC.GetColor());
+
+        RPC_SetBoxColor(dir, boxC.GetColor());
+        MapGenerator.Instance.RPC_SetGridColor(boxController.GetBoxPos(), gridC.GetColor());
 
     }
 
     public Color GetBlendColorWithFloor()
     {
         
-        ColorSet cs = new ColorSet(boxColorSet[(int)boxController.BoxDirs[(int)BoxDir.BOTTOM]].GetColor());
+        ColorSet cs = new ColorSet(NetworkBoxColorset[(int)boxController.BoxDirs[(int)BoxDir.BOTTOM]].GetColor());
+
 
         cs.GetBlendedColor(MapGenerator.Instance.GetGridColor(boxController.GetBoxPos()));
 
@@ -101,7 +117,7 @@ public class BoxColorController : NetworkBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
-            if (!boxColorSet[i].IsEmpty())
+            if (!NetworkBoxColorset[i].IsEmpty())
             {
                 return false;
             }

@@ -66,10 +66,18 @@ public class MapGenerator : NetworkBehaviour
     [Networked]
     public int NetworkedCurMapWidth { get; set; }
 
-    public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {
 
+        var tGridInfo= NetworkedMapGrids[pos].NetworkedGridInfo;
+        var tColorSet = tGridInfo.colorset;
+        tColorSet.SetColor(color);
+        tGridInfo.colorset = tColorSet;
+        NetworkedMapGrids[pos].SetGridInfo(tGridInfo);
+
         NetworkedMapGrids[pos].GetComponent<MeshRenderer>().material.DOColor(color, duration);
+
     }
 
     public MapGrid GetMapGrid(Vector2Int pos)
@@ -130,7 +138,7 @@ public class MapGenerator : NetworkBehaviour
 
         }
 
-        NetworkedCurMapWidth = n;
+        NetworkedCurMapWidth = mapResource.width;
         //curBoxController = Instantiate(boxPrefab).GetComponent<BoxController>();
 
         // TODO : pos, height modify needed

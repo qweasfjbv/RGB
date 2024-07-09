@@ -176,12 +176,15 @@ public class BoxController : NetworkBehaviour
     }
 
 
-    private bool _spacePressed = false;
+    private KeyCode _pressedKeyCode = KeyCode.None;
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        foreach (KeyCode key in arrowKeys)
         {
-            _spacePressed = true;
+            if (Input.GetKey(key))
+            {
+                _pressedKeyCode = key; return;
+            }
         }
     }
 
@@ -207,14 +210,14 @@ public class BoxController : NetworkBehaviour
                 isSynced = true;
             }
 
-            if (_spacePressed)
+            if (_pressedKeyCode != KeyCode.None)
             {
                 isSynced = false;
-                RPC_GetKeyInput(KeyCode.UpArrow);
+                RPC_GetKeyInput(_pressedKeyCode);
             }
         }
         
-        _spacePressed = false;
+        _pressedKeyCode = KeyCode.None;
 
     }
 
@@ -254,7 +257,6 @@ public class BoxController : NetworkBehaviour
                 forwardDir = BoxDir.RIGHT;
                 break;
             case var _ when tmpC.Equals(ColorConstants.ORANGE):
-                Debug.Log("ORANGE : " + ColorConstants.ORANGE);
                 forwardDir = BoxDir.BACK;
                 break;
             case var _ when tmpC.Equals(ColorConstants.GREEN):
@@ -360,7 +362,6 @@ public class BoxController : NetworkBehaviour
                 tmp = new Vector2Int(0, -1); break;
         }
 
-        /*
         MapGrid mForGrid = MapGenerator.Instance.GetMapGrid(boxPosition + tmp);
         tmp *= jDis;
 
@@ -372,16 +373,17 @@ public class BoxController : NetworkBehaviour
         {
             if (mGrid == null) // null -> fall
             {
+                Debug.Log("mGrid is null");
                 MoveBoxPos(key, jDis);
                 StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
             }
 
-            if (mGrid.Gridinfo.Height >= boxHeight + 2) { 
+            if (mGrid.NetworkedGridInfo.Height >= boxHeight + 2) { 
                 StartCoroutine(JumpBlockCoroutine(jumpDuration));
                 return;
             }
 
-            if (mGrid.Gridinfo.Height == boxHeight + 1 && hDis <= 0)
+            if (mGrid.NetworkedGridInfo.Height == boxHeight + 1 && hDis <= 0)
             {
                 StartCoroutine(JumpBlockCoroutine(jumpDuration));
                 return;
@@ -389,7 +391,7 @@ public class BoxController : NetworkBehaviour
         }
         else
         {
-            if (mForGrid!= null &&mForGrid.Gridinfo.Height >= boxHeight + 1)
+            if (mForGrid!= null &&mForGrid.NetworkedGridInfo.Height >= boxHeight + 1)
             {
                 StartCoroutine(JumpBlockCoroutine(jumpDuration));
                 return;
@@ -397,16 +399,16 @@ public class BoxController : NetworkBehaviour
 
             if (mGrid == null) // null -> fall
             {
+                Debug.Log("mGrid is null");
                 MoveBoxPos(key, jDis);
                 StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
             }
-            else if (mGrid.Gridinfo.Height >= boxHeight + 1)
+            else if (mGrid.NetworkedGridInfo.Height >= boxHeight + 1)
             {
-                StartCoroutine(JumpOneBlockCoroutine(jumpDuration, mForGrid.Gridinfo.Pos));
+                StartCoroutine(JumpOneBlockCoroutine(jumpDuration, mForGrid.NetworkedGridInfo.Pos));
                 return;
             }
         }
-        */
 
         switch (key)
         {
@@ -421,21 +423,21 @@ public class BoxController : NetworkBehaviour
         }
 
         MoveBoxPos(key, jDis);
-        /*
 
-        if (mGrid.Gridinfo.Height == boxHeight + 1 && hDis == 1) // JumpUp or Block
+        if (mGrid.NetworkedGridInfo.Height == boxHeight + 1 && hDis == 1) // JumpUp or Block
         {
+            jumpTarget.y += Constant.GRID_SIZE;
             StartCoroutine(JumpUpDownCoroutine(jumpDuration, true));
         }
-        else if (mGrid.Gridinfo.Height == boxHeight - 1)
+        else if (mGrid.NetworkedGridInfo.Height == boxHeight - 1)
         {
+            jumpTarget.y -= Constant.GRID_SIZE;
             StartCoroutine(JumpUpDownCoroutine(jumpDuration, false));
         }
         else
         { 
             StartCoroutine(JumpCoroutine(jumpDuration));
         }
-        */
 
         StartCoroutine(JumpCoroutine(jumpDuration));
 
@@ -517,7 +519,7 @@ public class BoxController : NetworkBehaviour
             yield return null;
         }
 
-        transform.localScale = Vector3.one;
+        isScaleSynced = false;
 
 
         elapsedTime = 0f;
@@ -567,8 +569,7 @@ public class BoxController : NetworkBehaviour
             yield return null;
         }
 
-        transform.localScale = Vector3.one;
-
+        isScaleSynced = false;
 
         elapsedTime = 0f;
         while (jumpProgress < 0.2f)
@@ -636,7 +637,7 @@ public class BoxController : NetworkBehaviour
             yield return null;
         }
 
-        transform.localScale = Vector3.one;
+        isScaleSynced = false;
 
 
         elapsedTime = 0f;
@@ -769,7 +770,7 @@ public class BoxController : NetworkBehaviour
             yield return null;
         }
 
-        transform.localScale = Vector3.one;
+        isScaleSynced = false;
         transform.localPosition = originalPosition;
 
         if (MapGenerator.Instance.CheckMapClear() && GetComponent<BoxColorController>().CheckBoxClear())
