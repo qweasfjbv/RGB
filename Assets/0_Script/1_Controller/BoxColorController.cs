@@ -1,7 +1,9 @@
 using Fusion;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 
 public class BoxColorController : NetworkBehaviour
 {
@@ -9,6 +11,7 @@ public class BoxColorController : NetworkBehaviour
     private ProBuilderMesh pbMesh;
 
     private Face[] faces;
+    [SerializeField] private List<Texture2D> diceTextures;
 
     [Networked, Capacity(6), UnitySerializeField]
     private NetworkArray<ColorSet> NetworkBoxColorset { get; } =
@@ -46,14 +49,40 @@ public class BoxColorController : NetworkBehaviour
         _ => -1
     };
 
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    private void RPC_ColorPBMesh(int idx, Color color)
+
+    #region Face Color to Dots
+
+    private void ApplyTextureToFace(Face face, Texture2D texture)
     {
-        Debug.Log("COLOR CHAGNE");
-        pbMesh.SetFaceColor(faces[idx], color);
+        Debug.Log("HELLO!");
+        Material material = new Material(Shader.Find("Standard"));
+        material.mainTexture = texture;
+        material.mainTextureScale = new Vector2(2f, 2f);
+        material.mainTextureOffset = new Vector2(0.5f, 0.5f);
+
+        pbMesh.SetMaterial(new List<Face> { face }, material);
         pbMesh.ToMesh();
         pbMesh.Refresh();
     }
+    #endregion
+
+    private void ColorPBMesh(int idx, Color color)
+    {
+        ColorSet cSet = new ColorSet(color);
+        if (GameManagerEx.Instance.IsColorBlind)
+        {
+            ApplyTextureToFace(faces[idx], diceTextures[cSet.GetColorIdx()]);
+        }
+        else
+        {
+
+            pbMesh.SetFaceColor(faces[idx], color);
+            pbMesh.ToMesh();
+            pbMesh.Refresh();
+        }
+    }
+
+
 
     public void SetBoxColor(BoxDir dir, Color color)
     {
@@ -63,7 +92,7 @@ public class BoxColorController : NetworkBehaviour
         cSet.SetColor(color);
         NetworkBoxColorset.Set((int)dir, cSet);
 
-        RPC_ColorPBMesh(idx, color);
+        ColorPBMesh(idx, color);
     }
 
 
@@ -76,14 +105,30 @@ public class BoxColorController : NetworkBehaviour
         NetworkBoxColorset.Set((int)dir, cSet);
 
 
-        RPC_ColorPBMesh(idx, ColorConstants.WHITE);
+        ColorPBMesh(idx, ColorConstants.WHITE);
 
     }
 
     public void StampColor(BoxDir dir)
     {
-        if (!Runner.IsSharedModeMasterClient) return;
+        if (HasStateAuthority)
+        {
+            ProcessStampColor(dir);
+        }
+        else
+        {
+            RPC_RequestStampColor(dir);
+        }
+    }
 
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_RequestStampColor(BoxDir dir)
+    {
+        ProcessStampColor(dir);
+    }
+
+    private void ProcessStampColor(BoxDir dir)
+    {
         ColorSet gridC = MapGenerator.Instance.GetGridColor(boxController.GetBoxPos());
         ColorSet boxC = NetworkBoxColorset[(int)dir];
 
@@ -105,7 +150,18 @@ public class BoxColorController : NetworkBehaviour
         SetBoxColor(dir, boxC.GetColor());
         MapGenerator.Instance.SetGridColor(boxController.GetBoxPos(), gridC.GetColor());
 
+        // 동기화: 모든 클라이언트에게 변경사항을 알림
+        RPC_SyncColor(dir, boxC, boxController.GetBoxPos(), gridC);
     }
+
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_SyncColor(BoxDir dir, ColorSet boxColor, Vector2Int boxPos, ColorSet gridColor)
+    {
+        SetBoxColor(dir, boxColor.GetColor());
+        MapGenerator.Instance.SetGridColor(boxPos, gridColor.GetColor());
+    }
+
 
     public Color GetBlendColorWithFloor()
     {

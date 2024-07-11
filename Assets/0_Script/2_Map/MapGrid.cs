@@ -92,21 +92,21 @@ public struct ColorSet : INetworkStruct
         Color color = GetColor();
         switch (color)
         {
-            case var _ when color.Equals(ColorConstants.RED):
-                return 0;
-            case var _ when color.Equals(ColorConstants.BLUE):
-                return 1;
-            case var _ when color.Equals(ColorConstants.YELLOW):
-                return 2;
-            case var _ when color.Equals(ColorConstants.GREEN):
-                return 3;
-            case var _ when color.Equals(ColorConstants.ORANGE):
-                return 4;
-            case var _ when color.Equals(ColorConstants.PURPLE):
-                return 5;
-            case var _ when color.Equals(ColorConstants.BLACK):
-                return 6;
             case var _ when color.Equals(ColorConstants.WHITE):
+                return 0;
+            case var _ when color.Equals(ColorConstants.RED):
+                return 1;
+            case var _ when color.Equals(ColorConstants.BLUE):
+                return 2;
+            case var _ when color.Equals(ColorConstants.YELLOW):
+                return 3;
+            case var _ when color.Equals(ColorConstants.GREEN):
+                return 4;
+            case var _ when color.Equals(ColorConstants.ORANGE):
+                return 5;
+            case var _ when color.Equals(ColorConstants.PURPLE):
+                return 6;
+            case var _ when color.Equals(ColorConstants.BLACK):
                 return 7;
             default:
                 return -1;
@@ -218,11 +218,6 @@ public class MapGrid : NetworkBehaviour
     public void RPC_UpdateGridVisuals()
     {
 
-        if (NetworkedGridInfo.Pos.x == 1 && NetworkedGridInfo.Pos.y == 0)
-        {
-            Debug.Log(NetworkedGridInfo.colorset.ToString());
-        }
-         
         GetComponent<Renderer>().material.color = NetworkedGridInfo.colorset.GetColor();
           switch (NetworkedGridInfo.State)
         {

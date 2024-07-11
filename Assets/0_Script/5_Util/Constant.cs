@@ -23,7 +23,7 @@ public static class ColorConstants {
     public static readonly Color BLACK = new Color(20f / 255, 20f / 255, 20f / 255, 1f);
     public static readonly Color WHITE = new Color(1f, 1f, 1f, 1f);
 
-    public static Color[] COLORARR = new Color[]{ RED, BLUE, YELLOW, GREEN, ORANGE, PURPLE, BLACK, WHITE };
+    public static Color[] COLORARR = new Color[]{ WHITE, RED, BLUE, YELLOW, GREEN, ORANGE, PURPLE, BLACK };
 
     // Pastel Tone colors
     public static readonly Color P_RED = new Color(255f / 255, 150f / 255, 150f / 255, 1f);
@@ -35,6 +35,6 @@ public static class ColorConstants {
     public static readonly Color P_BLACK = new Color(20f / 255, 20f / 255, 20f / 255, 1f);
     public static readonly Color P_WHITE = new Color(1f, 1f, 1f, 1f);
 
-    public static Color[] PCOLORARR = new Color[] { P_RED, P_BLUE, P_YELLOW, P_GREEN, P_ORANGE, P_PURPLE, P_BLACK, P_WHITE };
+    public static Color[] PCOLORARR = new Color[] { P_WHITE, P_RED, P_BLUE, P_YELLOW, P_GREEN, P_ORANGE, P_PURPLE, P_BLACK };
 
 }

@@ -224,7 +224,6 @@ public class BoxController : NetworkBehaviour
     int jDis = 1;
     int hDis = 0; 
     
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_GetKeyInput(KeyCode key)
     {
         // Key Block during Jumping
@@ -533,8 +532,12 @@ public class BoxController : NetworkBehaviour
         {
             jumpProgress = elapsedTime / duration;
             // Calculate parabola
-            if (up) height = Mathf.Sin(5f/6*Mathf.PI * jumpProgress) * jumpHeight * 2;
-            else height = (Mathf.Sin(1f/6 * Mathf.PI +  5f / 6 * Mathf.PI * jumpProgress) - 0.5f) * jumpHeight * 2;
+            if (up) height = Mathf.Sin(5f / 6 * Mathf.PI * jumpProgress) * jumpHeight * 2;
+            else
+            {
+                height = (Mathf.Sin(1f / 6 * Mathf.PI + 5f / 6 * Mathf.PI * jumpProgress) - 0.5f);
+                if (height >= 0) height *= 2;
+            }
             transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
             transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
 
@@ -717,8 +720,16 @@ public class BoxController : NetworkBehaviour
             yield return null;
         }
 
+
+        RPC_GameFail();
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_GameFail()
+    {
         GameManagerEx.Instance.GameFail();
     }
+
 
     // Stamp!
     private IEnumerator StampCoroutine(float duration)

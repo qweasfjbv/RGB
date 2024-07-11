@@ -1,10 +1,11 @@
 using DG.Tweening;
+using Fusion;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManagerEx : MonoBehaviour
+public class GameManagerEx : NetworkBehaviour
 {
 
     #region Singleton
@@ -31,17 +32,24 @@ public class GameManagerEx : MonoBehaviour
     }
     #endregion
 
+
     private int currentLv = -1;
+    public int CurLv { get => currentLv; }
 
     [Header("Scene Conversion Effect")]
     [SerializeField] private float duration;
     [SerializeField] private RectTransform shade;
 
+
+    [SerializeField] public bool IsColorBlind;
+
     private void Start()
     {
         shade.gameObject.SetActive(false);
         SoundManager.Instance.ChangeBGM(BGMClip.MAIN_BGM);
+        IsColorBlind = false;
     }
+
 
     public void GameStart(int lvId)
     {
@@ -74,7 +82,7 @@ public class GameManagerEx : MonoBehaviour
             // TODO : DataManager에 접근 필요
             StartCoroutine(GameRestartCoroutine(++currentLv));
         }
-
+        
     }
 
 
@@ -113,7 +121,7 @@ public class GameManagerEx : MonoBehaviour
 
         MapGenerator.Instance.EraseAllObject();
         FinSceneShade();
-        //MapGenerator.Instance.GenerateMap(idx);
+
     }
     // Scene Convert Eff
     

@@ -1262,6 +1262,7 @@ MonoBehaviour:
   PlayerPrefab: {fileID: 1466752397469436484, guid: 12656aede08a1544bb47ef42b5f2640d,
     type: 3}
   tmp: {fileID: 0}
+  idx: 0
 --- !u!850595691 &1637289734
 LightingSettings:
   m_ObjectHideFlags: 0

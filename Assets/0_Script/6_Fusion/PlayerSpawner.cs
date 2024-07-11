@@ -2,21 +2,24 @@ using Fusion;
 using TMPro;
 using UnityEngine;
 
-public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
-{
+public class PlayerSpawner : SimulationBehaviour, IPlayerJoined {
+
+
     public GameObject PlayerPrefab;
 
-    public GameObject tmp;
+    public NetworkObject currentPlayer;
+    public int idx;
+
     public void PlayerJoined(PlayerRef player)
     {
         if (player == Runner.LocalPlayer)
         {
-            tmp = Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity).gameObject;
-            tmp.GetComponent<BoxController>().SetBoxController(new Vector2Int(0, 0), 0);
-
             if (Runner.IsSharedModeMasterClient) CreateMap();
-        }
 
+            currentPlayer = Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            currentPlayer.GetComponent<BoxController>().SetBoxController(new Vector2Int(0, 0), 0);
+
+        }
     }
 
     private void CreateMap()
@@ -24,5 +27,22 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
         MapGenerator.Instance.GenerateMap(1, GetComponent<NetworkRunner>());
     }
 
+    public void MapRestart()
+    {
+        if (currentPlayer != null)
+        {
+            Debug.Log(currentPlayer.name);
+            Runner.Despawn(currentPlayer);
+        }
+
+        if (Runner.IsSharedModeMasterClient) 
+            CreateMap();
+
+        currentPlayer = Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        currentPlayer.GetComponent<BoxController>().SetBoxController(new Vector2Int(0, 0), 0);
+
+    }
+
 
 }
+

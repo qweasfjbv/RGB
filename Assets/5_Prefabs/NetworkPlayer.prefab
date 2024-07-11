@@ -524,6 +524,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3daa7756867a004aa84fe41349d770b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  diceTextures:
+  - {fileID: 2800000, guid: e60b753dd5933a241bc314e39cdd0040, type: 3}
+  - {fileID: 2800000, guid: d09ed08703b5c71498cf8088a91c59fb, type: 3}
+  - {fileID: 2800000, guid: bb9c76b27e706404a813a734b03ca0a5, type: 3}
+  - {fileID: 2800000, guid: 4985531444f4ad04d94b40eee8198392, type: 3}
+  - {fileID: 2800000, guid: 16e3712089657e345b20f97a9a681180, type: 3}
+  - {fileID: 2800000, guid: 7c5a66e35d71514429389a84cb5f6a4b, type: 3}
+  - {fileID: 2800000, guid: b6132c125d803ab4e867164e2e82fb5c, type: 3}
+  _NetworkBoxColorset:
+  - r: 0
+    y: 0
+    b: 0
+  - r: 0
+    y: 0
+    b: 0
+  - r: 0
+    y: 0
+    b: 0
+  - r: 0
+    y: 0
+    b: 0
+  - r: 0
+    y: 0
+    b: 0
+  - r: 0
+    y: 0
+    b: 0
 --- !u!114 &5771594630038231016
 MonoBehaviour:
   m_ObjectHideFlags: 0
