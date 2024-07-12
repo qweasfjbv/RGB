@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class MapGenerator : NetworkBehaviour
+public class MapGenerator : NetworkBehaviour, ISpawned
 {
 
     #region Singleton
@@ -67,6 +67,11 @@ public class MapGenerator : NetworkBehaviour
     [Networked]
     public int NetworkedCurMapWidth { get; set; }
 
+    public override void Spawned()
+    {
+        UpdateMapGrids();
+    }
+
     public void SetGridColor(Vector2Int pos, Color color, float duration = 0.4f)
     {
         if (!HasStateAuthority) return;
@@ -77,8 +82,6 @@ public class MapGenerator : NetworkBehaviour
         tGridInfo.colorset = tColorSet;
         NetworkedMapGrids[pos].SetGridInfo(tGridInfo);
 
-        NetworkedMapGrids[pos].GetComponent<MeshRenderer>().material.DOColor(color, duration);
-
     }
 
     public MapGrid GetMapGrid(Vector2Int pos)
@@ -87,6 +90,20 @@ public class MapGenerator : NetworkBehaviour
         return NetworkedMapGrids[pos];
     }
 
+    public void UpdateMapGrids()
+    {
+        for (int i = 0; i < NetworkedCurMapWidth; i++)
+        {
+            for (int j = 0; j < NetworkedCurMapWidth; j++)
+            {
+                var tmpGrid = NetworkedMapGrids[new Vector2Int(i, j)];
+                if (tmpGrid != null)
+                {
+                    tmpGrid.RPC_UpdateGridVisuals();
+                }
+            }
+        }
+    }
 
     public ColorSet GetGridColor(Vector2Int pos)
     {

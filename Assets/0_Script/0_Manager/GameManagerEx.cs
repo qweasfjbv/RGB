@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManagerEx : NetworkBehaviour
+public class GameManagerEx : NetworkBehaviour, ISpawned
 {
 
     #region Singleton
@@ -31,6 +31,7 @@ public class GameManagerEx : NetworkBehaviour
         }
     }
     #endregion
+
 
 
     private int currentLv = -1;

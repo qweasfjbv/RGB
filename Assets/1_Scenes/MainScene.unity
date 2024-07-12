@@ -1925,8 +1925,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05e925126a39e994a8c427242f227850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerPrefab: {fileID: 1466752397469436484, guid: 12656aede08a1544bb47ef42b5f2640d,
+    type: 3}
+  currentPlayer: {fileID: 0}
+  idx: 0
   duration: 0.7
   shade: {fileID: 1086633310}
+  IsColorBlind: 0
 --- !u!224 &1175433194
 RectTransform:
   m_ObjectHideFlags: 0

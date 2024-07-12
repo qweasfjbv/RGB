@@ -30,14 +30,19 @@ public class ResourceManager
 {
 
     private string mapInfoPath = "JsonData/MapData";
+    private string diceTexturesPath = "Texture";
 
     // json->리소스 받아오기, 배열에 저장
     private MapInfos mapInfos = new MapInfos();
-
+    private Texture2D[] diceTextures;
 
     public void Init()
     {
         mapInfos = JsonUtility.FromJson<MapInfos>(Resources.Load<TextAsset>(mapInfoPath).text);
+
+        diceTextures =  Resources.LoadAll<Texture2D>(diceTexturesPath);
+
+        
     }
 
     public MapInfo GetMapInfo(int idx)
@@ -48,5 +53,10 @@ public class ResourceManager
     public int GetMapCount()
     {
         return mapInfos.mapInfo.Length;
+    }
+
+    public Texture2D GetDiceTexture(int idx)
+    {
+        return diceTextures[idx];   
     }
 }

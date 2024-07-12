@@ -11,7 +11,6 @@ public class BoxColorController : NetworkBehaviour
     private ProBuilderMesh pbMesh;
 
     private Face[] faces;
-    [SerializeField] private List<Texture2D> diceTextures;
 
     [Networked, Capacity(6), UnitySerializeField]
     private NetworkArray<ColorSet> NetworkBoxColorset { get; } =
@@ -54,7 +53,6 @@ public class BoxColorController : NetworkBehaviour
 
     private void ApplyTextureToFace(Face face, Texture2D texture)
     {
-        Debug.Log("HELLO!");
         Material material = new Material(Shader.Find("Standard"));
         material.mainTexture = texture;
         material.mainTextureScale = new Vector2(2f, 2f);
@@ -71,11 +69,10 @@ public class BoxColorController : NetworkBehaviour
         ColorSet cSet = new ColorSet(color);
         if (GameManagerEx.Instance.IsColorBlind)
         {
-            ApplyTextureToFace(faces[idx], diceTextures[cSet.GetColorIdx()]);
+            ApplyTextureToFace(faces[idx], Managers.Resource.GetDiceTexture(cSet.GetColorIdx()));
         }
         else
         {
-
             pbMesh.SetFaceColor(faces[idx], color);
             pbMesh.ToMesh();
             pbMesh.Refresh();

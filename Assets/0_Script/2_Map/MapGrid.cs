@@ -3,6 +3,7 @@ using DG.Tweening;
 using System;
 using Fusion;
 using Unity.VisualScripting;
+using UnityEngine.ProBuilder.MeshOperations;
 
 // Convert RGB to RYB
 [Serializable]
@@ -205,6 +206,9 @@ public class MapGrid : NetworkBehaviour
     [SerializeField, Networked]
     public NetworkGridInfo NetworkedGridInfo { get; set; }
 
+    [SerializeField]
+
+
     // Process Grid According to GridState
     public void InitMapGrid(NetworkGridInfo info)
     {
@@ -217,9 +221,15 @@ public class MapGrid : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_UpdateGridVisuals()
     {
-
-        GetComponent<Renderer>().material.color = NetworkedGridInfo.colorset.GetColor();
-          switch (NetworkedGridInfo.State)
+        if (GameManagerEx.Instance.IsColorBlind)
+        {
+            GetComponent<Renderer>().material.mainTexture = Managers.Resource.GetDiceTexture(NetworkedGridInfo.colorset.GetColorIdx());
+        }
+        else
+        {
+            GetComponent<Renderer>().material.color = NetworkedGridInfo.colorset.GetColor();
+        }
+        switch (NetworkedGridInfo.State)
         {
             case GridState.NONE: break;
             case GridState.START:
@@ -230,15 +240,10 @@ public class MapGrid : NetworkBehaviour
         }
     }
 
-    public override void FixedUpdateNetwork()
-    {
-        if (!Runner.IsSharedModeMasterClient) return;
-
-        RPC_UpdateGridVisuals();
-    }
-
     public void SetGridInfo(NetworkGridInfo info)
     {
         NetworkedGridInfo = info;
+
+        RPC_UpdateGridVisuals();
     }
 }
