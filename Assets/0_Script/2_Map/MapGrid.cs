@@ -202,10 +202,11 @@ public struct NetworkGridInfo : INetworkStruct{
 }
 
 
-public class MapGrid : NetworkBehaviour
+public class MapGrid : NetworkBehaviour, IAfterSpawned
 {
     [SerializeField, Networked]
     public NetworkGridInfo NetworkedGridInfo { get; set; }
+
 
     // Process Grid According to GridState
     public void InitMapGrid(NetworkGridInfo info)
@@ -241,6 +242,11 @@ public class MapGrid : NetworkBehaviour
     {
         NetworkedGridInfo = info;
 
+        RPC_UpdateGridVisuals();
+    }
+
+    void IAfterSpawned.AfterSpawned()
+    {
         RPC_UpdateGridVisuals();
     }
 }
