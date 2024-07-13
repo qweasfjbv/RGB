@@ -32,6 +32,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     }
     #endregion
 
+    public PlayerSpawner spawner;
 
 
     private int currentLv = -1;
@@ -120,7 +121,11 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     {
         yield return StartCoroutine(RevStartSceneShade());
 
-        MapGenerator.Instance.EraseAllObject();
+        MapGenerator.Instance.EraseAllObject(spawner.Runner);
+        // TODO : RESTART MAP;
+
+        spawner.MapRestart();
+
         FinSceneShade();
 
     }

@@ -4,6 +4,7 @@ using System;
 using Fusion;
 using Unity.VisualScripting;
 using UnityEngine.ProBuilder.MeshOperations;
+using System.Collections;
 
 // Convert RGB to RYB
 [Serializable]
@@ -206,21 +207,20 @@ public class MapGrid : NetworkBehaviour
     [SerializeField, Networked]
     public NetworkGridInfo NetworkedGridInfo { get; set; }
 
-    [SerializeField]
-
-
     // Process Grid According to GridState
     public void InitMapGrid(NetworkGridInfo info)
     {
         NetworkedGridInfo = new NetworkGridInfo(info.Pos, info.Height, info.colorset.GetColorIdx(), info.State);
-        transform.position = new Vector3(transform.position.x, NetworkedGridInfo.Height * Constant.GRID_SIZE - transform.localScale.y / 2 - Constant.BOX_SIZE / 2, transform.position.z);
+
         RPC_UpdateGridVisuals();
     }
-
 
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_UpdateGridVisuals()
     {
+        transform.localScale = Vector3.one * Constant.GRID_SIZE;
+        transform.position = new Vector3(transform.position.x, NetworkedGridInfo.Height * Constant.GRID_SIZE - transform.localScale.y / 2 - Constant.BOX_SIZE / 2, transform.position.z);
+
         if (GameManagerEx.Instance.IsColorBlind)
         {
             GetComponent<Renderer>().material.mainTexture = Managers.Resource.GetDiceTexture(NetworkedGridInfo.colorset.GetColorIdx());
@@ -231,9 +231,6 @@ public class MapGrid : NetworkBehaviour
         }
         switch (NetworkedGridInfo.State)
         {
-            case GridState.NONE: break;
-            case GridState.START:
-                break;
             case GridState.CAMERA:
                 Camera.main.GetComponent<CameraController>().SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
                 break;

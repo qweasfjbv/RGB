@@ -3,7 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class PlayerSpawner : SimulationBehaviour, IPlayerJoined {
+public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
 
 
     public void PlayerJoined(PlayerRef player)
@@ -12,7 +12,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined {
         {
 
             if (Runner.IsSharedModeMasterClient) CreateMap();
-
+            GameManagerEx.Instance.spawner = this;
             PlayerSpawn();
         }
     }
@@ -25,9 +25,9 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined {
 
     public void MapRestart()
     {
+        GameManagerEx.Instance.spawner = this;
         if (currentPlayer != null)
         {
-            Debug.Log(currentPlayer.name);
             Runner.Despawn(currentPlayer);
         }
 

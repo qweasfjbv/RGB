@@ -1,11 +1,7 @@
 using DG.Tweening;
 using Fusion;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class MapGenerator : NetworkBehaviour, ISpawned
 {
@@ -150,22 +146,21 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         for (int i = 0; i < mapArrs.Count; i++)
         {
             grid = mapArrs[i];
-            NetworkedMapGrids.Set(new Vector2Int(grid.Pos.y, grid.Pos.x), runner.Spawn(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE, Quaternion.identity).GetComponent<MapGrid>());
-            NetworkedMapGrids[new Vector2Int(grid.Pos.y, grid.Pos.x)].transform.localScale = Vector3.one * Constant.GRID_SIZE;
-            NetworkedMapGrids[new Vector2Int(grid.Pos.y, grid.Pos.x)].InitMapGrid(grid);
+            var sp = runner.Spawn(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE, Quaternion.identity,
+               inputAuthority: null,
+               (runner, NO) => NO.GetComponent<MapGrid>().InitMapGrid(grid));
+
+            NetworkedMapGrids.Set(new Vector2Int(grid.Pos.y, grid.Pos.x), sp.GetComponent<MapGrid>());
 
         }
 
         NetworkedCurMapWidth = mapResource.width;
-        //curBoxController = Instantiate(boxPrefab).GetComponent<BoxController>();
-
-        // TODO : pos, height modify needed
-        //curBoxController.SetBoxController(new Vector2Int(0, 0), 0);
         return;
     }
 
 
-    public void EraseAllObject()
+
+    public void EraseAllObject(NetworkRunner runner)
     {
         if (isMapMaking) StopCoroutine(gridAppearCoroutine);
 
@@ -177,7 +172,7 @@ public class MapGenerator : NetworkBehaviour, ISpawned
             for (int j = 0; j < NetworkedCurMapWidth; j++)
             {
                 if (NetworkedMapGrids.TryGet(new Vector2Int(i, j), out var value)){
-                    Destroy(value.gameObject);
+                    runner.Despawn(value.gameObject. GetComponent<NetworkObject>());
                 }
             }
         }
