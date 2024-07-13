@@ -233,7 +233,7 @@ public class MapGrid : NetworkBehaviour, IAfterSpawned
         switch (NetworkedGridInfo.State)
         {
             case GridState.CAMERA:
-                Camera.main.GetComponent<CameraController>().SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
+                CameraController.Instance.SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
                 break;
         }
     }

@@ -13,6 +13,34 @@ public class CameraController : MonoBehaviour
     private Vector3 camTarget;
 
 
+    #region Singleton
+    private static CameraController instance = null;
+
+    void Awake()
+    {
+        if (null == instance)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+    }
+
+    public static CameraController Instance
+    {
+        get
+        {
+            if (null == instance) return null;
+            return instance;
+        }
+    }
+
+    #endregion
+
 
     private void Start()
     {
@@ -42,7 +70,7 @@ public class CameraController : MonoBehaviour
 
 
     // Calc Spherical to orthogonal coordinate
-    private Vector3 CalcOrthoPos(Vector3 target)
+    private Vector3 CalcOrthoPos()
     {
         float hAngle = Mathf.Deg2Rad *horizontalRotate;
         float vAngle = Mathf.Deg2Rad * verticalRotate;
@@ -56,9 +84,8 @@ public class CameraController : MonoBehaviour
 
     public void SetQuaterView(Vector3 target)
     {
-
         camTarget = target;
-        transform.position = target + CalcOrthoPos(target);
+        transform.position = target + CalcOrthoPos();
         transform.LookAt(target);
 
         Quaternion cameraRotation = Quaternion.Euler(new Vector3(verticalRotate, horizontalRotate, 0f));
@@ -66,8 +93,10 @@ public class CameraController : MonoBehaviour
 
     }
 
-    private void Update()
+    public void UnsetCamera()
     {
-        SetQuaterView(camTarget);
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.identity;
     }
+
 }

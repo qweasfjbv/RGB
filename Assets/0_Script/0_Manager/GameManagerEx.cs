@@ -52,6 +52,21 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         IsColorBlind = false;
     }
 
+    private void EraseNOs()
+    {
+        var runners = FindObjectsOfType<NetworkRunner>();
+        foreach (var runner in runners)
+        {
+            Destroy(runner.gameObject);
+        }
+
+        var linkers = FindObjectsOfType<FusionBootstrap>();
+        foreach (var runner in runners)
+        {
+            Destroy(runner.gameObject);
+        }
+
+    }
 
     public void GameStart(int lvId)
     {
@@ -113,8 +128,10 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         yield return async;
         SoundManager.Instance.ChangeBGM(BGMClip.MAIN_BGM);
 
+        CameraController.Instance.UnsetCamera();
+        EraseNOs();
         RevFinSceneShade();
-        
+
     }
 
     public IEnumerator GameRestartCoroutine(int idx)
