@@ -10,10 +10,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
     {
         if (player == Runner.LocalPlayer)
         {
-
-            if (Runner.IsSharedModeMasterClient) CreateMap();
-            GameManagerEx.Instance.spawner = this;
-            PlayerSpawn();
+            MapRestart();
         }
     }
 
@@ -26,6 +23,8 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
     public void MapRestart()
     {
         GameManagerEx.Instance.spawner = this;
+        MapGenerator.Instance.SetStageName(GameManagerEx.Instance.CurLv);
+
         if (currentPlayer != null)
         {
             Runner.Despawn(currentPlayer);
@@ -33,8 +32,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
 
         if (Runner.IsSharedModeMasterClient)
             CreateMap();
-        currentPlayer = Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        currentPlayer.GetComponent<BoxController>().SetBoxController(new Vector2Int(0, 0), 0);
+        PlayerSpawn();
 
     }
 
@@ -48,7 +46,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
 
     public void CreateMap()
     {
-        MapGenerator.Instance.GenerateMap(1, Runner);
+        MapGenerator.Instance.GenerateMap(GameManagerEx.Instance.CurLv, Runner);
     }
 
 }

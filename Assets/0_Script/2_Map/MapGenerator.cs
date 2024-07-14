@@ -123,9 +123,13 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         return true;
     }
 
-    public void GenerateMap(int n, NetworkRunner runner)
+    public void SetStageName(int n)
     {
         gameSceneUI.UpdateStageText(n);
+    }
+
+    public void GenerateMap(int n, NetworkRunner runner)
+    {
         if (n == 1)
             RenderSettings.skybox = skyboxMaterials[1];
         else RenderSettings.skybox = skyboxMaterials[0];

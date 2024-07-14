@@ -114,7 +114,6 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         SoundManager.Instance.ChangeBGM(BGMClip.GAME_BGM);
 
         FinSceneShade();
-        //MapGenerator.Instance.GenerateMap(idx);
 
     }
 
@@ -126,6 +125,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
         AsyncOperation async = SceneManager.LoadSceneAsync(Constant.MAIN_SCENE);
         yield return async;
+
         SoundManager.Instance.ChangeBGM(BGMClip.MAIN_BGM);
 
         CameraController.Instance.UnsetCamera();
