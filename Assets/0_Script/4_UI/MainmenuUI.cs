@@ -60,12 +60,12 @@ public class MainmenuUI : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
-        GameManagerEx.Instance.GameStart(currentSelectedIdx);
+        GameManagerEx.Instance.GameStart(curGameType, currentSelectedIdx);
     }
 
     private void OnStageRightButtonClicked()
     {
-        if (Managers.Resource.GetMapCount()-1 == currentSelectedIdx) return;
+        if (Managers.Resource.GetMapCount(curGameType)-1 == currentSelectedIdx) return;
         currentSelectedIdx++;
         UpdateStageTMP();
     }
@@ -102,7 +102,9 @@ public class MainmenuUI : MonoBehaviour
         GameModeTMPs[nextMode].GetComponent<RectTransform>().DOAnchorPosY(0, modeFadeDuration);
 
         curGameType = (GameType)nextMode;
+        GameManagerEx.Instance.CurGameType = curGameType;
     }
+
     private void OnModeLeftButtonClicked()
     {
         currentSelectedIdx = 1;
@@ -122,7 +124,7 @@ public class MainmenuUI : MonoBehaviour
         GameModeTMPs[nextMode].GetComponent<RectTransform>().DOAnchorPosY(0, modeFadeDuration);
 
         curGameType = (GameType)nextMode;
-
+        GameManagerEx.Instance.CurGameType = curGameType;
     }
 
 }

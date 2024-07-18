@@ -29,30 +29,54 @@ public class GridInfoEx
 public class ResourceManager
 {
 
-    private string mapInfoPath = "JsonData/MapData";
+    private string tutorialMapInfoPath = "JsonData/TutoMapData";
+    private string stageMapInfoPath = "JsonData/StageMapData";
+    private string multiMapInfoPath = "JsonData/MultiMapData";
     private string diceTexturesPath = "Texture";
 
     // json->리소스 받아오기, 배열에 저장
-    private MapInfos mapInfos = new MapInfos();
+    private MapInfos stageMapInfos = new MapInfos();
+    private MapInfos tutoMapInfos = new MapInfos();
+    private MapInfos multiMapInfos = new MapInfos();
     private Texture2D[] diceTextures;
 
     public void Init()
     {
-        mapInfos = JsonUtility.FromJson<MapInfos>(Resources.Load<TextAsset>(mapInfoPath).text);
+        stageMapInfos = JsonUtility.FromJson<MapInfos>(Resources.Load<TextAsset>(stageMapInfoPath).text);
+        tutoMapInfos = JsonUtility.FromJson<MapInfos>(Resources.Load<TextAsset>(tutorialMapInfoPath).text);
+        multiMapInfos = JsonUtility.FromJson<MapInfos>(Resources.Load<TextAsset>(multiMapInfoPath).text);
 
         diceTextures =  Resources.LoadAll<Texture2D>(diceTexturesPath);
 
         
     }
 
-    public MapInfo GetMapInfo(int idx)
+    public MapInfo GetMapInfo(GameType type, int idx)
     {
-        return mapInfos.mapInfo[idx];
+        switch (type)
+        {
+            case GameType.TUTO:
+                return tutoMapInfos.mapInfo[idx];
+            case GameType.STAGE:
+                return stageMapInfos.mapInfo[idx];
+            case GameType.MULTI:
+                return multiMapInfos.mapInfo[idx];
+        }
+
+        return null;
     }
 
-    public int GetMapCount()
+    public int GetMapCount(GameType type)
     {
-        return mapInfos.mapInfo.Length;
+        switch (type) {
+            case GameType.TUTO:
+                return tutoMapInfos.mapInfo.Length;
+            case GameType.STAGE:
+                return stageMapInfos.mapInfo.Length;
+            case GameType.MULTI:
+                return multiMapInfos.mapInfo.Length;
+        }
+        return -1;
     }
 
     public Texture2D GetDiceTexture(int idx)

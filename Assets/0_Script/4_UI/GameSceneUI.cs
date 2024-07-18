@@ -22,9 +22,25 @@ public class GameSceneUI : MonoBehaviour
         RetryButton.onClick.AddListener(() => GameManagerEx.Instance.GameFail());
     }
 
-    public void UpdateStageText(int idx)
+    public void UpdateStageText(GameType type, int idx)
     {
-        stageText.text = "Stage " + idx;
+        switch (type)
+        {
+            case GameType.TUTO:
+                stageText.text = "Tutorial " + idx;
+                break;
+            case GameType.STAGE:
+                stageText.text = "Stage " + idx;
+                break;
+            case GameType.MULTI:
+                stageText.text = "Multi " + idx;
+                break;
+            default:
+                stageText.text = "ERROR";
+                break;
+        }
+
+
     }
 
 }

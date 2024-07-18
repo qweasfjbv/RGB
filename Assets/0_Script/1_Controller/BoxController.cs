@@ -247,19 +247,19 @@ public class BoxController : NetworkBehaviour
         switch (tmpC)
         {
             case var _ when tmpC.Equals(ColorConstants.RED):
-                jDis = 2;
-                break;
-            case var _ when tmpC.Equals(ColorConstants.BLUE):
-                hDis = 1;
-                break;
-            case var _ when tmpC.Equals(ColorConstants.YELLOW):
                 forwardDir = BoxDir.RIGHT;
                 break;
-            case var _ when tmpC.Equals(ColorConstants.ORANGE):
+            case var _ when tmpC.Equals(ColorConstants.BLUE):
+                forwardDir = BoxDir.LEFT;
+                break;
+            case var _ when tmpC.Equals(ColorConstants.YELLOW):
                 forwardDir = BoxDir.BACK;
                 break;
+            case var _ when tmpC.Equals(ColorConstants.ORANGE):
+                jDis = 2;
+                break;
             case var _ when tmpC.Equals(ColorConstants.GREEN):
-                forwardDir = BoxDir.LEFT;
+                hDis = 1;
                 break;
             case var _ when tmpC.Equals(ColorConstants.PURPLE):
                 jDis = 0; hDis = 0;
@@ -398,7 +398,6 @@ public class BoxController : NetworkBehaviour
 
             if (mGrid == null) // null -> fall
             {
-                Debug.Log("mGrid is null");
                 MoveBoxPos(key, jDis);
                 StartCoroutine(JumpFallCoroutine(jumpDuration)); return;
             }
@@ -451,7 +450,6 @@ public class BoxController : NetworkBehaviour
     private IEnumerator JumpCoroutine(float duration)
     {
 
-        Debug.Log("jumpcoroutine");
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping = true;
@@ -500,7 +498,6 @@ public class BoxController : NetworkBehaviour
     private IEnumerator JumpUpDownCoroutine(float duration, bool up)
     {
 
-        Debug.Log("JUMPUPDOWN");
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         if (up) boxHeight++;
@@ -558,7 +555,6 @@ public class BoxController : NetworkBehaviour
     // Jump_block by wall
     private IEnumerator JumpBlockCoroutine(float duration)
     {
-        Debug.Log("JUMPBLOCK");
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping = true;

@@ -123,20 +123,21 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         return true;
     }
 
-    public void SetStageName(int n)
+    public void SetStageName(GameType type, int n)
     {
-        gameSceneUI.UpdateStageText(n);
+        gameSceneUI.UpdateStageText(type, n);
     }
 
-    public void GenerateMap(int n, NetworkRunner runner)
+    public void GenerateMap(GameType type,  int n, NetworkRunner runner)
     {
+
         if (n == 1)
             RenderSettings.skybox = skyboxMaterials[1];
         else RenderSettings.skybox = skyboxMaterials[0];
 
         List<NetworkGridInfo> mapArrs = new List<NetworkGridInfo>();
 
-        MapInfo mapResource = Managers.Resource.GetMapInfo(n);
+        MapInfo mapResource = Managers.Resource.GetMapInfo(type, n);
 
 
         foreach (GridInfoEx gi in mapResource.gridInfo) {

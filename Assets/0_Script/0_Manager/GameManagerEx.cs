@@ -35,8 +35,12 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     public PlayerSpawner spawner;
 
 
+
     private int currentLv = -1;
     public int CurLv { get => currentLv; }
+
+    private GameType curGameType;
+    public GameType CurGameType { get => curGameType; set => curGameType = value; }
 
     [Header("Scene Conversion Effect")]
     [SerializeField] private float duration;
@@ -68,7 +72,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     }
 
-    public void GameStart(int lvId)
+    public void GameStart(GameType type, int lvId)
     {
         currentLv = lvId;
         StartCoroutine(GameStartCoroutine(lvId));
@@ -90,7 +94,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     public void GameSuccess()
     {
-        if (currentLv == Managers.Resource.GetMapCount())
+        if (currentLv == Managers.Resource.GetMapCount(curGameType))
         {
             // All Clear!
         }
@@ -111,6 +115,11 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         // LoadScene and wait-> MapGenerate
         AsyncOperation async = SceneManager.LoadSceneAsync(Constant.GAME_SCENE);
         yield return async;
+
+        FusionNetworkManager linkers = FindObjectOfType<FusionNetworkManager>();
+        if (curGameType == GameType.MULTI) linkers.StartSharedClient();
+        else linkers.StartSinglePlay();
+
         SoundManager.Instance.ChangeBGM(BGMClip.GAME_BGM);
 
         FinSceneShade();
