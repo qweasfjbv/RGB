@@ -234,7 +234,7 @@
           },
           "height": 0,
           "colorIdx": 0,
-          "state": 2
+          "state": 0
         },
         {
           "pos": {
@@ -277,8 +277,8 @@
     },
 
     {
-      "mapId": 2,
-      "width": 3,
+      "mapId": 4,
+      "width": 5,
       "gridInfo": [
         {
           "pos": {
@@ -286,7 +286,7 @@
             "y": 0
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 1
         },
         {
@@ -295,7 +295,7 @@
             "y": 1
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 5,
           "state": 0
         },
         {
@@ -303,8 +303,26 @@
             "x": 0,
             "y": 2
           },
-          "height": 1,
-          "colorIdx": 7,
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 0,
+            "y": 3
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 0,
+            "y": 4
+          },
+          "height": 0,
+          "colorIdx": 0,
           "state": 0
         },
         {
@@ -313,7 +331,7 @@
             "y": 0
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 0
         },
         {
@@ -322,43 +340,124 @@
             "y": 1
           },
           "height": 0,
-          "colorIdx": 7,
-          "state": 2
+          "colorIdx": 0,
+          "state": 0
         },
         {
           "pos": {
             "x": 1,
             "y": 2
           },
-          "height": 1,
-          "colorIdx": 7,
+          "height": 0,
+          "colorIdx": 0,
           "state": 0
         },
         {
           "pos": {
-            "x": 2,
+            "x": 1,
+            "y": 3
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 1,
+            "y": 4
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 3,
             "y": 0
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 0
         },
         {
           "pos": {
-            "x": 2,
+            "x": 3,
             "y": 1
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 0
         },
         {
           "pos": {
-            "x": 2,
+            "x": 3,
             "y": 2
           },
-          "height": 1,
-          "colorIdx": 7,
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 3,
+            "y": 3
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 3,
+            "y": 4
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 4,
+            "y": 0
+          },
+          "height": 0,
+          "colorIdx": 1,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 4,
+            "y": 1
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 4,
+            "y": 2
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 4,
+            "y": 3
+          },
+          "height": 0,
+          "colorIdx": 0,
+          "state": 0
+        },
+        {
+          "pos": {
+            "x": 4,
+            "y": 4
+          },
+          "height": 0,
+          "colorIdx": 3,
           "state": 0
         }
 
@@ -366,7 +465,7 @@
     },
 
     {
-      "mapId": 2,
+      "mapId": 5,
       "width": 3,
       "gridInfo": [
         {
@@ -375,7 +474,7 @@
             "y": 0
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 1
         },
         {
@@ -384,7 +483,7 @@
             "y": 1
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 2,
           "state": 0
         },
         {
@@ -393,7 +492,7 @@
             "y": 2
           },
           "height": 1,
-          "colorIdx": 7,
+          "colorIdx": 4,
           "state": 0
         },
         {
@@ -402,7 +501,7 @@
             "y": 0
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 0
         },
         {
@@ -411,8 +510,8 @@
             "y": 1
           },
           "height": 0,
-          "colorIdx": 7,
-          "state": 2
+          "colorIdx": 0,
+          "state": 0
         },
         {
           "pos": {
@@ -420,7 +519,7 @@
             "y": 2
           },
           "height": 1,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 0
         },
         {
@@ -429,7 +528,7 @@
             "y": 0
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 0
         },
         {
@@ -438,7 +537,7 @@
             "y": 1
           },
           "height": 0,
-          "colorIdx": 7,
+          "colorIdx": 3,
           "state": 0
         },
         {
@@ -447,7 +546,7 @@
             "y": 2
           },
           "height": 1,
-          "colorIdx": 7,
+          "colorIdx": 0,
           "state": 0
         }
 
@@ -455,7 +554,7 @@
     },
 
     {
-      "mapId": 2,
+      "mapId": 6,
       "width": 3,
       "gridInfo": [
         {

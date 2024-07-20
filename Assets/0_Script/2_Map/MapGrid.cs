@@ -230,12 +230,8 @@ public class MapGrid : NetworkBehaviour, IAfterSpawned
         {
             GetComponent<Renderer>().material.color = NetworkedGridInfo.colorset.GetColor();
         }
-        switch (NetworkedGridInfo.State)
-        {
-            case GridState.CAMERA:
-                CameraController.Instance.SetQuaterView(transform.position - new Vector3(0, transform.position.y, 0));
-                break;
-        }
+
+
     }
 
     public void SetGridInfo(NetworkGridInfo info)

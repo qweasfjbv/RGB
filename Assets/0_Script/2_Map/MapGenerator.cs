@@ -27,10 +27,6 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         }
     }
 
-    private void Start()
-    {
-        isMapMaking = false;
-    }
     #endregion
 
     [Header("Prefabs")]
@@ -53,9 +49,6 @@ public class MapGenerator : NetworkBehaviour, ISpawned
     private Coroutine gridAppearCoroutine = null;
     private BoxController curBoxController = null;
 
-
-    //public MapGrid[,] NetworkedMapGrids { get; set; }
-    private bool isMapMaking;
 
     [UnitySerializeField, Networked, Capacity(50)]
     public NetworkDictionary<Vector2Int, MapGrid> NetworkedMapGrids => default;
@@ -83,7 +76,12 @@ public class MapGenerator : NetworkBehaviour, ISpawned
     public MapGrid GetMapGrid(Vector2Int pos)
     {
         if (pos.x < 0 || pos.y < 0 || pos.x >= NetworkedCurMapWidth || pos.y >= NetworkedCurMapWidth) return null;
-        return NetworkedMapGrids[pos];
+        MapGrid value;
+        if (NetworkedMapGrids.TryGet(pos, out value))
+        {
+            return value;
+        }
+        else return null;
     }
 
     public void UpdateMapGrids()
@@ -108,13 +106,14 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 
     public bool CheckMapClear()
     {
+        MapGrid value;
         for (int i = 0; i < NetworkedCurMapWidth; i++)
         {
             for (int j = 0; j < NetworkedCurMapWidth; j++)
             {
-                if (NetworkedMapGrids[new Vector2Int(i, j)] == null) continue;
+                if (!NetworkedMapGrids.TryGet(new Vector2Int(i, j), out value)) continue;
 
-                if (NetworkedMapGrids[new Vector2Int(i, j)].NetworkedGridInfo.colorset.GetColor().Equals(ColorConstants.WHITE)) continue;
+                if (value.NetworkedGridInfo.colorset.GetColor().Equals(ColorConstants.WHITE)) continue;
 
                 return false;
             }
@@ -148,6 +147,7 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 
         NetworkGridInfo grid;
 
+        NetworkedMapGrids.Clear();
         for (int i = 0; i < mapArrs.Count; i++)
         {
             grid = mapArrs[i];
@@ -167,7 +167,6 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 
     public void EraseAllObject(NetworkRunner runner)
     {
-        if (isMapMaking) StopCoroutine(gridAppearCoroutine);
 
         if (curBoxController != null)
             Destroy(curBoxController.gameObject);

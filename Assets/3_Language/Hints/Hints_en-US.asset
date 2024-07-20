@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Hints_en-US
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en-US
+  m_SharedData: {fileID: 11400000, guid: 1d66bbec96df7254fbe3b2eec3417530, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 14798307328
+    m_Localized: 'Colors always operate
+
+      only on the bottom face
+
+      of
+      the cube.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10839869112320
+    m_Localized: 'Symbols always operate
+
+      only on the bottom face
+
+      of
+      the cube.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988544
+    m_Localized: "Red rotates the input \nby one position \nclockwise."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988545
+    m_Localized: "Blue rotates the input \nby one position \ncoutnerclockwise."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988546
+    m_Localized: "Yellow rotates the input \nby two position."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988547
+    m_Localized: "Green enables \nhigher jumps."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988548
+    m_Localized: "Orange enables \nlonger jumps."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988549
+    m_Localized: "Purple make cube \njump in place."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988550
+    m_Localized: "Black can erase \nEVERYTHING."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988551
+    m_Localized: "Circle rotates the input \nby one position \nclockwise."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988552
+    m_Localized: "Triangle rotates the input \nby one position \ncoutnerclockwise."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988553
+    m_Localized: "Rectangle rotates the input \nby two position."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988554
+    m_Localized: "Tri+Rect enables \nhigher jumps."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988555
+    m_Localized: "Circle+Rect enables \nlonger jumps."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988556
+    m_Localized: "Circle+Tri make cube \njump in place."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988557
+    m_Localized: "Black can erase \nEVERYTHING."
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

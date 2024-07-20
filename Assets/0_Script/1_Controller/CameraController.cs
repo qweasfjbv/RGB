@@ -86,11 +86,12 @@ public class CameraController : MonoBehaviour
     public void SetQuaterView(Vector3 target)
     {
         camTarget = target;
+        transform.position = target + CalcOrthoPos();
         transform.LookAt(target);
         Quaternion cameraRotation = Quaternion.identity;
-        transform.position = target + CalcOrthoPos();
         cameraRotation = Quaternion.Euler(new Vector3(verticalRotate, horizontalRotate, 0f));
         RenderSettings.skybox.SetMatrix("_Rotation", Matrix4x4.Rotate(Quaternion.Inverse(cameraRotation)));
+
 
     }
 

@@ -9,6 +9,8 @@ public static class Constant
     public const string GAME_SCENE = "GameScene";
     public const string MAIN_SCENE = "MainScene";
 
+    public const string HINT_TABLE = "Hints";
+
 }
 
 public static class ColorConstants {

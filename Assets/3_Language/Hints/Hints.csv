@@ -1,0 +1,61 @@
+﻿Key,Id,Shared Comments,English (United States)(en-US),English (United States)(en-US) Comments,Korean (South Korea)(ko-KR),Korean (South Korea)(ko-KR) Comments
+C0,14798307328,,"Colors always operate
+only on the bottom face
+of the cube.",,"색들은 항상
+큐브의 바닥면에서만
+동작합니다.",
+C1,,1 : RED,"Red rotates the input 
+by one position 
+clockwise.",,"빨간색은 입력이
+시계방향으로 한 칸씩
+회전합니다.",
+C2,,2 : BLUE,"Blue rotates the input 
+by one position 
+coutnerclockwise.",,"파란색은 입력이
+반시계방향으로 한 칸씩
+회전합니다.",
+C3,,3 : YELLOW,"Yellow rotates the input 
+by two position.",,"노란색은 입력이
+두 칸 회전합니다.",
+C4,,4 : GREEN,"Green enables 
+higher jumps.",,"초록색은 더 높이 
+점프합니다.",
+C5,,5 : ORANGE,"Orange enables 
+longer jumps.",,"주황색은 더 멀리 
+점프합니다.",
+C6,,6 : PURPLE,"Purple make cube 
+jump in place.",,"보라색은 제자리에서
+점프합니다.",
+C7,,7 : BLACK,"Black can erase 
+EVERYTHING.",,"검정색은 
+모든 것을 없앱니다.",
+B0,1.08399E+13,,"Symbols always operate
+only on the bottom face
+of the cube.",,"기호들은 항상
+큐브의 바닥면에서만
+동작합니다.",
+B1,,1 : Circle,"Circle rotates the input 
+by one position 
+clockwise.",,"원은 입력이
+시계방향으로 한 칸씩
+회전합니다.",
+B2,,2 : Triangle,"Triangle rotates the input 
+by one position 
+coutnerclockwise.",,"삼각형은 입력이
+시계방향으로 한 칸씩
+회전합니다.",
+B3,,3 : Rect,"Rectangle rotates the input 
+by two position.",,"사각형은 입력이
+두 칸 회전합니다.",
+B4,,4 : 2+3,"Tri+Rect enables 
+higher jumps.",,"삼각형과 사각형은
+더 높이 점프합니다.",
+B5,,5 : 1+3,"Circle+Rect enables 
+longer jumps.",,"원과 사각형은 더 멀리 
+점프합니다.",
+B6,,6 : 1+2,"Circle+Tri make cube 
+jump in place.",,"원과 삼각형은 
+제자리에서 점프합니다.",
+B7,,7 : Black,"Black can erase 
+EVERYTHING.",,"검정색은 
+모든 것을 없앱니다.",

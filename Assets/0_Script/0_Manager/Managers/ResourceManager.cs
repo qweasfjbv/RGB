@@ -51,6 +51,13 @@ public class ResourceManager
         
     }
 
+    public Vector3 GetCamPos(GameType type, int idx)
+    {
+        int tmp = GetMapInfo(type, idx).width;
+
+        return new Vector3((tmp / 2), 0, (tmp / 2)) * Constant.GRID_SIZE;
+    }
+
     public MapInfo GetMapInfo(GameType type, int idx)
     {
         switch (type)

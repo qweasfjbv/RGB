@@ -1,0 +1,163 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Hints Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: Hints
+  m_TableCollectionNameGuidString: 1d66bbec96df7254fbe3b2eec3417530
+  m_Entries:
+  - m_Id: 14798307328
+    m_Key: C0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988544
+    m_Key: C1
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527914
+  - m_Id: 18998234988545
+    m_Key: C2
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527915
+  - m_Id: 18998234988546
+    m_Key: C3
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527916
+  - m_Id: 18998234988547
+    m_Key: C4
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527917
+  - m_Id: 18998234988548
+    m_Key: C5
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527918
+  - m_Id: 18998234988549
+    m_Key: C6
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527919
+  - m_Id: 18998234988550
+    m_Key: C7
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527920
+  - m_Id: 10839869112320
+    m_Key: B0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18998234988551
+    m_Key: B1
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527921
+  - m_Id: 18998234988552
+    m_Key: B2
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527922
+  - m_Id: 18998234988553
+    m_Key: B3
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527923
+  - m_Id: 18998234988554
+    m_Key: B4
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527924
+  - m_Id: 18998234988555
+    m_Key: B5
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527925
+  - m_Id: 18998234988556
+    m_Key: B6
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527926
+  - m_Id: 18998234988557
+    m_Key: B7
+    m_Metadata:
+      m_Items:
+      - rid: 2239951936392527927
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 2239951936392527896
+  references:
+    version: 2
+    RefIds:
+    - rid: 2239951936392527896
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1721460653641
+    - rid: 2239951936392527914
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '1 : RED'
+    - rid: 2239951936392527915
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '2 : BLUE'
+    - rid: 2239951936392527916
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '3 : YELLOW'
+    - rid: 2239951936392527917
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '4 : GREEN'
+    - rid: 2239951936392527918
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '5 : ORANGE'
+    - rid: 2239951936392527919
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '6 : PURPLE'
+    - rid: 2239951936392527920
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '7 : BLACK'
+    - rid: 2239951936392527921
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '1 : Circle'
+    - rid: 2239951936392527922
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '2 : Triangle'
+    - rid: 2239951936392527923
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '3 : Rect'
+    - rid: 2239951936392527924
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '4 : 2+3'
+    - rid: 2239951936392527925
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '5 : 1+3'
+    - rid: 2239951936392527926
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '6 : 1+2'
+    - rid: 2239951936392527927
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: '7 : Black'

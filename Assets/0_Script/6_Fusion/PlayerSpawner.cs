@@ -23,8 +23,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
     public void MapRestart()
     {
         GameManagerEx.Instance.spawner = this;
-        MapGenerator.Instance.SetStageName(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv);
-
+        
         if (currentPlayer != null)
         {
             Runner.Despawn(currentPlayer);
@@ -32,6 +31,11 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
 
         if (GameManagerEx.Instance.CurGameType== GameType.MULTI && Runner.IsSharedModeMasterClient || GameManagerEx.Instance.CurGameType!= GameType.MULTI)
             CreateMap();
+
+
+        MapGenerator.Instance.SetStageName(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv);
+        CameraController.Instance.SetQuaterView(Managers.Resource.GetCamPos(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv));
+
 
         PlayerSpawn();
 

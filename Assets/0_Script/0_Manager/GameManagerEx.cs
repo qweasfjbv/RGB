@@ -64,14 +64,15 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
             Destroy(runner.gameObject);
         }
 
-        var linkers = FindObjectsOfType<FusionBootstrap>();
-        foreach (var runner in runners)
+        var linkers = FindObjectsOfType<FusionNetworkManager>();
+        foreach (var linker in linkers)
         {
-            Destroy(runner.gameObject);
+            Destroy(linker.gameObject);
         }
 
     }
 
+    bool isCoroutineRunning = false;
     public void GameStart(GameType type, int lvId)
     {
         currentLv = lvId;
