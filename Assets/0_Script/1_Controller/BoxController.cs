@@ -64,12 +64,21 @@ public class BoxController : NetworkBehaviour
 
     // Previous input buffer
     private KeyCode inputBuffer;
-    private bool isInputBlock;
+    private static bool isInputBlock;
 
-    private void Awake()
+    public override void Spawned()
     {
         isInputBlock = true;
-        //gameObject.SetActive(false);
+    }
+
+    public static void UnlockInputBlock()
+    {
+        isInputBlock = false;
+    }
+
+    public override void Despawned(NetworkRunner runner, bool hasState)
+    {
+        base.Despawned(runner, hasState);
     }
 
     private void Start()
@@ -93,7 +102,6 @@ public class BoxController : NetworkBehaviour
 
         gameObject.SetActive(true);
 
-        transform.DOScale(new Vector3(1, 1, 1), appearDuration).SetEase(Ease.OutElastic).OnComplete(() => isInputBlock = false);
         return;
     }
 
@@ -179,6 +187,7 @@ public class BoxController : NetworkBehaviour
     private KeyCode _pressedKeyCode = KeyCode.None;
     private void Update()
     {
+        if (isInputBlock) return;
         foreach (KeyCode key in arrowKeys)
         {
             if (Input.GetKey(key))
@@ -213,7 +222,7 @@ public class BoxController : NetworkBehaviour
             if (_pressedKeyCode != KeyCode.None)
             {
                 isSynced = false;
-                RPC_GetKeyInput(_pressedKeyCode);
+                GetKeyInput(_pressedKeyCode);
             }
         }
         
@@ -224,7 +233,7 @@ public class BoxController : NetworkBehaviour
     int jDis = 1;
     int hDis = 0; 
     
-    public void RPC_GetKeyInput(KeyCode key)
+    public void GetKeyInput(KeyCode key)
     {
         // Key Block during Jumping
         if (isJumping)

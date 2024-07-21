@@ -1,9 +1,14 @@
 ﻿Key,Id,Shared Comments,English (United States)(en-US),English (United States)(en-US) Comments,Korean (South Korea)(ko-KR),Korean (South Korea)(ko-KR) Comments
-C0,14798307328,,"Colors always operate
-only on the bottom face
-of the cube.",,"색들은 항상
-큐브의 바닥면에서만
-동작합니다.",
+C0,14798307328,,"Move - Arrow
+Stamp - Space
+
+You can combine or remove colors by stamp.
+Remove all the colors!",,"이동 - 화살표
+스탬프 - 스페이스 바
+
+스탬프를 통해 색을 합치거나
+없앨 수 었습니다.
+모든 색을 없애세요!",
 C1,,1 : RED,"Red rotates the input 
 by one position 
 clockwise.",,"빨간색은 입력이
@@ -29,11 +34,16 @@ jump in place.",,"보라색은 제자리에서
 C7,,7 : BLACK,"Black can erase 
 EVERYTHING.",,"검정색은 
 모든 것을 없앱니다.",
-B0,1.08399E+13,,"Symbols always operate
-only on the bottom face
-of the cube.",,"기호들은 항상
-큐브의 바닥면에서만
-동작합니다.",
+B0,1.08E+13,,"Move - Arrow
+Stamp - Space
+
+You can combine or remove symbols by stamp.
+Remove all the symbols!",,"이동 - 화살표
+스탬프 - 스페이스 바
+
+스탬프를 통해 기호를 합치거나
+없앨 수 었습니다.
+모든 기호를 없애세요!",
 B1,,1 : Circle,"Circle rotates the input 
 by one position 
 clockwise.",,"원은 입력이

@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Components;
@@ -12,34 +9,20 @@ public class HintUI : MonoBehaviour
 
     private LocalizeStringEvent localizedStringEvent;
 
-    int count = 0;
 
     private void Start()
     {
         localizedStringEvent = contentTMP.GetComponent<LocalizeStringEvent>();
-        SetLocalizeText("");
     }
 
-    private void Update()
+    public void SetLocalizeText(string key)
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            SetLocalizeText("C" + count.ToString());
-            count++;
-        }
-    }
-
-    private void SetLocalizeText(string key)
-    {
-
-        localizedStringEvent.StringReference.SetReference(Constant.HINT_TABLE, key);
+        Debug.Log(key);
+        contentTMP.GetComponent<LocalizeStringEvent>().StringReference.SetReference(Constant.HINT_TABLE, key);
         //contentTMP.GetComponent<LocalizeStringEvent>().StringReference.
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[1];
 
     }
-
-
-
 
 
 }

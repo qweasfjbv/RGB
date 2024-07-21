@@ -22,7 +22,7 @@ public class GameSceneUI : MonoBehaviour
         RetryButton.onClick.AddListener(() => GameManagerEx.Instance.GameFail());
     }
 
-    public void UpdateStageText(GameType type, int idx)
+    public void UpdateStageText(GameType type, int idx, NetworkRunner runner)
     {
         switch (type)
         {

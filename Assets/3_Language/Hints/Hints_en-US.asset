@@ -19,21 +19,27 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 14798307328
-    m_Localized: 'Colors always operate
+    m_Localized: 'Move - Arrow
 
-      only on the bottom face
+      Stamp - Space
 
-      of
-      the cube.'
+
+      You can combine or remove
+      colors by stamp.
+
+      Remove all the colors!'
     m_Metadata:
       m_Items: []
   - m_Id: 10839869112320
-    m_Localized: 'Symbols always operate
+    m_Localized: 'Move - Arrow
 
-      only on the bottom face
+      Stamp - Space
 
-      of
-      the cube.'
+
+      You can combine or remove
+      symbols by stamp.
+
+      Remove all the symbols!'
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988544

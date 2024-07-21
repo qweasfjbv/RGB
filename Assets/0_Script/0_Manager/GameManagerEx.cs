@@ -72,7 +72,6 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     }
 
-    bool isCoroutineRunning = false;
     public void GameStart(GameType type, int lvId)
     {
         currentLv = lvId;

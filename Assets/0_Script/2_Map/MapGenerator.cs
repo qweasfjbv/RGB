@@ -122,9 +122,9 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         return true;
     }
 
-    public void SetStageName(GameType type, int n)
+    public void SetStageName(GameType type, int n, NetworkRunner runner)
     {
-        gameSceneUI.UpdateStageText(type, n);
+        gameSceneUI.UpdateStageText(type, n, runner);
     }
 
     public void GenerateMap(GameType type,  int n, NetworkRunner runner)
@@ -134,6 +134,12 @@ public class MapGenerator : NetworkBehaviour, ISpawned
             RenderSettings.skybox = skyboxMaterials[1];
         else RenderSettings.skybox = skyboxMaterials[0];
 
+
+        if (type == GameType.TUTO)
+        {
+            TutorialManager.Instance.PopupHint(GameManagerEx.Instance.IsColorBlind, n);
+        }
+
         List<NetworkGridInfo> mapArrs = new List<NetworkGridInfo>();
 
         MapInfo mapResource = Managers.Resource.GetMapInfo(type, n);
@@ -142,7 +148,6 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         foreach (GridInfoEx gi in mapResource.gridInfo) {
             mapArrs.Add(new NetworkGridInfo(gi.pos, gi.height, gi.colorIdx, gi.state));
         }
-
 
 
         NetworkGridInfo grid;

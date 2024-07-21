@@ -91,18 +91,6 @@ namespace Fusion
             return _networkDebugStart;
         }
 
-        private void Update()
-        {
-
-            var nds = EnsureNetworkDebugStartExists();
-
-            var currentstage = nds.CurrentStage;
-            if (currentstage != FusionBS.Stage.Disconnected)
-            {
-                return;
-            }
-
-        }
 
         public void StartSharedClient()
         {

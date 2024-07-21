@@ -142,7 +142,6 @@ public struct ColorSet : INetworkStruct
 
     public void GetBlendedColor(ColorSet cSet)
     {
-
         r = (r + cSet.r) > 1 ? 1 : r + cSet.r;
         y = (y + cSet.y) > 1 ? 1 : y + cSet.y;
         b = (b + cSet.b) > 1 ? 1 : b + cSet.b;
@@ -230,8 +229,6 @@ public class MapGrid : NetworkBehaviour, IAfterSpawned
         {
             GetComponent<Renderer>().material.color = NetworkedGridInfo.colorset.GetColor();
         }
-
-
     }
 
     public void SetGridInfo(NetworkGridInfo info)
