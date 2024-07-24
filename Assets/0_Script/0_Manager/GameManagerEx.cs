@@ -1,10 +1,8 @@
 using DG.Tweening;
 using Fusion;
-using Fusion.Sockets;
-using NanoSockets;
 using System.Collections;
-using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -52,9 +50,6 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     [SerializeField] private float duration;
     [SerializeField] private RectTransform shade;
 
-
-    [SerializeField] public bool IsColorBlind;
-
     [Header("Network")]
     [SerializeField] private GameObject _networkRunnerPrefab;
 
@@ -62,7 +57,12 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     {
         shade.gameObject.SetActive(false);
         SoundManager.Instance.ChangeBGM(BGMClip.MAIN_BGM);
-        IsColorBlind = false;
+    }
+
+
+    public void SetLocale(int idx)
+    {
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[idx];
     }
 
     private void EraseNOs()

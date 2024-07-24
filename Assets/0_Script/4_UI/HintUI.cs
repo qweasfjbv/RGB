@@ -17,11 +17,7 @@ public class HintUI : MonoBehaviour
 
     public void SetLocalizeText(string key)
     {
-        Debug.Log(key);
         contentTMP.GetComponent<LocalizeStringEvent>().StringReference.SetReference(Constant.HINT_TABLE, key);
-        //contentTMP.GetComponent<LocalizeStringEvent>().StringReference.
-        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[1];
-
     }
 
 

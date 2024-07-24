@@ -67,7 +67,7 @@ public class BoxColorController : NetworkBehaviour
     private void ColorPBMesh(int idx, Color color)
     {
         ColorSet cSet = new ColorSet(color);
-        if (GameManagerEx.Instance.IsColorBlind)
+        if (Managers.Data.GetBasicSetting().isBlind)
         {
             ApplyTextureToFace(faces[idx], Managers.Resource.GetDiceTexture(cSet.GetColorIdx()));
         }

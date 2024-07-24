@@ -154,7 +154,7 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 
         if (type == GameType.TUTO)
         {
-            TutorialManager.Instance.PopupHint(GameManagerEx.Instance.IsColorBlind, n);
+            TutorialManager.Instance.PopupHint(Managers.Data.GetBasicSetting().isBlind, n);
         }
 
         List<NetworkGridInfo> mapArrs = new List<NetworkGridInfo>();

@@ -1,19 +1,64 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using System.IO;
 using UnityEngine;
+
+[Serializable]
+public class BasicSettingData {
+
+    public BasicSettingData(bool isblind, int loc)
+    {
+        isBlind= isblind;
+        locale = loc;
+    }
+
+    public bool isBlind;
+    public int locale;
+}
+
 
 public class DataManager
 {
-    // Start is called before the first frame update
-    void Start()
+
+    // PATHS
+    private string basicSettingPath = Application.dataPath + "/basicSetting";
+
+    // DATAS
+    private BasicSettingData basicSettingData = null;
+
+
+
+    public void Init()
     {
-        
+        LoadBasicSetting();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SaveBasicSetting(BasicSettingData settingData)
     {
-        
+        string json = JsonUtility.ToJson(settingData, true);
+        File.WriteAllText(basicSettingPath, json);
+
+        // Update Current Data
+        LoadBasicSetting();
+    }
+
+    public void LoadBasicSetting()
+    {
+        if (File.Exists(basicSettingPath))
+        {
+            string json = File.ReadAllText(basicSettingPath);
+
+            basicSettingData = JsonUtility.FromJson<BasicSettingData>(json);   
+        }
+        else
+        {
+            // Basic Setting
+            basicSettingData = new BasicSettingData(false, 0);
+        }
+    }
+
+    public BasicSettingData GetBasicSetting()
+    {
+        return basicSettingData;
     }
 
 }

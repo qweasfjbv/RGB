@@ -23,8 +23,8 @@ public class MainmenuUI : MonoBehaviour
     [SerializeField] private float modeFadeDuration;
     [SerializeField, ReadOnly(true)] private GameType curGameType;
 
-    [Header("MultiSession")]
-    [SerializeField] private MultiRoomSelectUI multiRoomSelectUI;
+    [Header("SettingUIs")]
+    [SerializeField] private GameObject basicSettingUI;
 
     private int currentSelectedIdx = 1;
     private Color alphaColor;
@@ -44,6 +44,7 @@ public class MainmenuUI : MonoBehaviour
         UpdateStageTMP();
         EraseAllListener();
 
+        // Stage Change Buttons
         gameStartButton.onClick.AddListener(() => OnStartButtonClicked());
         stageRightButton.onClick.AddListener(() => OnStageRightButtonClicked());
         stageLeftButton.onClick.AddListener(() => OnStageLeftButtonClicked());
@@ -55,9 +56,9 @@ public class MainmenuUI : MonoBehaviour
             GameModeTMPs[i].gameObject.SetActive(false);
         }
 
+        // Mode Change Buttons
         modeRightButton.onClick.AddListener(() => OnModeRightButtonClicked());
         modeLeftButton.onClick.AddListener(() => OnModeLeftButtonClicked());
-
 
     }
 
@@ -79,14 +80,14 @@ public class MainmenuUI : MonoBehaviour
 
     private void OnStageRightButtonClicked()
     {
-        if (Managers.Resource.GetMapCount(curGameType)-1 == currentSelectedIdx) return;
+        if (Managers.Resource.GetMapCount(curGameType) - 1 == currentSelectedIdx) return;
         currentSelectedIdx++;
         UpdateStageTMP();
     }
 
     private void OnStageLeftButtonClicked()
     {
-        if(currentSelectedIdx == 1) return;
+        if (currentSelectedIdx == 1) return;
         currentSelectedIdx--;
         UpdateStageTMP();
     }
@@ -141,4 +142,8 @@ public class MainmenuUI : MonoBehaviour
         GameManagerEx.Instance.CurGameType = curGameType;
     }
 
+    public void OnBasicSettingButton()
+    {
+        basicSettingUI.SetActive(true);
+    }
 }

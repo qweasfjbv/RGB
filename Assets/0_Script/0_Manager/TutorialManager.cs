@@ -36,10 +36,6 @@ public class TutorialManager : MonoBehaviour
 
     private bool isHintPop = false;
 
-    private void Start()
-    {
-        PlayerPrefs.SetInt("C", -1);
-    }
 
     public void PopupHint(bool isBlind, int idx)
     {

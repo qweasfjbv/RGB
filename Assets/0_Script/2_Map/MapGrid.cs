@@ -214,7 +214,7 @@ public class MapGrid : NetworkBehaviour, IAfterSpawned
         transform.localScale = Vector3.one * Constant.GRID_SIZE;
         transform.position = new Vector3(transform.position.x, NetworkedGridInfo.Height * Constant.GRID_SIZE - transform.localScale.y / 2 - Constant.BOX_SIZE / 2, transform.position.z);
 
-        if (GameManagerEx.Instance.IsColorBlind)
+        if (Managers.Data.GetBasicSetting().isBlind)
         {
             GetComponent<Renderer>().material.mainTexture = Managers.Resource.GetDiceTexture(NetworkedGridInfo.colorset.GetColorIdx());
         }
