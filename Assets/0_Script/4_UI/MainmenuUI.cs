@@ -23,6 +23,9 @@ public class MainmenuUI : MonoBehaviour
     [SerializeField] private float modeFadeDuration;
     [SerializeField, ReadOnly(true)] private GameType curGameType;
 
+    [Header("MultiSession")]
+    [SerializeField] private MultiRoomSelectUI multiRoomSelectUI;
+
     private int currentSelectedIdx = 1;
     private Color alphaColor;
 
@@ -61,6 +64,17 @@ public class MainmenuUI : MonoBehaviour
     private void OnStartButtonClicked()
     {
         GameManagerEx.Instance.GameStart(curGameType, currentSelectedIdx);
+        /*
+        if (curGameType != GameType.MULTI)
+        {
+            GameManagerEx.Instance.GameStart(curGameType, currentSelectedIdx);
+        }
+        else
+        {
+            multiRoomSelectUI.gameObject.SetActive(true);
+            multiRoomSelectUI.SetPrefix(currentSelectedIdx);
+        }
+        */
     }
 
     private void OnStageRightButtonClicked()

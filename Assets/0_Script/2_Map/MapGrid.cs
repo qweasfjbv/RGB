@@ -142,23 +142,16 @@ public struct ColorSet : INetworkStruct
 
     public void GetBlendedColor(ColorSet cSet)
     {
-        r = (r + cSet.r) > 1 ? 1 : r + cSet.r;
-        y = (y + cSet.y) > 1 ? 1 : y + cSet.y;
-        b = (b + cSet.b) > 1 ? 1 : b + cSet.b;
+        r = (r == cSet.r) ? 0 : 1;
+        y = (y == cSet.y) ? 0 : 1;
+        b = (b == cSet.b) ? 0 : 1;
     }
 
     public void BlendColor(ColorSet cSet)
     {
-        if (this.Equals(cSet))
-        {
-            cSet.RemoveColor();
-            this.RemoveColor();
-            return;
-        }
-
-        r = (r + cSet.r) > 1 ? 1 : r + cSet.r;
-        y = (y + cSet.y) > 1 ? 1 : y + cSet.y;
-        b = (b + cSet.b) > 1 ? 1 : b + cSet.b;
+        r = (r == cSet.r) ? 0 : 1;
+        y = (y == cSet.y) ? 0 : 1;
+        b = (b == cSet.b) ? 0 : 1;
     }
 
     public override string ToString()

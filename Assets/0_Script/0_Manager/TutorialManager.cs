@@ -45,12 +45,11 @@ public class TutorialManager : MonoBehaviour
     {
         if (isHintPop) return;
 
-        isHintPop = true;
         hintBG.SetActive(true);
-        hintPanel.GetComponent<HintUI>().SetLocalizeText((isBlind ? "B" : "C") + idx.ToString());
+        hintPanel.GetComponent<HintUI>().SetLocalizeText((isBlind ? "B" : "C") + (idx-1).ToString());
 
         hintPanel.GetComponent<RectTransform>().localScale = Vector3.zero;
-        hintPanel.GetComponent<RectTransform>().DOScale(Vector3.one, 1f).SetEase(Ease.OutElastic);
+        hintPanel.GetComponent<RectTransform>().DOScale(Vector3.one, 1f).SetEase(Ease.OutElastic).OnComplete(()=>isHintPop = true);
         hintPanel.SetActive(true);
 
     }
@@ -60,11 +59,12 @@ public class TutorialManager : MonoBehaviour
         hintPanel.SetActive(false);
         isHintPop = false;
         hintBG.SetActive(false);
+        BoxController.UnlockInputBlock();
     }
 
     private void Update()
     {
-        if (isHintPop & Input.GetKey(KeyCode.Escape))
+        if (isHintPop && (Input.GetKey(KeyCode.Return) || Input.GetMouseButtonDown(0)))
                 Popdown();
     }
 

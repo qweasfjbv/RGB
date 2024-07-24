@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Fusion;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,28 +37,44 @@ public class MapGenerator : NetworkBehaviour, ISpawned
     [Space(10)]
 
     [Header("Map Appear Effect")]
-    [SerializeField] private float fallDuration;
     [SerializeField] private float timeBetweenFall;
     [SerializeField] private int camOffY;
     [Space(10)]
-    
+
+    [Header("UIs")]
     [SerializeField] private GameSceneUI gameSceneUI;
+    [SerializeField] private ResultPanelUI resultPanelUI;
+    [SerializeField] private float popupDuration;
+    [Space(10)]
 
     [Header("Skybox Materials")]
     [SerializeField] private List<Material> skyboxMaterials;
+
+
 
     private Coroutine gridAppearCoroutine = null;
     private BoxController curBoxController = null;
 
 
-    [UnitySerializeField, Networked, Capacity(50)]
+    [Networked, Capacity(50)]
     public NetworkDictionary<Vector2Int, MapGrid> NetworkedMapGrids => default;
 
     [Networked]
     public int NetworkedCurMapWidth { get; set; }
 
+
+    private bool isSpawned = false;
+    public bool IsSpawned { get => isSpawned; }
+
+
     public override void Spawned()
     {
+        // DO AFTER SPAWN GENERATE
+        isSpawned = true;
+
+        gameSceneUI= FindObjectOfType<GameSceneUI>();
+        resultPanelUI = FindObjectOfType<ResultPanelUI>();
+        resultPanelUI.gameObject.SetActive(false);
         UpdateMapGrids();
     }
 
@@ -187,5 +204,12 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         }
     }
 
+    public void PopupResultPanel()
+    {
+        resultPanelUI.SetResultPanel(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv);
+        resultPanelUI.GetComponent<RectTransform>().localScale = Vector3.zero;
+        resultPanelUI.gameObject.SetActive(true);
+        resultPanelUI.GetComponent<RectTransform>().DOScale(Vector3.one, popupDuration).SetEase(Ease.OutQuart);
+    }
 
 }

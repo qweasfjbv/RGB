@@ -45,15 +45,18 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988547
-    m_Localized: "\uCD08\uB85D\uC0C9\uC740 \uB354 \uB192\uC774 \n\uC810\uD504\uD569\uB2C8\uB2E4."
+    m_Localized: "\uD30C\uB791+\uB178\uB791=\uCD08\uB85D\n\n\uCD08\uB85D\uC0C9\uC740
+      \uB354 \uB192\uC774 \n\uC810\uD504\uD569\uB2C8\uB2E4."
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988548
-    m_Localized: "\uC8FC\uD669\uC0C9\uC740 \uB354 \uBA40\uB9AC \n\uC810\uD504\uD569\uB2C8\uB2E4."
+    m_Localized: "\uBE68\uAC15+\uB178\uB791=\uC8FC\uD669\n\n\uC8FC\uD669\uC0C9\uC740
+      \uB354 \uBA40\uB9AC \n\uC810\uD504\uD569\uB2C8\uB2E4."
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988549
-    m_Localized: "\uBCF4\uB77C\uC0C9\uC740 \uC81C\uC790\uB9AC\uC5D0\uC11C\n\uC810\uD504\uD569\uB2C8\uB2E4."
+    m_Localized: "\uBE68\uAC15+\uD30C\uB791=\uBCF4\uB77C\n\n\uBCF4\uB77C\uC0C9\uC740
+      \uC81C\uC790\uB9AC\uC5D0\uC11C\n\uC810\uD504\uD569\uB2C8\uB2E4."
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988550

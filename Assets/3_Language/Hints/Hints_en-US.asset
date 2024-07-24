@@ -55,15 +55,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988547
-    m_Localized: "Green enables \nhigher jumps."
+    m_Localized: "Blue+Yellow=Green\n\nGreen enables \nhigher jumps."
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988548
-    m_Localized: "Orange enables \nlonger jumps."
+    m_Localized: "Red+Yellow=Orange\n\nOrange enables \nlonger jumps."
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988549
-    m_Localized: "Purple make cube \njump in place."
+    m_Localized: "Red+Blue =Purple\n\nPurple make cube \njump in place."
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988550

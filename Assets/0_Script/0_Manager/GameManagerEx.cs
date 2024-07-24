@@ -1,6 +1,9 @@
 using DG.Tweening;
 using Fusion;
+using Fusion.Sockets;
+using NanoSockets;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -39,6 +42,9 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     private int currentLv = -1;
     public int CurLv { get => currentLv; }
 
+    private string curSession;
+    public string CurSession {  get => curSession; }
+
     private GameType curGameType;
     public GameType CurGameType { get => curGameType; set => curGameType = value; }
 
@@ -48,6 +54,9 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
 
     [SerializeField] public bool IsColorBlind;
+
+    [Header("Network")]
+    [SerializeField] private GameObject _networkRunnerPrefab;
 
     private void Start()
     {
@@ -72,14 +81,17 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     }
 
-    public void GameStart(GameType type, int lvId)
+    // GameStart (Main->GameScene)
+    public void GameStart(GameType type, int lvId, string sessionId="")
     {
         currentLv = lvId;
+        curSession = sessionId;
         StartCoroutine(GameStartCoroutine(lvId));
 
         return;
     }
 
+    // GameEnd (Game->MainScene)
     public void GameEnd()
     {
         StartCoroutine(GameEndCoroutine());
@@ -87,11 +99,13 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         return;
     }
 
+    // GameFail (GameScene, same Lv)
     public void GameFail()
     {
         StartCoroutine(GameRestartCoroutine(currentLv));
     }
 
+    // GameFail (GameScene, next Lv)
     public void GameSuccess()
     {
         if (currentLv == Managers.Resource.GetMapCount(curGameType))
@@ -106,7 +120,6 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         
     }
 
-
     public IEnumerator GameStartCoroutine(int idx)
     {
         SoundManager.Instance.SilentBGM();
@@ -116,13 +129,12 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         AsyncOperation async = SceneManager.LoadSceneAsync(Constant.GAME_SCENE);
         yield return async;
 
-        FusionNetworkManager linkers = FindObjectOfType<FusionNetworkManager>();
-        if (curGameType == GameType.MULTI) linkers.StartSharedClient();
-        else linkers.StartSinglePlay();
+        StartGame();
 
         SoundManager.Instance.ChangeBGM(BGMClip.GAME_BGM);
 
-        FinSceneShade();
+        if (curGameType != GameType.MULTI) 
+            FinSceneShade();
 
     }
 
@@ -185,7 +197,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         while (!tmpB) yield return null;
     }
 
-    private void FinSceneShade()
+    public void FinSceneShade()
     {
         shade.GetComponent<Image>().DOColor(Color.clear, duration).OnComplete(()=>shade.gameObject.SetActive(false));
     }
@@ -194,4 +206,51 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     {
         shade.DOSizeDelta(new Vector2(0, 0), duration).OnComplete(() => shade.gameObject.SetActive(false));
     }
+
+    public async void StartGame()
+    {
+
+        NetworkRunner newRunner = Instantiate(_networkRunnerPrefab).GetComponent<NetworkRunner>();
+
+        var sceneManager = newRunner.GetComponent<INetworkSceneManager>();
+        if (sceneManager == null)
+        {
+            Debug.Log($"NetworkRunner does not have any component implementing {nameof(INetworkSceneManager)} interface, adding {nameof(NetworkSceneManagerDefault)}.", newRunner);
+            sceneManager = newRunner.gameObject.AddComponent<NetworkSceneManagerDefault>();
+        }
+
+        var objectProvider = newRunner.GetComponent<INetworkObjectProvider>();
+        if (objectProvider == null)
+        {
+            Debug.Log($"NetworkRunner does not have any component implementing {nameof(INetworkObjectProvider)} interface, adding {nameof(NetworkObjectProviderDefault)}.", newRunner);
+            objectProvider = newRunner.gameObject.AddComponent<NetworkObjectProviderDefault>();
+        }
+
+        var sceneInfo = new NetworkSceneInfo();
+
+
+        StartGameArgs startGameArgs = new StartGameArgs()
+        {
+            GameMode = (curGameType==GameType.MULTI ? GameMode.Shared : GameMode.Single),
+            Scene = sceneInfo,
+            SessionName = string.Empty,
+            SceneManager = sceneManager,
+            Updater = null,
+            ObjectProvider = objectProvider,
+        };
+
+        StartGameResult result = await newRunner.StartGame(startGameArgs);
+
+        if (result.Ok)
+        {
+            // StartGame
+        }
+        else
+        {
+            // Error Catch
+        }
+
+    }
+
+
 }

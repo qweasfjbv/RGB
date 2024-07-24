@@ -6,11 +6,15 @@ using UnityEngine;
 
 public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
 
+    [SerializeField] private GameObject mapManagerPrefab;
+
+
 
     public void PlayerJoined(PlayerRef player)
     {
         if (player == Runner.LocalPlayer)
         {
+            Runner.Spawn(mapManagerPrefab);
             MapRestart();
         }
     }
@@ -36,7 +40,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
         currentPlayer.Clear();
 
         if (GameManagerEx.Instance.CurGameType== GameType.MULTI && Runner.IsSharedModeMasterClient || GameManagerEx.Instance.CurGameType!= GameType.MULTI)
-            CreateMap();
+            StartCoroutine(CreateMap());
 
 
         MapGenerator.Instance.SetStageName(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);
@@ -58,10 +62,17 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
 
         if (GameManagerEx.Instance.CurGameType != GameType.TUTO) // TUTO -> Set in TutorialManager after popup erase
             BoxController.UnlockInputBlock();
+
+        GameManagerEx.Instance.FinSceneShade();
     }
 
-    public void CreateMap()
+    public IEnumerator CreateMap()
     {
+        while (!MapGenerator.Instance.IsSpawned)
+        {
+            Debug.Log("Waiting");
+            yield return null;
+        }
         MapGenerator.Instance.GenerateMap(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);
     }
 

@@ -11,6 +11,7 @@ namespace Fusion
 
 #if UNITY_EDITOR
     using UnityEditor;
+    using Fusion.Photon.Realtime;
 #endif
 
     /// <summary>
@@ -545,16 +546,12 @@ namespace Fusion
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
 
+            DefaultRoomName = String.Empty;
             return runner.StartGame(new StartGameArgs
             {
                 GameMode = gameMode,
-                Address = address,
-                Scene = sceneInfo,
                 SessionName = DefaultRoomName,
-                OnGameStarted = onGameStarted,
-                SceneManager = sceneManager,
-                Updater = updater,
-                ObjectProvider = objectProvider,
+                PlayerCount = 2, // Minimum player count to start
             });
         }
 

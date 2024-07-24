@@ -75,6 +75,10 @@ public class BoxController : NetworkBehaviour
     {
         isInputBlock = false;
     }
+    public static void LockInputBlock()
+    {
+        isInputBlock = true;
+    }
 
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
@@ -797,7 +801,7 @@ public class BoxController : NetworkBehaviour
 
         if (MapGenerator.Instance.CheckMapClear() && GetComponent<BoxColorController>().CheckBoxClear())
         {
-            GameManagerEx.Instance.GameSuccess();
+            MapGenerator.Instance.PopupResultPanel();
             isInputBlock = true;
         }
 

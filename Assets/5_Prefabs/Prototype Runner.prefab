@@ -127,7 +127,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57fe33d1439fd194399e153886173d14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapManagerPrefab: {fileID: 2338338954586806457, guid: 388889a6e23e25940ab7dc72a2ae7862,
+    type: 3}
   PlayerPrefab: {fileID: 1466752397469436484, guid: 12656aede08a1544bb47ef42b5f2640d,
     type: 3}
-  currentPlayer: {fileID: 0}
+  currentPlayer:
+  - {fileID: 0}
   idx: 0

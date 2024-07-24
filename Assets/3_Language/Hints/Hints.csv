@@ -22,14 +22,26 @@ coutnerclockwise.",,"파란색은 입력이
 C3,,3 : YELLOW,"Yellow rotates the input 
 by two position.",,"노란색은 입력이
 두 칸 회전합니다.",
-C4,,4 : GREEN,"Green enables 
-higher jumps.",,"초록색은 더 높이 
+C4,,4 : GREEN,"Blue+Yellow=Green
+
+Green enables 
+higher jumps.",,"파랑+노랑=초록
+
+초록색은 더 높이 
 점프합니다.",
-C5,,5 : ORANGE,"Orange enables 
-longer jumps.",,"주황색은 더 멀리 
+C5,,5 : ORANGE,"Red+Yellow=Orange
+
+Orange enables 
+longer jumps.",,"빨강+노랑=주황
+
+주황색은 더 멀리 
 점프합니다.",
-C6,,6 : PURPLE,"Purple make cube 
-jump in place.",,"보라색은 제자리에서
+C6,,6 : PURPLE,"Red+Blue =Purple
+
+Purple make cube 
+jump in place.",,"빨강+파랑=보라
+
+보라색은 제자리에서
 점프합니다.",
 C7,,7 : BLACK,"Black can erase 
 EVERYTHING.",,"검정색은 

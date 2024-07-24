@@ -14,7 +14,7 @@
     "HideNetworkObjectInactivityGuard": false,
     "Simulation": {
         "InputDataWordCount": 0,
-        "ReplicationFeatures": 0,
+        "ReplicationFeatures": 1,
         "InputTransferMode": 0,
         "PlayerCount": 10,
         "TickRateSelection": {
