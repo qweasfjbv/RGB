@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Fusion;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
@@ -52,13 +53,21 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     [Header("Network")]
     [SerializeField] private GameObject _networkRunnerPrefab;
+    [SerializeField] private GameObject waitPanel;
+    [SerializeField] private Button cancelButton;
+
+    [Header("TimerUIs")]
+    [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private GameObject timerManagerPrefab;
+
+    private TimerManager timerManager;
+    private NetworkRunner newRunner = null;
 
     private void Start()
     {
         shade.gameObject.SetActive(false);
         SoundManager.Instance.ChangeBGM(BGMClip.MAIN_BGM);
     }
-
 
     public void SetLocale(int idx)
     {
@@ -72,6 +81,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         {
             Destroy(runner.gameObject);
         }
+        newRunner = null;
 
         var linkers = FindObjectsOfType<FusionNetworkManager>();
         foreach (var linker in linkers)
@@ -210,7 +220,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     public async void StartGame()
     {
 
-        NetworkRunner newRunner = Instantiate(_networkRunnerPrefab).GetComponent<NetworkRunner>();
+        newRunner = Instantiate(_networkRunnerPrefab).GetComponent<NetworkRunner>();
 
         var sceneManager = newRunner.GetComponent<INetworkSceneManager>();
         if (sceneManager == null)
@@ -248,6 +258,48 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         else
         {
             // Error Catch
+        }
+
+    }
+
+    // Wait for someone...
+    public void OnWaiting()
+    {
+        Debug.Log("WAITING");
+        waitPanel.SetActive(true);
+        cancelButton.onClick.RemoveAllListeners();
+        cancelButton.onClick.AddListener(GameEnd);
+        cancelButton.onClick.AddListener(() => waitPanel.SetActive(false));
+    }
+
+    public void OnRoomFull()
+    {
+        waitPanel.SetActive(false);
+        FinSceneShade();                // Fade Out Whiteboard
+        timerManager = newRunner.Spawn(timerManagerPrefab).GetComponent<TimerManager>();
+        
+        if(newRunner.IsSharedModeMasterClient)
+            timerManager.StartTimer(5f);
+        
+    }
+
+    public void EndTimer()
+    {
+        timerText.gameObject.SetActive(false);
+    }
+
+    public void UpdateTimerUI(int sec)
+    {
+
+        timerText.gameObject.SetActive(true);
+        if (sec != 0)
+        {
+            timerText.text = sec.ToString() + " !";
+        }
+        else
+        {
+            timerText.text = "Start !";
+            Invoke(nameof(EndTimer), 1f);
         }
 
     }

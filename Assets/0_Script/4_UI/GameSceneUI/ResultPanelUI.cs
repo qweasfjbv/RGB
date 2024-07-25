@@ -10,7 +10,7 @@ public class ResultPanelUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI clearStageText;
 
     public void SetResultPanel(GameType type, int curIdx)
-    {
+    { 
         grayBG.SetActive(true);
 
         switch (type)

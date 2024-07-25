@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 
 [Serializable]
 public class BasicSettingData {
@@ -54,6 +55,8 @@ public class DataManager
             // Basic Setting
             basicSettingData = new BasicSettingData(false, 0);
         }
+
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[basicSettingData.locale];
     }
 
     public BasicSettingData GetBasicSetting()

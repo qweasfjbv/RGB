@@ -1,14 +1,15 @@
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
 using UnityEngine;
 
-public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
+public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
+{
 
     [SerializeField] private GameObject mapManagerPrefab;
 
-
+    const int MAX_PLAYERS = 2;
 
     public void PlayerJoined(PlayerRef player)
     {
@@ -16,6 +17,36 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
         {
             Runner.Spawn(mapManagerPrefab);
             MapRestart();
+        }
+
+        if (GameManagerEx.Instance.CurGameType == GameType.MULTI)
+        {
+            if (Runner.ActivePlayers.Count() == MAX_PLAYERS)
+            {
+                if (Runner.IsSharedModeMasterClient)
+                {
+                    Runner.SessionInfo.IsOpen = false;
+                    Runner.SessionInfo.IsVisible = false;
+                }
+
+                GameManagerEx.Instance.OnRoomFull();
+            }
+            else   // Waiting for someone...
+            {
+                GameManagerEx.Instance.OnWaiting();
+            }
+        }
+    }
+
+    public void PlayerLeft(PlayerRef player)
+    {
+        if (player == Runner.LocalPlayer)
+        {
+
+        }
+        else
+        {
+            GameManagerEx.Instance.GameEnd();
         }
     }
 
@@ -29,7 +60,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
     {
 
         GameManagerEx.Instance.spawner = this;
-        
+
         if (currentPlayer != null)
         {
             for (int i = 0; i < currentPlayer.Count; i++)
@@ -39,7 +70,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
         }
         currentPlayer.Clear();
 
-        if (GameManagerEx.Instance.CurGameType== GameType.MULTI && Runner.IsSharedModeMasterClient || GameManagerEx.Instance.CurGameType!= GameType.MULTI)
+        if (GameManagerEx.Instance.CurGameType == GameType.MULTI && Runner.IsSharedModeMasterClient || GameManagerEx.Instance.CurGameType != GameType.MULTI)
             StartCoroutine(CreateMap());
 
 
@@ -57,24 +88,23 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined{
         currentPlayer.Add(Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity));
         currentPlayer[0].GetComponent<BoxController>().SetBoxController(new Vector2Int(0, 0), 0);
 
-        //currentPlayer.Add(Runner.Spawn(PlayerPrefab, new Vector3(4, 0, 4) * Constant.GRID_SIZE, Quaternion.identity));
-        //currentPlayer[1].GetComponent<BoxController>().SetBoxController(new Vector2Int(4, 4), 0);
+        if (GameManagerEx.Instance.CurGameType == GameType.STAGE) // TUTO -> Set in TutorialManager after popup erase
+            BoxController.UnlockInputBlock();                       // Multi -> Set in OnRoomFull
 
-        if (GameManagerEx.Instance.CurGameType != GameType.TUTO) // TUTO -> Set in TutorialManager after popup erase
-            BoxController.UnlockInputBlock();
-
-        GameManagerEx.Instance.FinSceneShade();
+        if (GameManagerEx.Instance.CurGameType != GameType.MULTI)
+            GameManagerEx.Instance.FinSceneShade();
     }
 
     public IEnumerator CreateMap()
     {
         while (!MapGenerator.Instance.IsSpawned)
         {
-            Debug.Log("Waiting");
             yield return null;
         }
         MapGenerator.Instance.GenerateMap(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);
     }
+
+
 
 }
 

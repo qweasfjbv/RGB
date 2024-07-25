@@ -70,11 +70,12 @@ public class MapGenerator : NetworkBehaviour, ISpawned
     public override void Spawned()
     {
         // DO AFTER SPAWN GENERATE
+        
         isSpawned = true;
 
-        gameSceneUI= FindObjectOfType<GameSceneUI>();
+        gameSceneUI = FindObjectOfType<GameSceneUI>();
         resultPanelUI = FindObjectOfType<ResultPanelUI>();
-        resultPanelUI.gameObject.SetActive(false);
+        if(resultPanelUI != null) resultPanelUI.gameObject.SetActive(false);
         UpdateMapGrids();
     }
 
