@@ -94,6 +94,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     // GameStart (Main->GameScene)
     public void GameStart(GameType type, int lvId, string sessionId="")
     {
+        curGameType = type;
         currentLv = lvId;
         curSession = sessionId;
         StartCoroutine(GameStartCoroutine(lvId));
@@ -110,9 +111,9 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     }
 
     // GameFail (GameScene, same Lv)
-    public void GameFail()
+    public void GameFail(bool isBlack = false)
     {
-        StartCoroutine(GameRestartCoroutine(currentLv));
+        StartCoroutine(GameRestartCoroutine(currentLv, isBlack));
     }
 
     // GameFail (GameScene, next Lv)
@@ -165,13 +166,18 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     }
 
-    public IEnumerator GameRestartCoroutine(int idx)
+    public IEnumerator GameRestartCoroutine(int idx, bool isBlack=false)
     {
-        yield return StartCoroutine(RevStartSceneShade());
+        if (!isBlack)
+        {
+            yield return StartCoroutine(RevStartSceneShade());
+        }
+        else
+        {
+            yield return StartCoroutine(BlackRevStartSceneShade());
+        }
 
         MapGenerator.Instance.EraseAllObject(spawner.Runner);
-        // TODO : RESTART MAP;
-
         spawner.MapRestart();
 
         FinSceneShade();
@@ -206,10 +212,24 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         shade.GetComponent<Image>().DOColor(ColorConstants.WHITE, duration).OnComplete(() => tmpB = true);
         while (!tmpB) yield return null;
     }
+    private IEnumerator BlackRevStartSceneShade()
+    {
+        shade.GetComponent<Image>().color = ColorConstants.BLACK;
+        SoundManager.Instance.CreateAudioSource(Vector3.zero, EffectClip.SHADE);
+        shade.sizeDelta = Vector2.zero;
+        shade.gameObject.SetActive(true);
+
+        bool tmpB = false;
+        shade.DOSizeDelta(new Vector2(1000, 1000), duration).OnComplete(() => tmpB = true);
+        while (!tmpB) yield return null;
+    }
+
 
     public void FinSceneShade()
     {
-        shade.GetComponent<Image>().DOColor(Color.clear, duration).OnComplete(()=>shade.gameObject.SetActive(false));
+        Color tmpColor = shade.GetComponent<Image>().color;
+        tmpColor.a = 0f;
+        shade.GetComponent<Image>().DOColor(tmpColor, duration).OnComplete(()=>shade.gameObject.SetActive(false));
     }
 
     private void RevFinSceneShade()
@@ -304,5 +324,11 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     }
 
+    public void OnStepBlack()
+    {
+        BoxController.RPC_LockInputBlock(); // Lock and Game End
+        GameFail(true);
+        
+    }
 
 }

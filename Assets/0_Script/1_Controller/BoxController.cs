@@ -5,6 +5,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using UnityEditor.AddressableAssets.Build;
 using UnityEngine;
 
 
@@ -75,6 +76,13 @@ public class BoxController : NetworkBehaviour
     {
         isInputBlock = false;
     }
+
+    //[Rpc(RpcSources.All, RpcTargets.All)]
+    public static void RPC_LockInputBlock()
+    {
+        LockInputBlock();   
+    }
+
     public static void LockInputBlock()
     {
         isInputBlock = true;
@@ -457,6 +465,15 @@ public class BoxController : NetworkBehaviour
 
     }
 
+    // If Black -> GameOver, other -> Don't care
+    private void CheckFloorColor()
+    {
+        if (GetComponent<BoxColorController>().GetBlendColorWithFloor().Equals(ColorConstants.BLACK))
+        {
+            GameManagerEx.Instance.OnStepBlack();
+        }
+    }
+
     #region JumpCoroutines
 
     // Jump
@@ -501,6 +518,7 @@ public class BoxController : NetworkBehaviour
         // JumpComplete
 
 
+        CheckFloorColor();
         isJumping = false;
 
     }
@@ -710,15 +728,48 @@ public class BoxController : NetworkBehaviour
     private IEnumerator JumpFallCoroutine(float duration)
     {
 
-        yield return StartCoroutine(JumpCoroutine(duration));
 
-        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.FALL);
+        SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
+
+        isJumping = true;
+        jumpProgress = 0f;
+
+        Vector3 scaleAxis = GetScaleYAxis();
+
+        float elapsedTime = 0f;
+        float scaleProgress = 0f;
+
+        while (scaleProgress < 1.0f)
+        {
+            scaleProgress = elapsedTime / scaleDuration;
+            float tmp = Mathf.Lerp(0, scaleEffect, scaleProgress);
+            transform.localScale = Vector3.one - tmp * scaleAxis;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        isScaleSynced = false;
+
+        elapsedTime = 0f;
+        while (jumpProgress < 1.0f)
+        {
+            jumpProgress = elapsedTime / duration;
+            // Calculate parabola
+            float height = Mathf.Sin(Mathf.PI * jumpProgress) * jumpHeight;
+            transform.position = Vector3.Lerp(jumpStart, jumpTarget, jumpProgress) + new Vector3(0, height, 0);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, jumpProgress);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+
+        }
+
 
 
         isJumping = true;
         Vector3 tmpP = transform.position;
 
-        float elapsedTime = 0;
+        elapsedTime = 0;
         while (elapsedTime < duration * 3)
         {
             tmpP.y -= Time.deltaTime * 10;

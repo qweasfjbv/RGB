@@ -64,18 +64,8 @@ public class MainmenuUI : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
+        Debug.Log("curgametype " + curGameType + ", " + currentSelectedIdx);
         GameManagerEx.Instance.GameStart(curGameType, currentSelectedIdx);
-        /*
-        if (curGameType != GameType.MULTI)
-        {
-            GameManagerEx.Instance.GameStart(curGameType, currentSelectedIdx);
-        }
-        else
-        {
-            multiRoomSelectUI.gameObject.SetActive(true);
-            multiRoomSelectUI.SetPrefix(currentSelectedIdx);
-        }
-        */
     }
 
     private void OnStageRightButtonClicked()

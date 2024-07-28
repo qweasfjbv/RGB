@@ -32,14 +32,13 @@ public class TimerManager : NetworkBehaviour
         while (isTimerRunning)
         {
             float timeLeft = GetTimeLeft();
-
-            // 모든 클라이언트의 UI 업데이트
             RPC_UpdateTimerUI(timeLeft);
 
             if (timeLeft <= 0)
             {
                 isTimerRunning = false;
-                // 타이머 종료시 추가 작업
+
+                // TODO : when timer expired
             }
 
             yield return new WaitForSeconds(0.1f);
@@ -62,6 +61,7 @@ public class TimerManager : NetworkBehaviour
         GameManagerEx.Instance.UpdateTimerUI(Mathf.RoundToInt(timeLeft));
     }
 
+    
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_UnlockControl()
     {
