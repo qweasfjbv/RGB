@@ -64,7 +64,6 @@ public class MainmenuUI : MonoBehaviour
 
     private void OnStartButtonClicked()
     {
-        Debug.Log("curgametype " + curGameType + ", " + currentSelectedIdx);
         GameManagerEx.Instance.GameStart(curGameType, currentSelectedIdx);
     }
 

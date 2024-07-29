@@ -129,6 +129,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapManagerPrefab: {fileID: 2338338954586806457, guid: 388889a6e23e25940ab7dc72a2ae7862,
     type: 3}
+  photonChatPrefab: {fileID: 7080942544236985121, guid: 7774c4feca48d7649913f6d2acd313e8,
+    type: 3}
   PlayerPrefab: {fileID: 1466752397469436484, guid: 12656aede08a1544bb47ef42b5f2640d,
     type: 3}
   currentPlayer:

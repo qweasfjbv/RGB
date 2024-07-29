@@ -8,7 +8,9 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
 {
 
     [SerializeField] private GameObject mapManagerPrefab;
+    [SerializeField] private GameObject photonChatPrefab;
 
+    private PhotonChat photonChat;
     const int MAX_PLAYERS = 2;
 
     public void PlayerJoined(PlayerRef player)
@@ -27,6 +29,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
                 {
                     Runner.SessionInfo.IsOpen = false;
                     Runner.SessionInfo.IsVisible = false;
+                    photonChat = Runner.Spawn(photonChatPrefab).GetComponent<PhotonChat>();
                 }
 
                 GameManagerEx.Instance.OnRoomFull();
@@ -35,6 +38,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
             {
                 GameManagerEx.Instance.OnWaiting();
             }
+
         }
     }
 
