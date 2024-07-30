@@ -15,10 +15,18 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
 
     public void PlayerJoined(PlayerRef player)
     {
+        if (Runner.IsSharedModeMasterClient && player != Runner.LocalPlayer)
+        {
+            MapGenerator.Instance.RPC_SetSingleton();
+        }
+
         if (player == Runner.LocalPlayer)
         {
-            Runner.Spawn(mapManagerPrefab);
-            MapRestart();
+            if ((GameManagerEx.Instance.CurGameType == GameType.MULTI && Runner.IsSharedModeMasterClient) || GameManagerEx.Instance.CurGameType != GameType.MULTI)
+            {
+                Runner.Spawn(mapManagerPrefab);
+            }
+            LoadMap();
         }
 
         if (GameManagerEx.Instance.CurGameType == GameType.MULTI)
@@ -30,6 +38,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
                     Runner.SessionInfo.IsOpen = false;
                     Runner.SessionInfo.IsVisible = false;
                     photonChat = Runner.Spawn(photonChatPrefab).GetComponent<PhotonChat>();
+
                 }
 
                 GameManagerEx.Instance.OnRoomFull();
@@ -60,7 +69,7 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
     public List<NetworkObject> currentPlayer;
     public int idx;
 
-    public void MapRestart()
+    public void LoadMap()
     {
 
         GameManagerEx.Instance.spawner = this;
@@ -74,11 +83,11 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
         }
         currentPlayer.Clear();
 
-        if (GameManagerEx.Instance.CurGameType == GameType.MULTI && Runner.IsSharedModeMasterClient || GameManagerEx.Instance.CurGameType != GameType.MULTI)
+        if ((GameManagerEx.Instance.CurGameType == GameType.MULTI && Runner.IsSharedModeMasterClient) || GameManagerEx.Instance.CurGameType != GameType.MULTI)
+        {
             StartCoroutine(CreateMap());
+        }
 
-
-        MapGenerator.Instance.SetStageName(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);
         CameraController.Instance.SetQuaterView(Managers.Resource.GetCamPos(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv));
 
 
@@ -105,7 +114,13 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
         {
             yield return null;
         }
+
+        while (MapGenerator.Instance ==null)
+            yield return null;
+
         MapGenerator.Instance.GenerateMap(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);
+        MapGenerator.Instance.SetStageName(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);
+
     }
 
 

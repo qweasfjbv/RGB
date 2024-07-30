@@ -8,6 +8,7 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 {
 
     #region Singleton
+
     private static MapGenerator instance = null;
 
     void Awake()
@@ -26,6 +27,14 @@ public class MapGenerator : NetworkBehaviour, ISpawned
             if (null == instance) return null;
             return instance;
         }
+    }
+
+    
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_SetSingleton()
+    {
+        Debug.Log(this.name);
+        instance = this;
     }
 
     #endregion
@@ -119,6 +128,21 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 
     public ColorSet GetGridColor(Vector2Int pos)
     {
+        Debug.Log("ERR POS : " + pos);
+        MapGrid tMapGrid = GetMapGrid(pos);
+        if (tMapGrid == null)
+        {
+            Debug.Log("WIDTH : " + NetworkedCurMapWidth);
+            for(int i=0; i< NetworkedCurMapWidth; i++)
+            {
+                for (int j = 0; j < NetworkedCurMapWidth; j++)
+                {
+                    NetworkedMapGrids.TryGet(pos, out tMapGrid);
+                    if (tMapGrid != null) Debug.Log(tMapGrid.NetworkedGridInfo.Pos);
+                }
+            }
+        }
+
         return NetworkedMapGrids[pos].NetworkedGridInfo.colorset;
     }
 
@@ -171,8 +195,10 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         NetworkGridInfo grid;
 
         NetworkedMapGrids.Clear();
+        Debug.Log("GENERTE MAEP : " + mapArrs.Count);
         for (int i = 0; i < mapArrs.Count; i++)
         {
+            Debug.Log("SPAWN!");
             grid = mapArrs[i];
             var sp = runner.Spawn(gridPrefab, new Vector3(grid.Pos.x, 0, grid.Pos.y) * Constant.GRID_SIZE, Quaternion.identity,
                inputAuthority: null,

@@ -57,8 +57,10 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     [SerializeField] private Button cancelButton;
 
     [Header("TimerUIs")]
-    [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI counterText;
     [SerializeField] private GameObject timerManagerPrefab;
+    [SerializeField] private GameObject timerUI;
+    [SerializeField] private TextMeshProUGUI timerText;
 
     private TimerManager timerManager;
     private NetworkRunner newRunner = null;
@@ -178,7 +180,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         }
 
         MapGenerator.Instance.EraseAllObject(spawner.Runner);
-        spawner.MapRestart();
+        spawner.LoadMap();
 
         FinSceneShade();
 
@@ -305,20 +307,20 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     public void EndTimer()
     {
-        timerText.gameObject.SetActive(false);
+        counterText.gameObject.SetActive(false);
     }
 
     public void UpdateTimerUI(int sec)
     {
 
-        timerText.gameObject.SetActive(true);
+        counterText.gameObject.SetActive(true);
         if (sec != 0)
         {
-            timerText.text = sec.ToString() + " !";
+            counterText.text = sec.ToString() + " !";
         }
         else
         {
-            timerText.text = "Start !";
+            counterText.text = "Start !";
             Invoke(nameof(EndTimer), 1f);
         }
 
@@ -330,5 +332,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         GameFail(true);
         
     }
+
+
 
 }

@@ -65,6 +65,7 @@ public class TimerManager : NetworkBehaviour
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_UnlockControl()
     {
+        Debug.Log("UNLOCK");
         BoxController.UnlockInputBlock();
     }
 
