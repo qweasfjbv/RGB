@@ -11,15 +11,6 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 
     private static MapGenerator instance = null;
 
-    void Awake()
-    {
-        if (null == instance)
-        {
-            instance = this;
-        }
-
-    }
-
     public static MapGenerator Instance
     {
         get
@@ -75,12 +66,17 @@ public class MapGenerator : NetworkBehaviour, ISpawned
     private bool isSpawned = false;
     public bool IsSpawned { get => isSpawned; }
 
-
     public override void Spawned()
     {
         // DO AFTER SPAWN GENERATE
-        
+
+        if (null == instance)
+        {
+            instance = this;
+        }
+
         isSpawned = true;
+
 
         gameSceneUI = FindObjectOfType<GameSceneUI>();
         resultPanelUI = FindObjectOfType<ResultPanelUI>();
@@ -128,7 +124,6 @@ public class MapGenerator : NetworkBehaviour, ISpawned
 
     public ColorSet GetGridColor(Vector2Int pos)
     {
-        Debug.Log("ERR POS : " + pos);
         MapGrid tMapGrid = GetMapGrid(pos);
         if (tMapGrid == null)
         {

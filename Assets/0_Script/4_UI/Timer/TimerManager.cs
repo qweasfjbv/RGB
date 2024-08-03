@@ -9,21 +9,38 @@ public class TimerManager : NetworkBehaviour
     [Networked] private float timerStartTime { get; set; }
     private bool isTimerRunning = false;
 
+    private Coroutine runningCoroutine;
 
+    private int curScore = 0;
+    public int CurScore { get { return curScore; } set {  curScore = value; } }
+    public void AddScore(PlayerRef player, int score)
+    {
+        curScore += score;
+        GameManagerEx.Instance.UpdateScore(1, curScore);
+        RPC_UpdateScoreText(player, curScore);
+    }
 
-    public void StartTimer(float duration)
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_UpdateScoreText(PlayerRef player, int score)
+    {
+        if (player == GameManagerEx.Instance.newRunner.LocalPlayer) return;
+
+        GameManagerEx.Instance.UpdateScore(2, score);
+    }
+
+    public void StartCounter(float duration)
     {
         if (!isTimerRunning)
         {
             timerDuration = duration;
             timerStartTime = Time.time;
             isTimerRunning = true;
-            StartCoroutine(UpdateTimerCoroutine());
+            runningCoroutine = StartCoroutine(UpdateCounterCoroutine());
         }
     }
 
     // 1초마다 클라이언트의 UI를 업데이트하는 RPC 호출
-    private IEnumerator UpdateTimerCoroutine()
+    private IEnumerator UpdateCounterCoroutine()
     {
 
         yield return new WaitForSeconds(1f);
@@ -32,7 +49,7 @@ public class TimerManager : NetworkBehaviour
         while (isTimerRunning)
         {
             float timeLeft = GetTimeLeft();
-            RPC_UpdateTimerUI(timeLeft);
+            RPC_UpdateCounterUI(timeLeft);
 
             if (timeLeft <= 0)
             {
@@ -55,10 +72,9 @@ public class TimerManager : NetworkBehaviour
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_UpdateTimerUI(float timeLeft)
+    public void RPC_UpdateCounterUI(float timeLeft)
     {
-        Debug.Log("UPDATE TIMER : +" + timeLeft);
-        GameManagerEx.Instance.UpdateTimerUI(Mathf.RoundToInt(timeLeft));
+        GameManagerEx.Instance.UpdateCounterUI(Mathf.RoundToInt(timeLeft));
     }
 
     
@@ -70,4 +86,55 @@ public class TimerManager : NetworkBehaviour
     }
 
 
+    public void StartTimer(float duration)
+    {
+        if (!isTimerRunning)
+        {
+            timerDuration = duration;
+            timerStartTime = Time.time;
+            isTimerRunning = true;
+            runningCoroutine = StartCoroutine(UpdateTimerCoroutine());
+        }
+    }
+
+    private IEnumerator UpdateTimerCoroutine()
+    {
+
+        yield return new WaitForSeconds(1f);
+
+        timerStartTime = Time.time;
+        while (isTimerRunning)
+        {
+            float timeLeft = GetTimeLeft();
+            RPC_UpdateTimerUI(timeLeft);
+
+            if (timeLeft <= 0)
+            {
+                isTimerRunning = false;
+
+                // TODO : when timer expired
+            }
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+
+
+    }
+
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_UpdateTimerUI(float timeLeft)
+    {
+        GameManagerEx.Instance.UpdateTimerUI(Mathf.RoundToInt(timeLeft));
+    }
+
+
+    public void StopAllCoroutine()
+    {
+        if (isTimerRunning)
+        {
+            StopCoroutine(runningCoroutine);
+        }
+    }
 }

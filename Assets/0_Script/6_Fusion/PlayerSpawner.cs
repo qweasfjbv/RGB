@@ -15,13 +15,9 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
 
     public void PlayerJoined(PlayerRef player)
     {
-        if (Runner.IsSharedModeMasterClient && player != Runner.LocalPlayer)
-        {
-            MapGenerator.Instance.RPC_SetSingleton();
-        }
-
         if (player == Runner.LocalPlayer)
         {
+            if (GameManagerEx.Instance.CurGameType == GameType.MULTI) GameManagerEx.Instance.IsInMultiGame = true;
             if ((GameManagerEx.Instance.CurGameType == GameType.MULTI && Runner.IsSharedModeMasterClient) || GameManagerEx.Instance.CurGameType != GameType.MULTI)
             {
                 Runner.Spawn(mapManagerPrefab);
@@ -55,7 +51,8 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
     {
         if (player == Runner.LocalPlayer)
         {
-
+            GameManagerEx.Instance.IsInMultiGame = false;
+            GameManagerEx.Instance.UnsetTimers();
         }
         else
         {
@@ -115,8 +112,6 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
             yield return null;
         }
 
-        while (MapGenerator.Instance ==null)
-            yield return null;
 
         MapGenerator.Instance.GenerateMap(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);
         MapGenerator.Instance.SetStageName(GameManagerEx.Instance.CurGameType, GameManagerEx.Instance.CurLv, Runner);

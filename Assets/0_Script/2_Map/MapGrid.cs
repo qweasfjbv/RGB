@@ -140,6 +140,17 @@ public struct ColorSet : INetworkStruct
         r = 0; y = 0; b = 0;
     }
 
+
+    public int GetScoreInMulti(ColorSet cSet)
+    {
+        int cnt = 0;
+        if (r == cSet.r && r == 1) cnt++;
+        if (y == cSet.y && y == 1) cnt++;
+        if (b == cSet.b && b == 1) cnt++;
+
+        return cnt;
+    }
+
     public void GetBlendedColor(ColorSet cSet)
     {
         r = (r == cSet.r) ? 0 : 1;

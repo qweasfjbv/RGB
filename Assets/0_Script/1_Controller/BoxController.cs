@@ -846,7 +846,7 @@ public class BoxController : NetworkBehaviour
         isScaleSynced = false;
         transform.localPosition = originalPosition;
 
-        if (MapGenerator.Instance.CheckMapClear() && GetComponent<BoxColorController>().CheckBoxClear())
+        if (MapGenerator.Instance.CheckMapClear() && GetComponent<BoxColorController>().CheckBoxClear() && !GameManagerEx.Instance.IsInMultiGame)
         {
             MapGenerator.Instance.PopupResultPanel();
             isInputBlock = true;

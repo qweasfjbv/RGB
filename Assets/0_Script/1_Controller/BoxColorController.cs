@@ -129,6 +129,9 @@ public class BoxColorController : NetworkBehaviour
         ColorSet gridC = MapGenerator.Instance.GetGridColor(boxController.GetBoxPos());
         ColorSet boxC = NetworkBoxColorset[(int)dir];
 
+
+        GameManagerEx.Instance.AddMultiScore(gridC.GetScoreInMulti(boxC));
+
         // Empty-> get Color from grid
         if (NetworkBoxColorset[(int)dir].IsEmpty())
         {
@@ -147,6 +150,7 @@ public class BoxColorController : NetworkBehaviour
         SetBoxColor(dir, boxC.GetColor());
         MapGenerator.Instance.SetGridColor(boxController.GetBoxPos(), gridC.GetColor());
 
+
         // 동기화: 모든 클라이언트에게 변경사항을 알림
         RPC_SyncColor(dir, boxC, boxController.GetBoxPos(), gridC);
     }
@@ -164,7 +168,6 @@ public class BoxColorController : NetworkBehaviour
     {
         
         ColorSet cs = new ColorSet(NetworkBoxColorset[(int)boxController.BoxDirs[(int)BoxDir.BOTTOM]].GetColor());
-
 
         cs.GetBlendedColor(MapGenerator.Instance.GetGridColor(boxController.GetBoxPos()));
 

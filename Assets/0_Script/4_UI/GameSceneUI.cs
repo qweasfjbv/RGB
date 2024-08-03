@@ -15,11 +15,18 @@ public class GameSceneUI : MonoBehaviour
 
     private void Start()
     {
+        if (GameManagerEx.Instance.CurGameType == GameType.MULTI)
+            RetryButton.gameObject.SetActive(false);
+        else
+            RetryButton.gameObject.SetActive(true);
+
         BackButton.onClick.RemoveAllListeners();
         RetryButton.onClick.RemoveAllListeners();
 
         BackButton.onClick.AddListener(() => GameManagerEx.Instance.GameEnd());
         RetryButton.onClick.AddListener(() => GameManagerEx.Instance.GameFail());
+
+        if (GameManagerEx.Instance.CurGameType == GameType.MULTI) stageText.gameObject.SetActive(false);
     }
 
     public void UpdateStageText(GameType type, int idx, NetworkRunner runner)

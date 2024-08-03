@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Fusion;
 using System.Collections;
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
@@ -44,6 +45,9 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     private string curSession;
     public string CurSession {  get => curSession; }
 
+    private bool isInMultiGame = false;
+    public bool IsInMultiGame { get { return isInMultiGame; }  set=>isInMultiGame = value; }
+
     private GameType curGameType;
     public GameType CurGameType { get => curGameType; set => curGameType = value; }
 
@@ -63,7 +67,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     [SerializeField] private TextMeshProUGUI timerText;
 
     private TimerManager timerManager;
-    private NetworkRunner newRunner = null;
+    public NetworkRunner newRunner = null;
 
     private void Start()
     {
@@ -107,6 +111,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     // GameEnd (Game->MainScene)
     public void GameEnd()
     {
+        UnsetTimers();
         StartCoroutine(GameEndCoroutine());
 
         return;
@@ -115,6 +120,11 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     // GameFail (GameScene, same Lv)
     public void GameFail(bool isBlack = false)
     {
+        if (isInMultiGame)
+        {
+            GameEnd();
+            return;
+        }
         StartCoroutine(GameRestartCoroutine(currentLv, isBlack));
     }
 
@@ -226,6 +236,16 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         while (!tmpB) yield return null;
     }
 
+    public void UnsetTimers() {
+        if(timerManager != null)
+        {
+            timerManager.StopAllCoroutine();
+        }
+        counterText.gameObject.SetActive(false);
+        timerUI.SetActive(false);
+        scoreUI.SetActive(false);
+    }
+
 
     public void FinSceneShade()
     {
@@ -287,7 +307,6 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     // Wait for someone...
     public void OnWaiting()
     {
-        Debug.Log("WAITING");
         waitPanel.SetActive(true);
         cancelButton.onClick.RemoveAllListeners();
         cancelButton.onClick.AddListener(GameEnd);
@@ -298,30 +317,54 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     {
         waitPanel.SetActive(false);
         FinSceneShade();                // Fade Out Whiteboard
-        timerManager = newRunner.Spawn(timerManagerPrefab).GetComponent<TimerManager>();
-        
-        if(newRunner.IsSharedModeMasterClient)
-            timerManager.StartTimer(5f);
+
+        if (newRunner.IsSharedModeMasterClient)
+        {
+            timerManager = newRunner.Spawn(timerManagerPrefab).GetComponent<TimerManager>();
+            timerManager.StartCounter(5f);
+        }
         
     }
 
     public void EndTimer()
     {
         counterText.gameObject.SetActive(false);
+
+        if (newRunner.IsSharedModeMasterClient)
+            timerManager.StartTimer(60f);
     }
 
-    public void UpdateTimerUI(int sec)
+    public void UpdateCounterUI(int sec)
     {
 
         counterText.gameObject.SetActive(true);
         if (sec != 0)
         {
-            counterText.text = sec.ToString() + " !";
+            counterText.text = sec.ToString();
         }
         else
         {
             counterText.text = "Start !";
             Invoke(nameof(EndTimer), 1f);
+        }
+
+    }
+
+    public void UpdateTimerUI(int sec)
+    {
+        if (!isInMultiGame) return;
+
+
+        timerUI.SetActive(true);
+        scoreUI.SetActive(true);
+
+        if (sec != 0)
+        {
+            timerText.text = sec.ToString();
+        }
+        else
+        {
+            PopupMultiResult();
         }
 
     }
@@ -333,6 +376,67 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         
     }
 
+    public void AddMultiScore(int score)
+    {
+        if (curGameType != GameType.MULTI) return;
+
+        if (timerManager == null)
+        {
+            timerManager = FindObjectOfType<TimerManager>();
+        }
+        timerManager.AddScore(newRunner.LocalPlayer, score);
+    }
+
+
+    [Header("ScoreUI")]
+    [SerializeField] private GameObject scoreUI;
+    [SerializeField] private TextMeshProUGUI scoreText1;
+    [SerializeField] private TextMeshProUGUI scoreText2;
+
+    // Called in RPC
+    public void UpdateScore(int target, int score)
+    {
+        switch (target) {
+            case 1:
+                scoreText1.text = score.ToString();
+                break;
+            case 2:
+                scoreText2.text = score.ToString();
+                break;
+        }
+
+    }
+
+    [Header("MultiResult")]
+    [SerializeField] private GameObject multiResultPanel;
+    [SerializeField] private TextMeshProUGUI multiResultText;
+    [SerializeField] private Button multiResultOkButton;
+
+    private Color winTextColor = new Color(207 / 255f, 14 / 255f, 0 / 255f, 255 / 255f);
+    private Color loseTextColor = new Color(5 / 255f, 192 / 255f, 5 / 255f, 255 / 255f);
+
+
+    // Should be called from all client
+    public void PopupMultiResult()
+    {
+        BoxController.LockInputBlock();
+        multiResultPanel.SetActive(true);
+
+        SetResultText();
+
+        multiResultOkButton.onClick.RemoveAllListeners();
+        multiResultOkButton.onClick.AddListener(GameEnd);
+    }
+
+    private void SetResultText()
+    {
+        bool isWin = false;
+
+        // TODO : CHECK SCORE
+
+        multiResultText.text = (isWin ? "Win" : "Lose");
+        multiResultText.color = (isWin ? winTextColor : loseTextColor);
+    }
 
 
 }
