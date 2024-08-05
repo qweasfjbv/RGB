@@ -13,6 +13,11 @@ public class TimerManager : NetworkBehaviour
 
     private int curScore = 0;
     public int CurScore { get { return curScore; } set {  curScore = value; } }
+
+    private int diffScore = 0;
+    public int DiffScore { get { return diffScore; } set {  diffScore = value; } }
+
+
     public void AddScore(PlayerRef player, int score)
     {
         curScore += score;
@@ -23,7 +28,10 @@ public class TimerManager : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_UpdateScoreText(PlayerRef player, int score)
     {
-        if (player == GameManagerEx.Instance.newRunner.LocalPlayer) return;
+        if (player == GameManagerEx.Instance.newRunner.LocalPlayer)
+        {
+            return;
+        }
 
         GameManagerEx.Instance.UpdateScore(2, score);
     }

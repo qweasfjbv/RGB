@@ -95,6 +95,8 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
             Destroy(linker.gameObject);
         }
 
+        Destroy(timerManager);
+
     }
 
     // GameStart (Main->GameScene)
@@ -112,6 +114,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     public void GameEnd()
     {
         UnsetTimers();
+        multiResultPanel.SetActive(false);
         StartCoroutine(GameEndCoroutine());
 
         return;
@@ -393,19 +396,27 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     [SerializeField] private TextMeshProUGUI scoreText1;
     [SerializeField] private TextMeshProUGUI scoreText2;
 
+    // 1 : mine, 2 : opponent
+    int maxScore1 = -1;
+    int maxScore2 = -1;
+
     // Called in RPC
     public void UpdateScore(int target, int score)
     {
         switch (target) {
             case 1:
                 scoreText1.text = score.ToString();
+                maxScore1 = score;
                 break;
             case 2:
                 scoreText2.text = score.ToString();
+                maxScore2 = score;
                 break;
         }
 
+
     }
+
 
     [Header("MultiResult")]
     [SerializeField] private GameObject multiResultPanel;
@@ -430,12 +441,35 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
 
     private void SetResultText()
     {
-        bool isWin = false;
 
-        // TODO : CHECK SCORE
+        Debug.Log(timerManager.CurScore + " : " + timerManager.DiffScore);
+        int isWin = 0;
 
-        multiResultText.text = (isWin ? "Win" : "Lose");
-        multiResultText.color = (isWin ? winTextColor : loseTextColor);
+        if (maxScore1 > maxScore2)
+        {
+            isWin = 1;
+        }
+        else if(maxScore1< maxScore2)
+        {
+            isWin = -1;
+        }
+
+
+        switch (isWin) {
+            case -1:
+                multiResultText.text = "Lose";
+                multiResultText.color = loseTextColor;
+                break;
+            case 0:
+                multiResultText.text = "Draw";
+                multiResultText.color = loseTextColor;
+                break;
+            case 1:
+                multiResultText.text = "Win";
+                multiResultText.color = winTextColor;
+                break;
+        }
+
     }
 
 
