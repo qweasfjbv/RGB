@@ -3,6 +3,7 @@ using Fusion;
 using System.Collections;
 using System.Security.Cryptography;
 using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
@@ -95,7 +96,8 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
             Destroy(linker.gameObject);
         }
 
-        Destroy(timerManager);
+        if (timerManager != null)
+            Destroy(timerManager);
 
     }
 
@@ -125,7 +127,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     {
         if (isInMultiGame)
         {
-            GameEnd();
+            timerManager.RPC_QuickMultiResult(false, newRunner.LocalPlayer);
             return;
         }
         StartCoroutine(GameRestartCoroutine(currentLv, isBlack));
@@ -337,8 +339,9 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
             timerManager.StartTimer(60f);
     }
 
-    public void UpdateCounterUI(int sec)
+    public void UpdateCounterUI(int sec, TimerManager timer)
     {
+        if(timerManager == null) timerManager = timer;
 
         counterText.gameObject.SetActive(true);
         if (sec != 0)
@@ -367,7 +370,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         }
         else
         {
-            PopupMultiResult();
+            PopupMultiResult(0, newRunner.LocalPlayer);
         }
 
     }
@@ -375,8 +378,12 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     public void OnStepBlack()
     {
         BoxController.RPC_LockInputBlock(); // Lock and Game End
-        GameFail(true);
-        
+        if (CurGameType == GameType.MULTI)
+            timerManager.RPC_QuickMultiResult(true, newRunner.LocalPlayer);
+        else
+        {
+            GameFail(true);
+        }
     }
 
     public void AddMultiScore(int score)
@@ -423,42 +430,60 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
     [SerializeField] private TextMeshProUGUI multiResultText;
     [SerializeField] private Button multiResultOkButton;
 
-    private Color winTextColor = new Color(207 / 255f, 14 / 255f, 0 / 255f, 255 / 255f);
-    private Color loseTextColor = new Color(5 / 255f, 192 / 255f, 5 / 255f, 255 / 255f);
-
+    private Color loseTextColor = new Color(207 / 255f, 14 / 255f, 0 / 255f, 255 / 255f);
+    private Color winTextColor = new Color(5 / 255f, 192 / 255f, 5 / 255f, 255 / 255f);
+    private Color blackTextColor = new Color(32 / 255f, 32 / 255f, 32 / 255f, 255 / 255f);
 
     // Should be called from all client
-    public void PopupMultiResult()
+    public void PopupMultiResult(int isTrapped, PlayerRef player)
     {
+        Debug.Log("SETACTIVE(TRU");
         BoxController.LockInputBlock();
         multiResultPanel.SetActive(true);
 
-        SetResultText();
+        SetResultText(isTrapped, player);
 
         multiResultOkButton.onClick.RemoveAllListeners();
         multiResultOkButton.onClick.AddListener(GameEnd);
     }
 
-    private void SetResultText()
+    // must be called from all client
+    private void SetResultText(int isTrapped, PlayerRef player)
     {
+        // 0: not trap, 1: fall, 2: blacked
 
-        Debug.Log(timerManager.CurScore + " : " + timerManager.DiffScore);
+        UnsetTimers();
+
         int isWin = 0;
 
-        if (maxScore1 > maxScore2)
-        {
-            isWin = 1;
+        if (isTrapped == 0) {
+
+            if (maxScore1 > maxScore2)
+            {
+                isWin = 1;
+            }
+            else if (maxScore1 < maxScore2)
+            {
+                isWin = -1;
+            }
         }
-        else if(maxScore1< maxScore2)
+        else
         {
-            isWin = -1;
+            if (player == newRunner.LocalPlayer)
+            {
+                isWin = -1;
+            }
+            else isWin = 1;
         }
+
+
+
 
 
         switch (isWin) {
             case -1:
-                multiResultText.text = "Lose";
-                multiResultText.color = loseTextColor;
+                multiResultText.text = (isTrapped==2) ? "Black" : "Lose";
+                multiResultText.color = (isTrapped == 2) ? blackTextColor : loseTextColor;
                 break;
             case 0:
                 multiResultText.text = "Draw";
@@ -471,6 +496,8 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         }
 
     }
+
+
 
 
 }

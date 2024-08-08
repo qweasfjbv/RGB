@@ -215,7 +215,6 @@ public class BoxController : NetworkBehaviour
         if (!isScaleSynced)
         {
             transform.localScale = Vector3.one;
-            isScaleSynced = true;
         }
 
         if (!isJumping)
@@ -476,6 +475,7 @@ public class BoxController : NetworkBehaviour
     private IEnumerator JumpCoroutine(float duration)
     {
 
+        isScaleSynced = true;
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         isJumping = true;
@@ -514,6 +514,7 @@ public class BoxController : NetworkBehaviour
         // JumpComplete
 
 
+        isScaleSynced = false;
         CheckFloorColor();
         isJumping = false;
 
@@ -525,6 +526,7 @@ public class BoxController : NetworkBehaviour
     private IEnumerator JumpUpDownCoroutine(float duration, bool up)
     {
 
+        isScaleSynced = true;
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
         if (up) boxHeight++;
@@ -584,6 +586,7 @@ public class BoxController : NetworkBehaviour
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
+        isScaleSynced = true;
         isJumping = true;
         jumpProgress = 0f;
 
@@ -652,6 +655,7 @@ public class BoxController : NetworkBehaviour
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
+        isScaleSynced = true;
         isJumping = true;
         jumpProgress = 0f;
 
@@ -727,6 +731,7 @@ public class BoxController : NetworkBehaviour
 
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.BASIC_JUMP);
 
+        isScaleSynced = true;
         isJumping = true;
         jumpProgress = 0f;
 
@@ -743,8 +748,6 @@ public class BoxController : NetworkBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        isScaleSynced = false;
 
         elapsedTime = 0f;
         while (jumpProgress < 1.0f)
@@ -777,12 +780,6 @@ public class BoxController : NetworkBehaviour
         }
 
 
-        RPC_GameFail();
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    private void RPC_GameFail()
-    {
         GameManagerEx.Instance.GameFail();
     }
 
@@ -792,6 +789,7 @@ public class BoxController : NetworkBehaviour
     {
         SoundManager.Instance.CreateAudioSource(transform.position, EffectClip.STAMP);
 
+        isScaleSynced = true;
         isJumping = true;
         GetComponent<BoxColorController>().StampColor(boxDirs[(int)BoxDir.BOTTOM]);
         jumpProgress = 0f;
@@ -846,7 +844,7 @@ public class BoxController : NetworkBehaviour
         isScaleSynced = false;
         transform.localPosition = originalPosition;
 
-        if (MapGenerator.Instance.CheckMapClear() && GetComponent<BoxColorController>().CheckBoxClear() && !GameManagerEx.Instance.IsInMultiGame)
+        if (MapGenerator.Instance.CheckMapClear() && GetComponent<BoxColorController>().CheckBoxClear() && GameManagerEx.Instance.CurGameType != GameType.MULTI)
         {
             MapGenerator.Instance.PopupResultPanel();
             isInputBlock = true;

@@ -66,7 +66,7 @@ public class CameraController : MonoBehaviour
 
     private void OnPreCull()
     {
-        GL.Clear(true, true, Color.black);
+        //GL.Clear(true, true, Color.black);
     }
 
 

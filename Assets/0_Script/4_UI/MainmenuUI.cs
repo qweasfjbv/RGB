@@ -69,6 +69,7 @@ public class MainmenuUI : MonoBehaviour
 
     private void OnStageRightButtonClicked()
     {
+        if (curGameType == GameType.MULTI) return;
         if (Managers.Resource.GetMapCount(curGameType) - 1 == currentSelectedIdx) return;
         currentSelectedIdx++;
         UpdateStageTMP();
@@ -76,6 +77,7 @@ public class MainmenuUI : MonoBehaviour
 
     private void OnStageLeftButtonClicked()
     {
+        if (curGameType == GameType.MULTI) return;
         if (currentSelectedIdx == 1) return;
         currentSelectedIdx--;
         UpdateStageTMP();
@@ -95,6 +97,9 @@ public class MainmenuUI : MonoBehaviour
         int curMode = (int)curGameType;
         int nextMode = (curMode + 1) % GameModeTMPs.Count;
 
+        if (nextMode == 2) stageTMP.gameObject.SetActive(false);
+        else stageTMP.gameObject.SetActive(true);
+
         GameModeTMPs[curMode].DOColor(alphaColor, modeFadeDuration);
         GameModeTMPs[curMode].GetComponent<RectTransform>().DOAnchorPosY(-50, modeFadeDuration);
 
@@ -107,6 +112,7 @@ public class MainmenuUI : MonoBehaviour
 
         curGameType = (GameType)nextMode;
         GameManagerEx.Instance.CurGameType = curGameType;
+
     }
 
     private void OnModeLeftButtonClicked()
@@ -116,6 +122,9 @@ public class MainmenuUI : MonoBehaviour
 
         int curMode = (int)curGameType;
         int nextMode = (curMode - 1) < 0 ? curMode - 1 + GameModeTMPs.Count : curMode - 1;
+
+        if (nextMode == 2) stageTMP.gameObject.SetActive(false);
+        else stageTMP.gameObject.SetActive(true);
 
         GameModeTMPs[curMode].DOColor(alphaColor, modeFadeDuration);
         GameModeTMPs[curMode].GetComponent<RectTransform>().DOAnchorPosY(50, modeFadeDuration);

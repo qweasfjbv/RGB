@@ -36,8 +36,8 @@ public class SettingsUI : MonoBehaviour
 
     private void Start()
     {
-        settingButton.onClick.RemoveListener(Toggle);
-        settingButton.onClick.AddListener(Toggle);
+        //settingButton.onClick.RemoveListener(Toggle);
+        //settingButton.onClick.AddListener(Toggle);
 
 
         isExtended = false;

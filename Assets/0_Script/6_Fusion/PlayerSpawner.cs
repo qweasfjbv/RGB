@@ -119,6 +119,5 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
     }
 
 
-
 }
 

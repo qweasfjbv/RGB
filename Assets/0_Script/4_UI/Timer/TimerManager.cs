@@ -82,7 +82,7 @@ public class TimerManager : NetworkBehaviour
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_UpdateCounterUI(float timeLeft)
     {
-        GameManagerEx.Instance.UpdateCounterUI(Mathf.RoundToInt(timeLeft));
+        GameManagerEx.Instance.UpdateCounterUI(Mathf.RoundToInt(timeLeft), this);
     }
 
     
@@ -145,4 +145,12 @@ public class TimerManager : NetworkBehaviour
             StopCoroutine(runningCoroutine);
         }
     }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_QuickMultiResult(bool isBlacked, PlayerRef player)
+    {
+        Debug.Log("RPCED");
+        GameManagerEx.Instance.PopupMultiResult(isBlacked ? 2 : 1, player);
+    }
+
 }

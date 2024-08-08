@@ -21,6 +21,8 @@ public class Managers : MonoBehaviour
 
     public void Init()
     {
+        Screen.SetResolution(540, 960, FullScreenMode.Windowed);
+
         if (s_instance == null)
         {
             GameObject go = GameObject.Find("@Managers");

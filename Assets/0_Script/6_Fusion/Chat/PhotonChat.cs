@@ -11,7 +11,7 @@ public class PhotonChat : NetworkBehaviour
 
 
 
-
+    [SerializeField] private float delayTime;
     private bool chatDelay = false;
 
     private void Update()
@@ -22,7 +22,7 @@ public class PhotonChat : NetworkBehaviour
             {
                 OnSendButtonClicked();
                 chatDelay = true;
-                Invoke(nameof(DelayChat), 5f);
+                Invoke(nameof(ReleaseChat), delayTime);
             }
         }
     }
@@ -58,7 +58,7 @@ public class PhotonChat : NetworkBehaviour
         return result;
     }
 
-    private void DelayChat()
+    private void ReleaseChat()
     {
         chatDelay = false;
     }

@@ -47,7 +47,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988545
-    m_Localized: "Blue rotates the input \nby one position \ncoutnerclockwise."
+    m_Localized: "Blue rotates the input \nby one position \ncounterclockwise."
     m_Metadata:
       m_Items: []
   - m_Id: 18998234988546
