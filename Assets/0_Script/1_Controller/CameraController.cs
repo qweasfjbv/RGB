@@ -83,6 +83,7 @@ public class CameraController : MonoBehaviour
         return new Vector3(-ox, oy, -oz);
     }
 
+    
     public void SetQuaterView(Vector3 target)
     {
         camTarget = target;
@@ -91,8 +92,6 @@ public class CameraController : MonoBehaviour
         Quaternion cameraRotation = Quaternion.identity;
         cameraRotation = Quaternion.Euler(new Vector3(verticalRotate, horizontalRotate, 0f));
         RenderSettings.skybox.SetMatrix("_Rotation", Matrix4x4.Rotate(Quaternion.Inverse(cameraRotation)));
-
-
     }
 
     public void UnsetCamera()

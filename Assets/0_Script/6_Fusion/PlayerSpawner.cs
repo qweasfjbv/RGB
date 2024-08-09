@@ -94,7 +94,6 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined, IPlayerLeft
 
     public void PlayerSpawn()
     {
-
         currentPlayer.Add(Runner.Spawn(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity));
         currentPlayer[0].GetComponent<BoxController>().SetBoxController(new Vector2Int(0, 0), 0);
 

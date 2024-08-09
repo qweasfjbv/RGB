@@ -336,7 +336,7 @@ public class GameManagerEx : NetworkBehaviour, ISpawned
         counterText.gameObject.SetActive(false);
 
         if (newRunner.IsSharedModeMasterClient)
-            timerManager.StartTimer(60f);
+            timerManager.StartTimer(30f);
     }
 
     public void UpdateCounterUI(int sec, TimerManager timer)

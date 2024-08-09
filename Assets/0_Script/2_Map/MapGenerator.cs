@@ -113,7 +113,8 @@ public class MapGenerator : NetworkBehaviour, ISpawned
         {
             for (int j = 0; j < NetworkedCurMapWidth; j++)
             {
-                var tmpGrid = NetworkedMapGrids[new Vector2Int(i, j)];
+                MapGrid tmpGrid;
+                NetworkedMapGrids.TryGet(new Vector2Int(i, j), out tmpGrid);
                 if (tmpGrid != null)
                 {
                     tmpGrid.RPC_UpdateGridVisuals();

@@ -95,18 +95,20 @@ public class BoxController : NetworkBehaviour
         direction = Vector3.zero;
         inputBuffer = KeyCode.None;
 
-        jumpTarget = transform.position;
-        targetRotation = transform.rotation;
         isJumping = false;
     }
 
     public void SetBoxController(Vector2Int pos, int height)
     {
+        Debug.Log("SETBOXCONTROLLER " + pos);
         boxPosition = pos;
         boxHeight = height;
 
         transform.position = new Vector3(pos.x, height, pos.y) * Constant.GRID_SIZE;
         transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+
+        jumpTarget = transform.position;
+        targetRotation = transform.rotation;
 
         gameObject.SetActive(true);
 
@@ -192,7 +194,7 @@ public class BoxController : NetworkBehaviour
     }
 
 
-    private KeyCode _pressedKeyCode = KeyCode.None;
+    public KeyCode _pressedKeyCode = KeyCode.None;
     private void Update()
     {
         if (isInputBlock) return;
@@ -209,7 +211,6 @@ public class BoxController : NetworkBehaviour
     private bool isScaleSynced = false;
     public override void FixedUpdateNetwork()
     {
-
         if (HasStateAuthority == false) return;
 
         if (!isScaleSynced)
@@ -512,7 +513,6 @@ public class BoxController : NetworkBehaviour
         }
 
         // JumpComplete
-
 
         isScaleSynced = false;
         CheckFloorColor();
