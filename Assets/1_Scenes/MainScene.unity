@@ -5219,7 +5219,6 @@ MonoBehaviour:
   GameModeTMPs:
   - {fileID: 660971516}
   - {fileID: 155173313}
-  - {fileID: 1583076149}
   modeRightButton: {fileID: 598392801}
   modeLeftButton: {fileID: 959269192}
   modeFadeDuration: 0.2

@@ -29,6 +29,8 @@ public class MainmenuUI : MonoBehaviour
     private int currentSelectedIdx = 1;
     private Color alphaColor;
 
+    private const int MODECOUNT = 2;
+
     private void EraseAllListener()
     {
         gameStartButton.onClick.RemoveAllListeners();
