@@ -198,6 +198,7 @@ public class BoxController : NetworkBehaviour
     private void Update()
     {
         if (isInputBlock) return;
+
         foreach (KeyCode key in arrowKeys)
         {
             if (Input.GetKey(key))
@@ -205,6 +206,8 @@ public class BoxController : NetworkBehaviour
                 _pressedKeyCode = key; return;
             }
         }
+        _pressedKeyCode = GameManagerEx.Instance.GetComponent<MobileInput>().GetMoblileInput();
+
     }
 
     private bool isSynced = false;
